@@ -8,6 +8,7 @@ public class RangururaApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(RangururaApplication.class, args);
+		System.out.println("Rangurura is running ....");
 	}
 
 }
