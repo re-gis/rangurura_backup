@@ -1,4 +1,4 @@
-package com.backend.rangurura.Services;
+package com.backend.rangurura.services;
 
 import com.backend.rangurura.entities.Leaders;
 import com.backend.rangurura.entities.User;
