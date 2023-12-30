@@ -1,6 +1,7 @@
 package com.backend.rangurura.ExceptionHandlers;
 
 import com.backend.rangurura.exceptions.BadRequestException;
+import com.backend.rangurura.exceptions.MessageSendingException;
 import com.backend.rangurura.exceptions.NotFoundException;
 import com.backend.rangurura.response.ApiResponse;
 import org.springframework.data.crossstore.ChangeSetPersister;
@@ -17,12 +18,17 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse<String>> handleInternalServerErrors(Exception e){
+    public ResponseEntity<ApiResponse<String>> handleInternalServerErrors(Exception e) {
         return new ResponseEntity<>(new ApiResponse<>(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ApiResponse<String>> handleNotFoundException(NotFoundException e) {
         return new ResponseEntity<>(new ApiResponse<>(e.getMessage()), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(MessageSendingException.class)
+    public ResponseEntity<ApiResponse<String>> handleMessageSendingException(MessageSendingException e) {
+        return new ResponseEntity<>(new ApiResponse<>(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

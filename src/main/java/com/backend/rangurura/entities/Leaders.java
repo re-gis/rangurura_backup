@@ -39,6 +39,7 @@ import java.util.Collection;
 
         @Column(nullable = false)
         private String role;
+        
         @Column(nullable = false)
         private boolean verified;
 

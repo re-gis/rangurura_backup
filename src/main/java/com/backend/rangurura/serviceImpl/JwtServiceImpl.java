@@ -1,4 +1,4 @@
-package com.backend.rangurura;
+package com.backend.rangurura.serviceImpl;
 
 import com.backend.rangurura.services.JwtService;
 import io.jsonwebtoken.Claims;
