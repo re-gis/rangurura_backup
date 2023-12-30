@@ -2,6 +2,8 @@ package com.backend.rangurura.serviceImpl;
 
 import java.util.Optional;
 
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +14,7 @@ import com.backend.rangurura.entities.User;
 import com.backend.rangurura.exceptions.BadRequestException;
 import com.backend.rangurura.exceptions.MessageSendingException;
 import com.backend.rangurura.exceptions.NotFoundException;
+import com.backend.rangurura.exceptions.UnauthorisedException;
 import com.backend.rangurura.repositories.OtpRepository;
 import com.backend.rangurura.repositories.UserRepository;
 import com.backend.rangurura.response.ApiResponse;
@@ -128,6 +131,39 @@ public class UserServiceImpl implements UserService {
                     .success(true)
                     .data("Account verified successfully...")
                     .build();
+        } catch (BadRequestException e) {
+            throw new BadRequestException("Invalid OTP!");
+        } catch (Exception e) {
+            throw new Exception("Internal server error...");
+        }
+    }
+
+    @Override
+    public ApiResponse<Object> getLoggedInUser() throws Exception {
+        try {
+            if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() == "anonymousUser") {
+                throw new UnauthorisedException(("You are not logged in"));
+            }
+
+            String nationalId;
+            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+            if (principal instanceof UserDetails) {
+                nationalId = ((UserDetails) principal).getUsername();
+            } else {
+                nationalId = principal.toString();
+            }
+
+            Optional<User> user = userRepository.findByNationalId(nationalId);
+            if (!user.isPresent()) {
+                throw new NotFoundException("User not found!");
+            }
+            return ApiResponse.builder()
+                    .data(user.get().getNationalId())
+                    .success(true)
+                    .build();
+        } catch (NotFoundException e) {
+            throw new NotFoundException("User not found!");
         } catch (Exception e) {
             throw new Exception("Internal server error...");
         }
