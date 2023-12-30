@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.rangurura.dtos.RegisterDto;
+import com.backend.rangurura.dtos.VerifyOtpDto;
 import com.backend.rangurura.response.ApiResponse;
 import com.backend.rangurura.serviceImpl.UserServiceImpl;
 import com.backend.rangurura.utils.ResponseHandler;
@@ -27,6 +28,17 @@ public class UserController {
 
             Object ob = userServiceImpl.registerUser(dto);
             return ResponseHandler.success(ob, HttpStatus.CREATED);
+        }catch(Exception e){
+            return ResponseHandler.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/account/verify")
+    public ResponseEntity<ApiResponse<Object>> verifyAccount(@Valid @RequestBody VerifyOtpDto dto) throws Exception {
+        try{
+
+            Object ob = userServiceImpl.verifyOtp(dto);
+            return ResponseHandler.success(ob, HttpStatus.OK);
         }catch(Exception e){
             return ResponseHandler.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
