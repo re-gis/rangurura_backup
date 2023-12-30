@@ -51,14 +51,12 @@ public class UserServiceImpl implements UserService {
             }
 
             // send the message
-            // String message = "Your verification code to RANGURURA is: " + otpServiceImpl.generateOtp(6);
-            // if(otpServiceImpl.sendMessage(dto.getPhoneNumber(), message) != true){
-            //     throw new MessageSendingException("Error while sending otp...");
-            // };
+            String message = "Your verification code to RANGURURA is: " + otpServiceImpl.generateOtp(6);
+            otpServiceImpl.sendMessage(dto.getPhoneNumber(), message);
 
             Otp otp = new Otp();
             otp.setNumber(dto.getPhoneNumber());
-            otp.setOtp(otpServiceImpl.generateOtp(6));
+            otp.setOtp(passwordEncoder.encode(otpServiceImpl.generateOtp(6)));
 
             User user = new User();
             user.setNationalId(dto.getNationalId());
