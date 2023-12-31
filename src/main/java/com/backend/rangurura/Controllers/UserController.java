@@ -48,7 +48,7 @@ public class UserController {
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<Object>> getMyProfile() {
         try {
-            return ResponseHandler.success(userServiceImpl.getLoggedInUser(), HttpStatus.OK);
+            return ResponseHandler.success(userServiceImpl.getLoggedInUser().getData(), HttpStatus.OK);
         } catch (Exception e) {
             return ResponseHandler.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }

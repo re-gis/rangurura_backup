@@ -11,6 +11,7 @@ import com.backend.rangurura.dtos.RegisterDto;
 import com.backend.rangurura.dtos.VerifyOtpDto;
 import com.backend.rangurura.entities.Otp;
 import com.backend.rangurura.entities.User;
+import com.backend.rangurura.enums.URole;
 import com.backend.rangurura.exceptions.BadRequestException;
 import com.backend.rangurura.exceptions.MessageSendingException;
 import com.backend.rangurura.exceptions.NotFoundException;
@@ -18,7 +19,9 @@ import com.backend.rangurura.exceptions.UnauthorisedException;
 import com.backend.rangurura.repositories.OtpRepository;
 import com.backend.rangurura.repositories.UserRepository;
 import com.backend.rangurura.response.ApiResponse;
+import com.backend.rangurura.response.UserResponse;
 import com.backend.rangurura.services.UserService;
+import com.backend.rangurura.utils.GetLoggedUser;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,6 +32,7 @@ public class UserServiceImpl implements UserService {
     private final OtpServiceImpl otpServiceImpl;
     private final OtpRepository otpRepository;
     private final PasswordEncoder passwordEncoder;
+    private final GetLoggedUser getLoggedUser;
 
     @Override
     public ApiResponse<Object> registerUser(RegisterDto dto) throws Exception {
@@ -78,6 +82,7 @@ public class UserServiceImpl implements UserService {
             user.setSector(dto.getSector());
             user.setImageUrl("https://icon-library.com/images/no-user-image-icon/no-user-image-icon-0.jpg");
             user.setVerified(false);
+            user.setRole(URole.UMUTURAGE);
             // save the otp and user
             Optional<Otp> eOtp = otpRepository.findOneByNumber(dto.getPhoneNumber());
             if (eOtp.isPresent()) {
@@ -141,25 +146,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public ApiResponse<Object> getLoggedInUser() throws Exception {
         try {
-            if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() == "anonymousUser") {
-                throw new UnauthorisedException(("You are not logged in"));
-            }
-
-            String nationalId;
-            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-            if (principal instanceof UserDetails) {
-                nationalId = ((UserDetails) principal).getUsername();
-            } else {
-                nationalId = principal.toString();
-            }
-
-            Optional<User> user = userRepository.findByNationalId(nationalId);
-            if (!user.isPresent()) {
-                throw new NotFoundException("User not found!");
-            }
+            UserResponse u = getLoggedUser.getLoggedUser();
             return ApiResponse.builder()
-                    .data(user.get().getNationalId())
+                    .data(u)
                     .success(true)
                     .build();
         } catch (NotFoundException e) {

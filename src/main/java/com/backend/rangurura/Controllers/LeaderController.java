@@ -14,13 +14,14 @@ import java.util.List;
 public class LeaderController {
 
     private final LeaderService leaderService;
+
     @GetMapping("/leaders")
-    public List<Leaders> getLeaders(){
+    public List<Leaders> getLeaders() {
         return leaderService.getLeaders();
     }
 
     @PostMapping("/addLeader")
-    public void registerLeader(@RequestBody Leaders leaders){
+    public void registerLeader(@RequestBody Leaders leaders) {
         leaderService.addNewLeader(leaders);
     }
 }
