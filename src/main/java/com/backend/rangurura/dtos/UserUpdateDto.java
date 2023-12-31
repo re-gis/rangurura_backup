@@ -27,4 +27,3 @@ public class UserUpdateDto {
     private String phoneNumber;
     private String imageUrl;
 }
-

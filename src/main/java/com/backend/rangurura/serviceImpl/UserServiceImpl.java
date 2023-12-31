@@ -23,6 +23,10 @@ import com.backend.rangurura.response.ApiResponse;
 import com.backend.rangurura.Services.UserService;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+
 
 @RequiredArgsConstructor
 @Service
@@ -104,6 +108,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+
     @Override
     public ApiResponse<Object> verifyOtp(VerifyOtpDto dto) throws Exception {
         try {
@@ -140,6 +145,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+
     @Override
     public ApiResponse<Object> getLoggedInUser() throws Exception {
         try {
@@ -174,6 +180,7 @@ public class UserServiceImpl implements UserService {
 
 
     //    //this is the function to find the id of the logged user
+
     private Long getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -256,4 +263,6 @@ public class UserServiceImpl implements UserService {
         }
 
     }
+
 }
+
