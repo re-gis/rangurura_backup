@@ -18,7 +18,7 @@ import com.backend.rangurura.exceptions.UnauthorisedException;
 import com.backend.rangurura.repositories.OtpRepository;
 import com.backend.rangurura.repositories.UserRepository;
 import com.backend.rangurura.response.ApiResponse;
-import com.backend.rangurura.services.UserService;
+import com.backend.rangurura.Services.UserService;
 
 import lombok.RequiredArgsConstructor;
 

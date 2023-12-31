@@ -1,4 +1,4 @@
-package com.backend.rangurura.services;
+package com.backend.rangurura.Services;
 
 import com.backend.rangurura.dtos.RegisterDto;
 import com.backend.rangurura.dtos.VerifyOtpDto;
