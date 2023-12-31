@@ -2,6 +2,8 @@ package com.backend.rangurura.serviceImpl;
 
 import java.util.Optional;
 
+import com.backend.rangurura.dtos.UserUpdateDto;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -169,4 +171,89 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+
+
+    //    //this is the function to find the id of the logged user
+    private Long getCurrentUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.isAuthenticated()) {
+            Object principal = authentication.getPrincipal();
+
+            if (principal instanceof UserDetails) {
+                // Principal is an instance of UserDetails
+                UserDetails userDetails = (UserDetails) principal;
+                return userRepository.findOneByNationalId(userDetails.getUsername())
+                        .map(User::getId)
+                        .orElse(null);
+            } else if (principal instanceof String) {
+                // Principal is a String, handle it accordingly
+                // Example: return userRepository.findOneByUsername((String) principal).map(User::getId).orElse(null);
+            }
+        }
+
+        return null;
+    }
+
+
+    //this is to update the user details
+    @Override
+    public ApiResponse<Object> updateUser(UserUpdateDto dto) throws Exception {
+        try {
+            Long loggedInUserId = getCurrentUserId();
+            System.out.println("The logged Id is " + loggedInUserId);
+
+            if (loggedInUserId == null) {
+                throw new NotFoundException("User not authenticated!");
+            }
+
+            Optional<User> existingUserOptional = userRepository.findById(loggedInUserId);
+            if (existingUserOptional.isPresent()) {
+                User existingUser = existingUserOptional.get();
+
+                // Validate input DTO
+                validateUpdateDto(dto);
+
+                // Update the fields you want to modify
+                existingUser.setUsername(dto.getName());
+                existingUser.setCell(dto.getCell());
+                existingUser.setVillage(dto.getVillage());
+                existingUser.setPassword(passwordEncoder.encode(dto.getPassword()));
+                existingUser.setProvince(dto.getProvince());
+                existingUser.setDistrict(dto.getDistrict());
+                existingUser.setSector(dto.getSector());
+                existingUser.setImageUrl(dto.getImageUrl());
+                existingUser.setNationalId(dto.getNationalId());
+
+                // Save the updated user
+                userRepository.save(existingUser);
+
+                return ApiResponse.builder()
+                        .success(true)
+                        .data("User information updated successfully!")
+                        .build();
+            } else {
+                System.out.println("The logged Id is " + loggedInUserId +" is not found");
+                throw new NotFoundException("User not found!");
+            }
+        } catch (BadRequestException e) {
+            throw new BadRequestException(e.getMessage());
+        } catch (NotFoundException e) {
+            throw new NotFoundException(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception("Internal server error ...");
+        }
+    }
+
+    // Validate the input DTO
+    private void validateUpdateDto(UserUpdateDto dto) {
+        if (dto == null || dto.getName() == null || dto.getCell() == null
+                || dto.getVillage() == null || dto.getPassword() == null
+                || dto.getProvince() == null || dto.getDistrict() == null
+                || dto.getSector() == null) {
+            throw new BadRequestException("All update details are required!");
+        }
+
+    }
 }

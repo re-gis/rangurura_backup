@@ -1,5 +1,6 @@
 package com.backend.rangurura.Controllers;
 
+import com.backend.rangurura.dtos.UserUpdateDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,6 +52,17 @@ public class UserController {
             return ResponseHandler.success(userServiceImpl.getLoggedInUser(), HttpStatus.OK);
         } catch (Exception e) {
             return ResponseHandler.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/updateprofile")
+    public ResponseEntity<ApiResponse<Object>> updateUser(@Valid @RequestBody UserUpdateDto dto) throws Exception{
+        try {
+            Object ob=userServiceImpl.updateUser(dto);
+            return ResponseHandler.success(ob,HttpStatus.OK);
+
+        }catch (Exception e){
+            return  ResponseHandler.error(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
