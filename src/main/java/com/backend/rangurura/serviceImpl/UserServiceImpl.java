@@ -22,7 +22,7 @@ import com.backend.rangurura.repositories.OtpRepository;
 import com.backend.rangurura.repositories.UserRepository;
 import com.backend.rangurura.response.ApiResponse;
 import com.backend.rangurura.response.UserResponse;
-import com.backend.rangurura.services.UserService;
+import com.backend.rangurura.Services.UserService;
 import com.backend.rangurura.utils.GetLoggedUser;
 
 import lombok.RequiredArgsConstructor;
