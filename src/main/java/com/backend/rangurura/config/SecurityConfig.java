@@ -42,7 +42,7 @@ public class SecurityConfig {
                 /**
                  * @description methods to access with authorisation
                  */
-                .requestMatchers("/api/v1/admin/**", "/api/v1/auth/**", "api/v1/users/register", "api/v1/users/account/verify")
+                .requestMatchers("/api/v1/admin/**", "/api/v1/auth/**", "api/v1/users/register", "api/v1/users/account/verify","/api/v1/suggestions/send_idea")
                 .permitAll()
                 /**
                  * @description authorise all others
