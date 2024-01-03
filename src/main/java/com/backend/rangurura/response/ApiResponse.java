@@ -1,5 +1,6 @@
 package com.backend.rangurura.response;
 
+import com.backend.rangurura.entities.Suggestions;
 import lombok.*;
 
 @Data
@@ -24,5 +25,8 @@ public class ApiResponse<T> {
     public ApiResponse(String errorMessage) {
         this.success = false;
         this.error = errorMessage;
+    }
+
+    public ApiResponse(String suggestionSavedSuccessfully, Suggestions savedSuggestion) {
     }
 }
