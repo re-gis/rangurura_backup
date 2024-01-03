@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.backend.rangurura.exceptions.MessageSendingException;
-import com.backend.rangurura.services.OtpService;
+import com.backend.rangurura.Services.OtpService;
 import com.nexmo.client.NexmoClient;
 import com.nexmo.client.sms.MessageStatus;
 import com.nexmo.client.sms.SmsSubmissionResponse;
