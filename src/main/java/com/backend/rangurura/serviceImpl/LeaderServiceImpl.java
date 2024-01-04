@@ -15,35 +15,34 @@ import org.springframework.stereotype.Service;
 @Service
 public class LeaderServiceImpl implements LeaderService {
     private final LeaderRepository leaderRepository;
-    @Override
-    public ApiResponse<Object> registerNewLeader(@Valid RegisterLeaderDto dto) throws Exception{
-        try {
-            //this is to convert DTO to entity
-            Leaders leadersEntity=convertDtoToEntity(dto);
 
-            Leaders savedLeader=leaderRepository.save(leadersEntity);
-            if(savedLeader!=null){
+    @Override
+    public ApiResponse<Object> registerNewLeader(@Valid RegisterLeaderDto dto) throws Exception {
+        try {
+            // this is to convert DTO to entity
+            Leaders leadersEntity = convertDtoToEntity(dto);
+
+            Leaders savedLeader = leaderRepository.save(leadersEntity);
+            if (savedLeader != null) {
                 return ApiResponse.builder()
                         .data("Leader is added successfully!")
                         .success(true)
                         .build();
-            }
-            else{
+            } else {
                 return ApiResponse.builder()
                         .data("Failed to add leader to position")
                         .success(false)
                         .build();
             }
 
-
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-        throw new Exception("Failed to add new leader to the system please try again!");
+            throw new Exception("Failed to add new leader to the system please try again!");
         }
 
     }
 
-    //this is the function to convert dto to entity
+    // this is the function to convert dto to entity
     private Leaders convertDtoToEntity(RegisterLeaderDto dto) {
 
         // Implement logic to convert DTO to Entity

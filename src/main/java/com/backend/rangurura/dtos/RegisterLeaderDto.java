@@ -14,5 +14,4 @@ public class RegisterLeaderDto {
     private String organizationLevel;
     private String location;
     private String category;
-
 }
