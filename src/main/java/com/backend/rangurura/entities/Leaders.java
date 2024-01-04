@@ -1,5 +1,7 @@
 package com.backend.rangurura.entities;
 
+import com.backend.rangurura.enums.ECategory;
+import com.backend.rangurura.enums.EUrwego;
 import com.backend.rangurura.enums.URole;
 
 import jakarta.persistence.*;
@@ -22,11 +24,11 @@ public class Leaders {
     @Column(nullable = false)
     private String nationalId;
 
-    @Column(nullable = false)
-    private String origanizationLevel;
+    @Enumerated(EnumType.STRING)
+    private EUrwego origanizationLevel;
 
-    @Column(nullable = false)
-    private String category;
+    @Enumerated(EnumType.STRING)
+    private ECategory category;
 
     @Column(nullable = false)
     private String location;
