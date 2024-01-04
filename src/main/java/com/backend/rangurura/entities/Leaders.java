@@ -34,7 +34,7 @@ public class Leaders {
     @Enumerated(EnumType.STRING)
     private URole role;
 
-    @Column(nullable = false)
-    private boolean verified;
+//    @Column(nullable = false)
+//    private boolean verified;
 
 }
