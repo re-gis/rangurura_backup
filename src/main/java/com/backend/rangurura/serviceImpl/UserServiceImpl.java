@@ -17,7 +17,6 @@ import com.backend.rangurura.enums.URole;
 import com.backend.rangurura.exceptions.BadRequestException;
 import com.backend.rangurura.exceptions.MessageSendingException;
 import com.backend.rangurura.exceptions.NotFoundException;
-import com.backend.rangurura.exceptions.UnauthorisedException;
 import com.backend.rangurura.repositories.OtpRepository;
 import com.backend.rangurura.repositories.UserRepository;
 import com.backend.rangurura.response.ApiResponse;
@@ -26,9 +25,6 @@ import com.backend.rangurura.services.UserService;
 import com.backend.rangurura.utils.GetLoggedUser;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 
 
 @RequiredArgsConstructor
