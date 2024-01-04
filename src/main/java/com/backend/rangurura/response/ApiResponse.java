@@ -26,7 +26,4 @@ public class ApiResponse<T> {
         this.success = false;
         this.error = errorMessage;
     }
-
-    public ApiResponse(String suggestionSavedSuccessfully, Suggestions savedSuggestion) {
-    }
 }

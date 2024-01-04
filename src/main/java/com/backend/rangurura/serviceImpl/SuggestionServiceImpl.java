@@ -24,10 +24,17 @@ public class SuggestionServiceImpl implements SuggestionService {
 
             // Save the suggestion to the repository
             Suggestions savedSuggestion = suggestionRepository.save(suggestionEntity);
-
-           //this is to return the saved suggestion
-            return new ApiResponse<>("Suggestion saved successfully", savedSuggestion);
-
+            if(savedSuggestion!=null) {
+                return ApiResponse.builder()
+                        .data("Suggestion sent successfully")
+                        .success(true)
+                        .build();
+            }else{
+                return  ApiResponse.builder()
+                        .data("Failed to process suggestion")
+                        .success(false)
+                        .build();
+            }
         } catch (Exception e) {
             throw new Exception("Failed to process suggestion", e);
         }
