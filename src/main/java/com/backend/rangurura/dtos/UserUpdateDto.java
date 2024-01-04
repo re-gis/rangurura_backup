@@ -23,7 +23,7 @@ public class UserUpdateDto {
     private String village;
     private String nationalId;
     private String password;
-    private String cpassword;
+//    private String cpassword;
     private String phoneNumber;
     private String imageUrl;
 }

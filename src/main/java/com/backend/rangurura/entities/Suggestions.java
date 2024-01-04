@@ -1,7 +1,5 @@
 package com.backend.rangurura.entities;
 
-import com.backend.rangurura.enums.URole;
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,32 +7,29 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "leaders")
+@Table(name = "suggestions")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Builder
-public class Leaders {
+public class Suggestions{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
     @Column(nullable = false)
-    private String nationalId;
+    private String phoneNumber;
+
 
     @Column(nullable = false)
-    private String origanizationLevel;
+    private String urwego;
 
     @Column(nullable = false)
     private String category;
 
     @Column(nullable = false)
-    private String location;
+    private String igitekerezo;
 
-    @Enumerated(EnumType.STRING)
-    private URole role;
 
-//    @Column(nullable = false)
-//    private boolean verified;
 
 }

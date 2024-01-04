@@ -1,6 +1,6 @@
 package com.backend.rangurura.serviceImpl;
 
-import com.backend.rangurura.services.JwtService;
+import com.backend.rangurura.Services.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

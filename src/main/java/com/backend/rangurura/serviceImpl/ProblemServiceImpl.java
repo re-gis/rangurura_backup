@@ -3,7 +3,7 @@ package com.backend.rangurura.serviceImpl;
 import org.springframework.stereotype.Service;
 
 import com.backend.rangurura.response.ApiResponse;
-import com.backend.rangurura.services.ProblemService;
+import com.backend.rangurura.Services.ProblemService;
 
 import lombok.RequiredArgsConstructor;
 
