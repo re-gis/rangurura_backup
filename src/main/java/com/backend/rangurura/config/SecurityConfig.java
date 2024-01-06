@@ -42,7 +42,7 @@ public class SecurityConfig {
                 /**
                  * @description methods to access with authorisation
                  */
-                .requestMatchers("/api/v1/admin/**", "/api/v1/auth/**", "api/v1/users/register", "api/v1/users/account/verify","/api/v1/suggestions/send_idea","/ap/v1/leaders/**")
+                .requestMatchers("/api/v1/admin/**", "/api/v1/auth/**", "api/v1/users/register", "api/v1/users/account/verify","/api/v1/suggestions/send_idea","/ap/v1/leaders/**","/ap/v1/leaders/**","/v2/api-docs", "/swagger-resources/**", "/swagger-ui.html", "/webjars/**", "/h2-console/**","/swagger-ui/index.html")
                 .permitAll()
                 /**
                  * @description authorise all others
