@@ -7,7 +7,7 @@ import com.backend.rangurura.entities.Leaders;
 import com.backend.rangurura.response.ApiResponse;
 import com.backend.rangurura.serviceImpl.LeaderServiceImpl;
 import com.backend.rangurura.utils.ResponseHandler;
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;

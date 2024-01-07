@@ -7,7 +7,7 @@ import com.backend.rangurura.entities.Leaders;
 import com.backend.rangurura.entities.Suggestions;
 import com.backend.rangurura.repositories.LeaderRepository;
 import com.backend.rangurura.response.ApiResponse;
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

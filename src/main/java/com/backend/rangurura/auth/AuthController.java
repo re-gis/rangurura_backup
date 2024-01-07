@@ -4,7 +4,7 @@ import com.backend.rangurura.dtos.LoginDto;
 import com.backend.rangurura.entities.User;
 import com.backend.rangurura.response.ApiResponse;
 import com.backend.rangurura.utils.ResponseHandler;
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

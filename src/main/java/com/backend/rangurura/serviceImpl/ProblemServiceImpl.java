@@ -1,6 +1,7 @@
 package com.backend.rangurura.serviceImpl;
 
-import org.apache.coyote.BadRequestException;
+//import org.apache.coyote.BadRequestException;
+import com.backend.rangurura.exceptions.BadRequestException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
