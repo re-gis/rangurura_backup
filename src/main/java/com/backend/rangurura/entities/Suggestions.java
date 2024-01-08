@@ -28,6 +28,13 @@ public class Suggestions{
     @Column(nullable = false)
     private String igitekerezo;
 
+    @Column(nullable = true)
+    private String proof;
+
+    @Column(nullable = true)
+    private String record;
+
+
 
 
 }

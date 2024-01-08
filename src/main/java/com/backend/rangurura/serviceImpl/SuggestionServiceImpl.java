@@ -2,6 +2,7 @@ package com.backend.rangurura.serviceImpl;
 
 import com.backend.rangurura.Services.SuggestionService;
 import com.backend.rangurura.dtos.SuggestionDto;
+import com.backend.rangurura.dtos.SuggestionUpdateDto;
 import com.backend.rangurura.entities.Suggestions;
 import com.backend.rangurura.exceptions.BadRequestException;
 import com.backend.rangurura.repositories.SuggestionRepository;
@@ -40,6 +41,15 @@ public class SuggestionServiceImpl implements SuggestionService {
         }
     }
 
+    @Override
+    public ApiResponse<Object> UpdateSuggestion(SuggestionUpdateDto dto) throws Exception {
+        return null;
+    }
+
+    //this is to get the Id of the current suggestion
+
+
+
     private Suggestions convertDtoToEntity(SuggestionDto dto) {
 
         // Implement logic to convert DTO to Entity
@@ -49,6 +59,8 @@ public class SuggestionServiceImpl implements SuggestionService {
         suggestions.setPhoneNumber(dto.getPhoneNumber());
         suggestions.setIgitekerezo(dto.getIgitekerezo());
         suggestions.setCategory(dto.getCategory());
+        suggestions.setProof(dto.getProof());
+        suggestions.setRecord(dto.getRecord());
 
         return suggestions;
     }

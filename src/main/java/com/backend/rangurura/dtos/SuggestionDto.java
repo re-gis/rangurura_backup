@@ -14,5 +14,7 @@ public class SuggestionDto {
     private String category;
     private String urwego;
     private String igitekerezo;
+    private String proof;
+    private String record;
 }
 
