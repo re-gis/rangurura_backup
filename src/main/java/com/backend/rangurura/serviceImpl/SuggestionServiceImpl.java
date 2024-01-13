@@ -49,7 +49,6 @@ public class SuggestionServiceImpl implements SuggestionService {
     //this is to get the Id of the current suggestion
 
 
-
     private Suggestions convertDtoToEntity(SuggestionDto dto) {
 
         // Implement logic to convert DTO to Entity
