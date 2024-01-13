@@ -4,7 +4,6 @@ import com.backend.rangurura.Services.SuggestionService;
 import com.backend.rangurura.dtos.SuggestionDto;
 import com.backend.rangurura.dtos.SuggestionUpdateDto;
 import com.backend.rangurura.entities.Suggestions;
-import com.backend.rangurura.exceptions.BadRequestException;
 import com.backend.rangurura.repositories.SuggestionRepository;
 import com.backend.rangurura.response.ApiResponse;
 import lombok.RequiredArgsConstructor;

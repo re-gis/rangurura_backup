@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.backend.rangurura.response.ApiResponse;
 import com.backend.rangurura.response.ProblemResponse;
@@ -18,7 +17,6 @@ import com.backend.rangurura.utils.UploadDoc;
 import com.backend.rangurura.Services.ProblemService;
 import com.backend.rangurura.dtos.CreateProblemDto;
 import com.backend.rangurura.entities.Problem;
-import com.backend.rangurura.entities.User;
 import com.backend.rangurura.enums.EProblem_Status;
 import com.backend.rangurura.repositories.ProblemRepository;
 

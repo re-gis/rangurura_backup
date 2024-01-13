@@ -1,6 +1,5 @@
 package com.backend.rangurura.entities;
 
-import lombok.*;
 
 import javax.persistence.*;
 

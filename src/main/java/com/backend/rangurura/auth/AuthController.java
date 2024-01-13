@@ -1,7 +1,6 @@
 package com.backend.rangurura.auth;
 
 import com.backend.rangurura.dtos.LoginDto;
-import com.backend.rangurura.entities.User;
 import com.backend.rangurura.response.ApiResponse;
 import com.backend.rangurura.utils.ResponseHandler;
 import javax.validation.Valid;

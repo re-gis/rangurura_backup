@@ -1,7 +1,5 @@
 package com.backend.rangurura.Controllers;
 
-import com.backend.rangurura.Services.SuggestionService;
-import com.backend.rangurura.dtos.RegisterDto;
 import com.backend.rangurura.dtos.SuggestionDto;
 import com.backend.rangurura.response.ApiResponse;
 import com.backend.rangurura.serviceImpl.SuggestionServiceImpl;

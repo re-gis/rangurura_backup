@@ -2,9 +2,7 @@ package com.backend.rangurura.serviceImpl;
 
 import com.backend.rangurura.Services.LeaderService;
 import com.backend.rangurura.dtos.RegisterLeaderDto;
-import com.backend.rangurura.dtos.SuggestionDto;
 import com.backend.rangurura.entities.Leaders;
-import com.backend.rangurura.entities.Suggestions;
 import com.backend.rangurura.repositories.LeaderRepository;
 import com.backend.rangurura.response.ApiResponse;
 import javax.validation.Valid;

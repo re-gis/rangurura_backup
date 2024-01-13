@@ -1,6 +1,5 @@
 package com.backend.rangurura.response;
 
-import com.backend.rangurura.entities.Suggestions;
 import lombok.*;
 
 @Data

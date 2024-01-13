@@ -4,7 +4,6 @@ import com.backend.rangurura.dtos.LoginDto;
 import com.backend.rangurura.entities.User;
 import com.backend.rangurura.exceptions.BadRequestException;
 import com.backend.rangurura.exceptions.NotFoundException;
-import com.backend.rangurura.exceptions.ServiceException;
 import com.backend.rangurura.exceptions.UnauthorisedException;
 import com.backend.rangurura.repositories.UserRepository;
 import com.backend.rangurura.response.ApiResponse;
