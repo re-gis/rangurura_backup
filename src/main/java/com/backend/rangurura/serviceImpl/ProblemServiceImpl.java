@@ -2,6 +2,11 @@ package com.backend.rangurura.serviceImpl;
 
 //import org.apache.coyote.BadRequestException;
 import com.backend.rangurura.exceptions.BadRequestException;
+import com.backend.rangurura.exceptions.NotFoundException;
+
+import java.util.Arrays;
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,6 +36,7 @@ public class ProblemServiceImpl implements ProblemService {
         try {
             // get logged in user
             UserResponse user = getLoggedUser.getLoggedUser();
+            System.out.println(user);
 
             if (dto.getCategory() == null || dto.getUrwego() == null || dto.getPhoneNumber() == null
                     || dto.getProof() == null
@@ -39,8 +45,8 @@ public class ProblemServiceImpl implements ProblemService {
                         "Vuga ikibazo cyawe byibuze ushyireho urwego na kategori yacyo na \'proof\' ubundi wohereze!");
             }
 
-            String recordUrl = null;
-            String ikibazo = null;
+            String recordUrl = "null";
+            String ikibazo = "null";
 
             if (dto.getIkibazo() != null) {
                 ikibazo = dto.getIkibazo();
@@ -63,7 +69,7 @@ public class ProblemServiceImpl implements ProblemService {
                     .proofUrl(docUrl)
                     .recordUrl(recordUrl)
                     .status(EProblem_Status.PENDING)
-                    .owner_id(user.getNationalId())
+                    .owner(user.getNationalId())
                     .urwego(dto.getUrwego())
                     .build();
 
@@ -77,6 +83,50 @@ public class ProblemServiceImpl implements ProblemService {
                     .success(true)
                     .data(response)
                     .build();
+        } catch (Exception e) {
+            System.out.println(e);
+            throw new Exception("Internal server error...");
+        }
+    }
+
+    @Override
+    public Problem[] getMyAskedProblems() throws Exception {
+        try {
+            UserResponse user = getLoggedUser.getLoggedUser();
+            // get problems I own
+            Problem[] problems = problemRepository.findAllByOwner(user.getNationalId());
+            if (problems.length == 0) {
+                throw new NotFoundException("No problems found for user: " + user.getName());
+            }
+
+            return problems;
+        } catch (Exception e) {
+            throw new Exception("Internal server error...");
+        }
+    }
+
+    @Override
+    public String deleteQuestion(Long id) throws Exception {
+        try {
+            UserResponse user = getLoggedUser.getLoggedUser();
+            // find the problem of the logged user to be deleted
+            Problem[] problems = problemRepository.findAllByOwner(user.getNationalId());
+            if (problems.length == 0) {
+                throw new NotFoundException("No problems found for user: " + user.getName());
+            }
+
+            // get the problem of the same id
+            Optional<Problem> problemToDelete = Arrays.stream(problems)
+                    .filter(problem -> problem.getId().equals(id))
+                    .findFirst();
+
+            if (problemToDelete.isEmpty()) {
+                throw new NotFoundException("Problem " + id + " not found!");
+            }
+
+            problemRepository.delete(problemToDelete.get());
+
+            return "Problem " + id + " deleted successfully!";
         } catch (Exception e) {
             throw new Exception("Internal server error...");
         }

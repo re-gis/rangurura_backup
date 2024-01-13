@@ -5,5 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.backend.rangurura.entities.Problem;
 
 public interface ProblemRepository extends JpaRepository<Problem, Long> {
+
+    Problem[] findAllByOwner(String owner_id);
     
 }

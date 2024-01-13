@@ -8,7 +8,6 @@ import lombok.*;
 
 import javax.persistence.*;
 
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -41,7 +40,7 @@ public class Problem {
     private String recordUrl;
 
     @Column(nullable = false)
-    private String owner_id;
+    private String owner;
 
     @Enumerated(EnumType.STRING)
     private EProblem_Status status;
