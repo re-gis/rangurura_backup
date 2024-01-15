@@ -16,8 +16,11 @@ import com.backend.rangurura.utils.GetLoggedUser;
 import com.backend.rangurura.utils.UploadDoc;
 import com.backend.rangurura.Services.ProblemService;
 import com.backend.rangurura.dtos.CreateProblemDto;
+import com.backend.rangurura.dtos.UpdateProblemDto;
 import com.backend.rangurura.entities.Problem;
+import com.backend.rangurura.enums.ECategory;
 import com.backend.rangurura.enums.EProblem_Status;
+import com.backend.rangurura.enums.EUrwego;
 import com.backend.rangurura.repositories.ProblemRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -56,6 +59,9 @@ public class ProblemServiceImpl implements ProblemService {
             } else {
                 throw new BadRequestException("At least a record or text is required!");
             }
+
+            System.out.println(recordUrl);
+            System.out.println(dto.getRecord());
 
             String docUrl = uploadDoc.uploadDoc(dto.getProof());
 
@@ -113,6 +119,10 @@ public class ProblemServiceImpl implements ProblemService {
                 throw new NotFoundException("No problems found for user: " + user.getName());
             }
 
+            if (id == null) {
+                throw new BadRequestException("Problem id is required!");
+            }
+
             // get the problem of the same id
             Optional<Problem> problemToDelete = Arrays.stream(problems)
                     .filter(problem -> problem.getId().equals(id))
@@ -125,6 +135,64 @@ public class ProblemServiceImpl implements ProblemService {
             problemRepository.delete(problemToDelete.get());
 
             return "Problem " + id + " deleted successfully!";
+        } catch (Exception e) {
+            throw new Exception("Internal server error...");
+        }
+    }
+
+    @Override
+    public ApiResponse<Object> updateMyProblem(UpdateProblemDto dto, Long id) throws Exception {
+        try {
+            UserResponse user = getLoggedUser.getLoggedUser();
+            if (id == null) {
+                throw new BadRequestException("Problem id is required!");
+            }
+
+            // get the problem by user and id
+            Problem[] problems = problemRepository.findAllByOwner(user.getNationalId());
+            if (problems.length == 0) {
+                throw new NotFoundException("No problems found for user: " + user.getName());
+            }
+            Optional<Problem> problemToUpdate = Arrays.stream(problems)
+                    .filter(problem -> problem.getId().equals(id))
+                    .findFirst();
+
+            if (problemToUpdate.isEmpty()) {
+                throw new NotFoundException("Problem " + id + " not found!");
+            }
+
+            Problem problem = problemToUpdate.get();
+            ECategory category = dto.getCategory().orElse(problem.getCategory());
+            String ikibazo = dto.getIkibazo().orElse(problem.getIkibazo());
+            EUrwego urwego = dto.getUrwego().orElse(problem.getUrwego());
+            String number = dto.getNumber().orElse(problem.getPhoneNumber());
+
+            String proof = problem.getProofUrl();
+            String record = problem.getRecordUrl();
+
+            if (dto.getProof() != null) {
+                proof = uploadDoc.uploadDoc(dto.getProof());
+            }
+
+            if (dto.getRecord() != null) {
+                record = uploadDoc.uploadRecord(dto.getRecord());
+            }
+
+            problem.setCategory(category);
+            problem.setIkibazo(ikibazo);
+            problem.setOwner(user.getNationalId());
+            problem.setPhoneNumber(number);
+            problem.setProofUrl(proof);
+            problem.setRecordUrl(record);
+            problem.setUrwego(urwego);
+
+            problemRepository.save(problem);
+
+            return ApiResponse.builder()
+                    .data(problem)
+                    .success(true)
+                    .build();
+
         } catch (Exception e) {
             throw new Exception("Internal server error...");
         }
