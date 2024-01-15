@@ -123,6 +123,10 @@ public class LeaderServiceImpl implements LeaderService {
                         .build();
             }
 
+        } catch (NotFoundException e) {
+            throw new NotFoundException(e.getMessage());
+        } catch (UnauthorisedException e) {
+            throw new UnauthorisedException(e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             throw new Exception("Failed to add new leader to the system please try again!");

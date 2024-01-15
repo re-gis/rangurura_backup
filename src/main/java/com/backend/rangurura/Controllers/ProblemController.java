@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.backend.rangurura.dtos.CreateProblemDto;
+import com.backend.rangurura.dtos.UpdateProblemDto;
 import com.backend.rangurura.entities.Problem;
 import com.backend.rangurura.response.ApiResponse;
 import com.backend.rangurura.serviceImpl.ProblemServiceImpl;
@@ -49,6 +50,16 @@ public class ProblemController {
             String response = problemServiceImpl.deleteQuestion(id);
             return ResponseHandler.success(response, HttpStatus.OK);
         } catch (Exception e) {
+            return ResponseHandler.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<ApiResponse<Object>> updateMyAskedProblem(@PathVariable("id") Long id, UpdateProblemDto dto) {
+        try {
+            return ResponseHandler.success(problemServiceImpl.updateMyProblem(dto, id), HttpStatus.CREATED);
+        } catch (Exception e) {
+            e.printStackTrace();
             return ResponseHandler.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

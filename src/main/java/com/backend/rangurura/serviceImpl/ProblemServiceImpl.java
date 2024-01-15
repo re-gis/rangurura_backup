@@ -87,6 +87,8 @@ public class ProblemServiceImpl implements ProblemService {
                     .success(true)
                     .data(response)
                     .build();
+        } catch (BadRequestException e) {
+            throw new BadRequestException(e.getMessage());
         } catch (Exception e) {
             System.out.println(e);
             throw new Exception("Internal server error...");
@@ -104,6 +106,8 @@ public class ProblemServiceImpl implements ProblemService {
             }
 
             return problems;
+        } catch (NotFoundException e) {
+            throw new NotFoundException(e.getMessage());
         } catch (Exception e) {
             throw new Exception("Internal server error...");
         }
@@ -135,7 +139,12 @@ public class ProblemServiceImpl implements ProblemService {
             problemRepository.delete(problemToDelete.get());
 
             return "Problem " + id + " deleted successfully!";
+        } catch (BadRequestException e) {
+            throw new BadRequestException("Problem id is required!");
+        } catch (NotFoundException e) {
+            throw new NotFoundException("No problems found!");
         } catch (Exception e) {
+            System.out.println(e);
             throw new Exception("Internal server error...");
         }
     }
@@ -193,7 +202,12 @@ public class ProblemServiceImpl implements ProblemService {
                     .success(true)
                     .build();
 
+        } catch (NotFoundException e) {
+            throw new NotFoundException(e.getMessage());
+        } catch (BadRequestException e) {
+            throw new BadRequestException(e.getMessage());
         } catch (Exception e) {
+            e.printStackTrace();
             throw new Exception("Internal server error...");
         }
     }
