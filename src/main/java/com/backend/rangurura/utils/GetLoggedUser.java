@@ -48,6 +48,7 @@ public class GetLoggedUser {
                     .cell(user.get().getCell())
                     .village(user.get().getVillage())
                     .phoneNumber(user.get().getPhone())
+                    .role(user.get().getRole())
                     .build();
             return u;
         } catch (NotFoundException e) {
