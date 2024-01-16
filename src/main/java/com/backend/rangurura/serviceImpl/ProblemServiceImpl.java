@@ -171,10 +171,14 @@ public class ProblemServiceImpl implements ProblemService {
             }
 
             Problem problem = problemToUpdate.get();
-            ECategory category = dto.getCategory().orElse(problem.getCategory());
-            String ikibazo = dto.getIkibazo().orElse(problem.getIkibazo());
-            EUrwego urwego = dto.getUrwego().orElse(problem.getUrwego());
-            String number = dto.getNumber().orElse(problem.getPhoneNumber());
+            Optional<ECategory> cat = dto.getCategory();
+            ECategory category = cat.orElse(problem.getCategory());
+            Optional<String> iki = dto.getIkibazo();
+            String ikibazo = iki.orElse(problem.getIkibazo());
+            Optional<EUrwego> urwe = dto.getUrwego();
+            EUrwego urwego = urwe.orElse(problem.getUrwego());
+            Optional<String> num = dto.getNumber();
+            String number = num.orElse(problem.getPhoneNumber());
 
             String proof = problem.getProofUrl();
             String record = problem.getRecordUrl();
