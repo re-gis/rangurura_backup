@@ -37,7 +37,6 @@ public class ProblemServiceImpl implements ProblemService {
         try {
             // get logged in user
             UserResponse user = getLoggedUser.getLoggedUser();
-            System.out.println(user);
 
             if (dto.getCategory() == null || dto.getUrwego() == null || dto.getPhoneNumber() == null
                     || dto.getProof() == null

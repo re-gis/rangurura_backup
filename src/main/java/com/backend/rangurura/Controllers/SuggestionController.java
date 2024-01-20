@@ -18,11 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/suggestions")
 public class SuggestionController {
     private final SuggestionServiceImpl suggestionServiceImpl;
+
     @PostMapping("/send_idea")
     public ResponseEntity<ApiResponse<Object>> PostSuggestion(@Valid @RequestBody SuggestionDto dto) throws Exception {
         try {
 
-            Object ob =suggestionServiceImpl.PostSuggestion(dto);
+            Object ob = suggestionServiceImpl.PostSuggestion(dto);
             return ResponseHandler.success(ob, HttpStatus.CREATED);
         } catch (Exception e) {
             return ResponseHandler.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

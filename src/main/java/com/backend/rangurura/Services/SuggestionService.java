@@ -5,8 +5,10 @@ import com.backend.rangurura.dtos.SuggestionUpdateDto;
 import com.backend.rangurura.response.ApiResponse;
 
 public interface SuggestionService {
-    ApiResponse<Object> PostSuggestion(SuggestionDto dto) throws Exception ;
-    ApiResponse<Object> UpdateSuggestion(SuggestionUpdateDto dto) throws Exception ;
+    ApiResponse<Object> PostSuggestion(SuggestionDto dto) throws Exception;
 
+    ApiResponse<Object> UpdateSuggestion(SuggestionUpdateDto dto) throws Exception;
+
+    ApiResponse<Object> getAllMySuggestions() throws Exception;
 
 }

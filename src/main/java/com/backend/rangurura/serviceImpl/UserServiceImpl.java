@@ -25,7 +25,6 @@ import com.backend.rangurura.Services.UserService;
 import com.backend.rangurura.utils.GetLoggedUser;
 import lombok.RequiredArgsConstructor;
 
-
 @RequiredArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
@@ -108,7 +107,6 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-
     @Override
     public ApiResponse<Object> verifyOtp(VerifyOtpDto dto) throws Exception {
         try {
@@ -145,7 +143,6 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-
     @Override
     public ApiResponse<Object> getLoggedInUser() throws Exception {
         try {
@@ -161,9 +158,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-
-
-    //    //this is the function to find the id of the logged user
+    // //this is the function to find the id of the logged user
 
     private Long getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -179,15 +174,15 @@ public class UserServiceImpl implements UserService {
                         .orElse(null);
             } else if (principal instanceof String) {
                 // Principal is a String, handle it accordingly
-                // Example: return userRepository.findOneByUsername((String) principal).map(User::getId).orElse(null);
+                // Example: return userRepository.findOneByUsername((String)
+                // principal).map(User::getId).orElse(null);
             }
         }
 
         return null;
     }
 
-
-    //this is to update the user details
+    // this is to update the user details
     @Override
     public ApiResponse<Object> updateUser(UserUpdateDto dto) throws Exception {
         try {
@@ -224,7 +219,7 @@ public class UserServiceImpl implements UserService {
                         .data("User information updated successfully!")
                         .build();
             } else {
-                System.out.println("The logged Id is " + loggedInUserId +" is not found");
+                System.out.println("The logged Id is " + loggedInUserId + " is not found");
                 throw new NotFoundException("User not found!");
             }
         } catch (BadRequestException e) {
@@ -249,4 +244,3 @@ public class UserServiceImpl implements UserService {
     }
 
 }
-
