@@ -17,4 +17,5 @@ public class RegisterLeaderDto {
     private EUrwego organizationLevel;
     private String location;
     private ECategory category;
+    private String phoneNumber;
 }

@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 public class LeaderServiceImpl implements LeaderService {
     private final LeaderRepository leaderRepository;
     private final GetLoggedUser getLoggedUser;
+    private final OtpServiceImpl otpServiceImpl;
 
     @Override
     public ApiResponse<Object> registerNewLeader(@Valid RegisterLeaderDto dto) throws Exception {
@@ -41,9 +42,8 @@ public class LeaderServiceImpl implements LeaderService {
             switch (urwego) {
                 case AKAGARI:
                     // check if the leader's akagari = the dto's akagari
-                    if (dto.getLocation() == user.getCell()
-                            && (loggedLeader.getOriganizationLevel() == EUrwego.UMURENGE
-                                    || loggedLeader.getOriganizationLevel() == EUrwego.AKAGARI)
+                    if ((loggedLeader.getOriganizationLevel() == EUrwego.UMURENGE
+                            || loggedLeader.getOriganizationLevel() == EUrwego.AKAGARI)
                             && loggedLeader.getCategory() == ECategory.IMIYOBORERE) {
                         // register the leader
                         // this is to convert DTO to entity
@@ -54,9 +54,8 @@ public class LeaderServiceImpl implements LeaderService {
                     break;
                 case AKARERE:
                     // check if the leader's akarere = the dto's akarere
-                    if (dto.getLocation() == user.getDistrict()
-                            && (loggedLeader.getOriganizationLevel() == EUrwego.INTARA
-                                    || loggedLeader.getOriganizationLevel() == EUrwego.AKARERE)
+                    if ((loggedLeader.getOriganizationLevel() == EUrwego.INTARA
+                            || loggedLeader.getOriganizationLevel() == EUrwego.AKARERE)
                             && loggedLeader.getCategory() == ECategory.IMIYOBORERE) {
                         // register the leader
                         // this is to convert DTO to entity
@@ -112,6 +111,11 @@ public class LeaderServiceImpl implements LeaderService {
                     throw new Exception("Unknown Organisational level provided!");
             }
             if (savedLeader != null) {
+                // send an sms to verify
+                String message = String.format("Uri umuyobozi w'%s \n Bikozwe na %s \n numero ya telephone: %s",
+                        savedLeader.getLocation(), user.getName(), user.getPhoneNumber());
+
+                otpServiceImpl.sendMessage(dto.getPhoneNumber(), message);
                 return ApiResponse.builder()
                         .data("Leader is added successfully!")
                         .success(true)
@@ -146,6 +150,7 @@ public class LeaderServiceImpl implements LeaderService {
         leaders.setOriganizationLevel(dto.getOrganizationLevel());
         leaders.setVerified(false);
         leaders.setRole(URole.UMUYOBOZI);
+        leaders.setPhoneNumber(dto.getPhoneNumber());
 
         return leaders;
     }

@@ -3,15 +3,22 @@ package com.backend.rangurura.serviceImpl;
 import com.backend.rangurura.Services.SuggestionService;
 import com.backend.rangurura.dtos.SuggestionDto;
 import com.backend.rangurura.dtos.SuggestionUpdateDto;
+import com.backend.rangurura.entities.Leaders;
 import com.backend.rangurura.entities.Suggestions;
+import com.backend.rangurura.enums.ESuggestion;
 import com.backend.rangurura.enums.EUrwego;
+import com.backend.rangurura.enums.URole;
 import com.backend.rangurura.exceptions.BadRequestException;
+import com.backend.rangurura.exceptions.NotFoundException;
 import com.backend.rangurura.exceptions.ServiceException;
+import com.backend.rangurura.exceptions.UnauthorisedException;
+import com.backend.rangurura.repositories.LeaderRepository;
 import com.backend.rangurura.repositories.SuggestionRepository;
 import com.backend.rangurura.response.ApiResponse;
 import com.backend.rangurura.response.SuggestionResponse;
 import com.backend.rangurura.response.UserResponse;
 import com.backend.rangurura.utils.GetLoggedUser;
+import java.util.*;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +28,7 @@ import org.springframework.stereotype.Service;
 public class SuggestionServiceImpl implements SuggestionService {
     private final SuggestionRepository suggestionRepository;
     private final GetLoggedUser getLoggedUser;
+    private final LeaderRepository leaderRepository;
 
     @Override
     public ApiResponse<Object> PostSuggestion(SuggestionDto dto) throws Exception {
@@ -70,11 +78,70 @@ public class SuggestionServiceImpl implements SuggestionService {
         try {
             UserResponse user = getLoggedUser.getLoggedUser();
             String nationalId = user.getNationalId();
+
+            // the nationalid is like the owner of the suggestion
+            List<Suggestions> suggestions = suggestionRepository.findAllByNationalId(nationalId);
+            if (suggestions.isEmpty()) {
+                throw new NotFoundException("No suggestions found for user: " + nationalId);
+            }
+
+            return ApiResponse.builder()
+                    .data(suggestions)
+                    .success(true)
+                    .build();
+
+        } catch (NotFoundException e) {
+            throw new NotFoundException(e.getMessage());
         } catch (Exception e) {
             throw new Exception("Internal server error...");
         }
+    }
 
-        return null;
+    @Override
+    public ApiResponse<Object> getSuggestionsByStatus(ESuggestion status) throws Exception {
+        try {
+            // UserResponse user = getLoggedUser.getLoggedUser();
+            // String nationalId =
+
+            return null;
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @Override
+    public ApiResponse<Object> getMyLocalSuggestions() throws Exception {
+        try {
+            UserResponse user = getLoggedUser.getLoggedUser();
+            if (user.getRole() != URole.UMUYOBOZI) {
+                throw new UnauthorisedException("You are not authorised to perform this action!");
+            }
+
+            Optional<Leaders> leader = leaderRepository.findByNationalId(user.getNationalId());
+            if (!leader.isPresent()) {
+                throw new NotFoundException("Leader " + user.getNationalId() + " not found!");
+            }
+
+            // get the suggestions zaho ayoboye
+            List<Suggestions> suggestions = suggestionRepository.findAllByUrwegoAndLocationAndCategory(
+                    leader.get().getOriganizationLevel(), leader.get().getLocation(), leader.get().getCategory());
+
+            if (suggestions.isEmpty()) {
+                throw new NotFoundException(String.format("No suggestions found in %s and category: %s",
+                        leader.get().getLocation(), leader.get().getCategory()));
+            }
+
+            return ApiResponse.builder()
+                    .data(suggestions)
+                    .success(true)
+                    .build();
+        } catch (UnauthorisedException e) {
+            throw new UnauthorisedException(e.getMessage());
+        } catch (NotFoundException e) {
+            throw new NotFoundException(e.getMessage());
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
     }
 
     /*
@@ -90,6 +157,7 @@ public class SuggestionServiceImpl implements SuggestionService {
         suggestions.setUrwego(dto.getUrwego());
         suggestions.setIgitekerezo(dto.getIgitekerezo());
         suggestions.setCategory(dto.getCategory());
+        suggestions.setStatus(ESuggestion.PENDING);
 
         EUrwego urwego = dto.getUrwego();
         if (urwego == EUrwego.AKARERE || urwego == EUrwego.INTARA) {

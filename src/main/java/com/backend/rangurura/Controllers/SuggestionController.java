@@ -8,6 +8,7 @@ import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +27,15 @@ public class SuggestionController {
             Object ob = suggestionServiceImpl.PostSuggestion(dto);
             return ResponseHandler.success(ob, HttpStatus.CREATED);
         } catch (Exception e) {
+            return ResponseHandler.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/mine")
+    public ResponseEntity<ApiResponse<Object>> getMySuggestions(){
+        try{
+            return ResponseHandler.success(suggestionServiceImpl.getAllMySuggestions(), HttpStatus.OK);
+        }catch(Exception e){
             return ResponseHandler.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

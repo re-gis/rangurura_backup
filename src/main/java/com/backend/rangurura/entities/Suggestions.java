@@ -5,6 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 
 import com.backend.rangurura.enums.ECategory;
+import com.backend.rangurura.enums.ESuggestion;
 import com.backend.rangurura.enums.EUrwego;
 
 @Entity
@@ -38,5 +39,8 @@ public class Suggestions {
 
     @Column(nullable = false)
     private String igitekerezo;
+
+    @Enumerated(EnumType.STRING)
+    private ESuggestion status;
 
 }

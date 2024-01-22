@@ -21,6 +21,9 @@ public class Leaders {
     @Column(nullable = false)
     private String nationalId;
 
+    @Column(nullable = false)
+    private String phoneNumber;
+
     @Enumerated(EnumType.STRING)
     private EUrwego origanizationLevel;
 
