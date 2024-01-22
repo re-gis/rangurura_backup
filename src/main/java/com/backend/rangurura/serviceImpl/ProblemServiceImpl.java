@@ -3,8 +3,10 @@ package com.backend.rangurura.serviceImpl;
 //import org.apache.coyote.BadRequestException;
 import com.backend.rangurura.exceptions.BadRequestException;
 import com.backend.rangurura.exceptions.NotFoundException;
+import com.backend.rangurura.exceptions.UnauthorisedException;
 
 import java.util.Arrays;
+import java.util.*;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -17,11 +19,16 @@ import com.backend.rangurura.utils.UploadDoc;
 import com.backend.rangurura.Services.ProblemService;
 import com.backend.rangurura.dtos.CreateProblemDto;
 import com.backend.rangurura.dtos.UpdateProblemDto;
+import com.backend.rangurura.entities.Leaders;
 import com.backend.rangurura.entities.Problem;
+import com.backend.rangurura.entities.User;
 import com.backend.rangurura.enums.ECategory;
 import com.backend.rangurura.enums.EProblem_Status;
 import com.backend.rangurura.enums.EUrwego;
+import com.backend.rangurura.enums.URole;
+import com.backend.rangurura.repositories.LeaderRepository;
 import com.backend.rangurura.repositories.ProblemRepository;
+import com.backend.rangurura.repositories.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,6 +38,8 @@ public class ProblemServiceImpl implements ProblemService {
     private final GetLoggedUser getLoggedUser;
     private final UploadDoc uploadDoc;
     private final ProblemRepository problemRepository;
+    private final LeaderRepository leaderRepository;
+    private final UserRepository userRepository;
 
     @Override
     public ApiResponse<Object> createAProblem(CreateProblemDto dto) throws Exception {
@@ -211,6 +220,93 @@ public class ProblemServiceImpl implements ProblemService {
             throw new BadRequestException(e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
+            throw new Exception("Internal server error...");
+        }
+    }
+
+    @Override
+    public ApiResponse<Object> getMyLocalProblems() throws Exception {
+        try {
+            UserResponse user = getLoggedUser.getLoggedUser();
+            // get the leader
+            if (user.getRole() != URole.UMUYOBOZI) {
+                throw new UnauthorisedException("You are not authorised to perform this action!");
+            }
+
+            // get the leader
+            Optional<Leaders> leader = leaderRepository.findByNationalId(user.getNationalId());
+            if (!leader.isPresent()) {
+                throw new NotFoundException("Leader not found!");
+            }
+
+            // get all the problems and filter them
+            List<Problem> problems = problemRepository.findAllByUrwegoAndCategory(leader.get().getOriganizationLevel(),
+                    leader.get().getCategory());
+            if (problems.isEmpty()) {
+                throw new NotFoundException("No problems found!");
+            }
+
+            List<Problem> filteredProblems = new ArrayList<>();
+            EUrwego urwego = leader.get().getOriganizationLevel();
+            for (Problem problem : problems) {
+                String owner = problem.getOwner();
+                // get the same user
+                Optional<User> userResponse = userRepository.findByNationalId(owner);
+                if (!userResponse.isPresent()) {
+                    throw new NotFoundException("Owner " + owner + " not found!");
+                }
+
+                // get the user's location same to that of the leader
+                switch (urwego) {
+                    case AKAGARI:
+                        // check the user with the same akagari
+                        if (userResponse.get().getCell() == leader.get().getLocation()) {
+                            filteredProblems.add(problem);
+                        }
+                        break;
+                    case INTARA:
+                        if (userResponse.get().getProvince() == leader.get().getLocation()) {
+                            filteredProblems.add(problem);
+                        }
+                        break;
+
+                    case AKARERE:
+                        if (userResponse.get().getProvince() == leader.get().getLocation()) {
+                            filteredProblems.add(problem);
+                        }
+                        break;
+
+                    case UMUDUGUDU:
+                        if (userResponse.get().getProvince() == leader.get().getLocation()) {
+                            filteredProblems.add(problem);
+                        }
+                        break;
+
+                    case UMURENGE:
+                        if (userResponse.get().getProvince() == leader.get().getLocation()) {
+                            filteredProblems.add(problem);
+                        }
+                        break;
+                    default:
+                        throw new NotFoundException("No problems found in your location!");
+
+                }
+            }
+
+            if (filteredProblems.isEmpty()) {
+                throw new NotFoundException("No problems found!");
+            }
+
+            return ApiResponse.builder()
+                    .data(filteredProblems)
+                    .success(true)
+                    .build();
+
+        } catch (NotFoundException e) {
+            throw new NotFoundException(e.getMessage());
+        } catch (UnauthorisedException e) {
+            throw new UnauthorisedException(e.getMessage());
+        } catch (Exception e) {
             throw new Exception("Internal server error...");
         }
     }
