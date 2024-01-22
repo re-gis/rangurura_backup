@@ -20,6 +20,8 @@ import com.backend.rangurura.response.UserResponse;
 import com.backend.rangurura.utils.GetLoggedUser;
 import java.util.*;
 
+import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -100,10 +102,39 @@ public class SuggestionServiceImpl implements SuggestionService {
     @Override
     public ApiResponse<Object> getSuggestionsByStatus(ESuggestion status) throws Exception {
         try {
-            // UserResponse user = getLoggedUser.getLoggedUser();
-            // String nationalId =
+            UserResponse user = getLoggedUser.getLoggedUser();
+            if (user.getRole() != URole.UMUYOBOZI) {
+                throw new UnauthorisedException("You are not authorised to perform this action!");
+            }
 
-            return null;
+            Optional<Leaders> leader = leaderRepository.findByNationalId(user.getNationalId());
+            if (!leader.isPresent()) {
+                throw new NotFoundException("Leader " + user.getNationalId() + " not found!");
+            }
+
+            // get the suggestions zaho ayoboye
+            List<Suggestions> suggestions = suggestionRepository.findAllByUrwegoAndLocationAndCategory(
+                    leader.get().getOriganizationLevel(), leader.get().getLocation(), leader.get().getCategory());
+
+            if (suggestions.isEmpty()) {
+                throw new NotFoundException(String.format("No suggestions found in %s and category: %s",
+                        leader.get().getLocation(), leader.get().getCategory()));
+            }
+
+            List<Suggestions> filteredSuggestions = suggestions.stream().filter(sugg -> sugg.getStatus() == status)
+                    .collect(Collectors.toList());
+
+            if (filteredSuggestions.isEmpty()) {
+                throw new NotFoundException("No " + status + " suggestions found!");
+            }
+
+            return ApiResponse.builder()
+                    .data(filteredSuggestions)
+                    .success(true)
+                    .build();
+
+        } catch (NotFoundException e) {
+            throw new NotFoundException(e.getMessage());
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }

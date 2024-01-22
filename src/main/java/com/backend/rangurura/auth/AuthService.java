@@ -39,7 +39,7 @@ public class AuthService {
             throw new UnauthorisedException("Verify the account to continue!");
         }
 
-        var token = jwtService.generateToken(user);
+        var token = jwtService.generateToken(user);        
         return ApiResponse.builder()
                 .success(true)
                 .data(token)

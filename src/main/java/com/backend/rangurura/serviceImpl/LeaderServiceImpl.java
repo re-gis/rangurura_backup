@@ -3,18 +3,23 @@ package com.backend.rangurura.serviceImpl;
 import com.backend.rangurura.Services.LeaderService;
 import com.backend.rangurura.dtos.RegisterLeaderDto;
 import com.backend.rangurura.entities.Leaders;
+import com.backend.rangurura.entities.User;
 import com.backend.rangurura.enums.ECategory;
 import com.backend.rangurura.enums.EUrwego;
 import com.backend.rangurura.enums.URole;
 import com.backend.rangurura.exceptions.NotFoundException;
 import com.backend.rangurura.exceptions.UnauthorisedException;
 import com.backend.rangurura.repositories.LeaderRepository;
+import com.backend.rangurura.repositories.UserRepository;
 import com.backend.rangurura.response.ApiResponse;
 import com.backend.rangurura.response.UserResponse;
 import com.backend.rangurura.utils.GetLoggedUser;
 
+import java.util.Optional;
+
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -23,6 +28,7 @@ public class LeaderServiceImpl implements LeaderService {
     private final LeaderRepository leaderRepository;
     private final GetLoggedUser getLoggedUser;
     private final OtpServiceImpl otpServiceImpl;
+    private final UserRepository userRepository;
 
     @Override
     public ApiResponse<Object> registerNewLeader(@Valid RegisterLeaderDto dto) throws Exception {
@@ -140,6 +146,14 @@ public class LeaderServiceImpl implements LeaderService {
 
     // this is the function to convert dto to entity
     private Leaders convertDtoToEntity(RegisterLeaderDto dto) {
+
+        // check if the leader existed as a user
+        Optional<User> user = userRepository.findByNationalId(dto.getNationalId());
+        if (user.isPresent()) {
+            user.get().setRole(URole.UMUYOBOZI);
+            // save the user
+            userRepository.save(user.get());
+        }
 
         // Implement logic to convert DTO to Entity
         Leaders leaders = new Leaders();
