@@ -1,4 +1,4 @@
-package com.backend.rangurura.Services;
+package com.backend.rangurura.services;
 
 import io.jsonwebtoken.Claims;
 import org.springframework.security.core.userdetails.UserDetails;

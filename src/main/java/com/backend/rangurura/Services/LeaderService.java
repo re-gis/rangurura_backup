@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 @Service
 
 public interface LeaderService {
+<<<<<<< HEAD
     public ApiResponse<Object> registerNewLeader(RegisterLeaderDto dto) throws  Exception;
 
     public ApiResponse<Object> getLocalLeaders() throws Exception;
@@ -27,4 +28,7 @@ public interface LeaderService {
 //        leaderRepository.save(leaders);
 //
 //    }
+=======
+    ApiResponse<Object> registerNewLeader(RegisterLeaderDto dto) throws  Exception;
+>>>>>>> 9f8584e (debuging)
 }
