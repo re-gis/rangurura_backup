@@ -18,4 +18,10 @@ public class RegisterLeaderDto {
     private String location;
     private ECategory category;
     private String phoneNumber;
+    private String name;
+    private String cell;
+    private String village;
+    private String district;
+    private String sector;
+    private String province;
 }

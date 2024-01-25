@@ -21,4 +21,5 @@ public class UserResponse {
     private String nationalId;
     private String phoneNumber;
     private URole role;
+    private boolean isVerified;
 }

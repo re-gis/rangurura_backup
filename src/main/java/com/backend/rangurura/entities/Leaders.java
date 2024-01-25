@@ -1,4 +1,5 @@
 package com.backend.rangurura.entities;//package com.backend.rangurura.entities;
+
 import com.backend.rangurura.enums.ECategory;
 import com.backend.rangurura.enums.EUrwego;
 import com.backend.rangurura.enums.URole;
@@ -36,10 +37,7 @@ public class Leaders {
     @Enumerated(EnumType.STRING)
     private URole role;
 
-   @Column(nullable = false)
-   private boolean verified;
+    @Column(nullable = false)
+    private boolean verified;
 
 }
-
-
-

@@ -82,7 +82,7 @@ public class UserServiceImpl implements UserService {
             user.setSector(dto.getSector());
             user.setImageUrl("https://icon-library.com/images/no-user-image-icon/no-user-image-icon-0.jpg");
             user.setVerified(false);
-            user.setRole(URole.UMUTURAGE);
+            user.setRole(URole.ADMIN);
             // save the otp and user
             Optional<Otp> eOtp = otpRepository.findOneByNumber(dto.getPhoneNumber());
             if (eOtp.isPresent()) {
