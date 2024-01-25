@@ -14,4 +14,7 @@ public interface ProblemService {
     public ApiResponse<Object> updateMyProblem(UpdateProblemDto dto, Long id) throws Exception;
 
     public ApiResponse<Object> getMyLocalProblems() throws Exception;
+
+   
+    
 }

@@ -15,11 +15,13 @@ import com.backend.rangurura.response.ApiResponse;
 import com.backend.rangurura.response.UserResponse;
 import com.backend.rangurura.utils.GetLoggedUser;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -142,6 +144,59 @@ public class LeaderServiceImpl implements LeaderService {
             throw new Exception("Failed to add new leader to the system please try again!");
         }
 
+    }
+
+
+    @PreAuthorize("hasRole('UMUYOBOZI')")
+    @Override
+    public ApiResponse<Object> getLocalLeaders() throws Exception {
+        try {
+            UserResponse user = getLoggedUser.getLoggedUser();
+            if (user.getRole() != URole.UMUYOBOZI) {
+                throw new UnauthorisedException("You are not allowed to perform this action!");
+            }
+            // get the leader
+            Optional<Leaders> leader = leaderRepository.findByNationalId(user.getNationalId());
+            if (!leader.isPresent()) {
+                throw new NotFoundException("Leader " + user.getNationalId() + " not found!");
+            }
+
+            List<Leaders> allLeaders = leaderRepository.findAllByLocationAndOriganizationLevel(
+                    leader.get().getLocation(), leader.get().getOriganizationLevel());
+            if (allLeaders.isEmpty()) {
+                throw new NotFoundException("No leaders found!");
+            }
+
+            // return those leaders in the same location and same level
+            return ApiResponse.builder()
+                    .data(allLeaders)
+                    .success(true)
+                    .build();
+
+        } catch (NotFoundException e) {
+            throw new NotFoundException(e.getMessage());
+        } catch (UnauthorisedException e) {
+            throw new UnauthorisedException(e.getMessage());
+        } catch (Exception e) {
+            throw new Exception("Internal server error...");
+        }
+    }
+
+
+    @PreAuthorize("hasRole('UMUYOBOZI')")
+    @Override
+    public ApiResponse<Object> getLeaders() throws Exception {
+        try {
+            UserResponse user = getLoggedUser.getLoggedUser();
+            if (user.getRole() != URole.UMUYOBOZI) {
+                throw new UnauthorisedException("You are not allowed to perform this action!");
+            }
+
+        } catch (Exception e) {
+            throw new Exception("Internal server error...");
+        }
+
+        return null;
     }
 
     // this is the function to convert dto to entity

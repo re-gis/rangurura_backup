@@ -9,7 +9,11 @@ import org.springframework.stereotype.Service;
 @Service
 
 public interface LeaderService {
-    ApiResponse<Object> registerNewLeader(RegisterLeaderDto dto) throws  Exception;
+    public ApiResponse<Object> registerNewLeader(RegisterLeaderDto dto) throws  Exception;
+
+    public ApiResponse<Object> getLocalLeaders() throws Exception;
+
+    public ApiResponse<Object> getLeaders() throws Exception;
 //    private final LeaderRepository leaderRepository;
 //
 //    // this is to get all leaders

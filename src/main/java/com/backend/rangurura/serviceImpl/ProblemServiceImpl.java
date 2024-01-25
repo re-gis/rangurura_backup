@@ -5,10 +5,9 @@ import com.backend.rangurura.exceptions.BadRequestException;
 import com.backend.rangurura.exceptions.NotFoundException;
 import com.backend.rangurura.exceptions.UnauthorisedException;
 
-import java.util.Arrays;
 import java.util.*;
-import java.util.Optional;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import com.backend.rangurura.response.ApiResponse;
@@ -224,6 +223,8 @@ public class ProblemServiceImpl implements ProblemService {
         }
     }
 
+
+    @PreAuthorize("hasRole('UMUYOBOZI')")
     @Override
     public ApiResponse<Object> getMyLocalProblems() throws Exception {
         try {
@@ -310,5 +311,7 @@ public class ProblemServiceImpl implements ProblemService {
             throw new Exception("Internal server error...");
         }
     }
+
+    
 
 }
