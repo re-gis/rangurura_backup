@@ -1,12 +1,8 @@
 package com.backend.rangurura.serviceImpl;
 
-//<<<<<<< HEAD
-//import com.backend.rangurura.Services.JwtService;
 import com.backend.rangurura.entities.User;
 
-//=======
-import com.backend.rangurura.services.JwtService;
-//>>>>>>> 9f8584e (debuging)
+import com.backend.rangurura.Services.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
