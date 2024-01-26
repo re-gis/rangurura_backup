@@ -22,9 +22,10 @@ public class ProblemController {
     private final ProblemServiceImpl problemServiceImpl;
 
     @PostMapping("/create")
-    public ResponseEntity<ApiResponse<Object>> createProblem(@RequestParam("proof") MultipartFile proof,
-            @RequestParam("record") MultipartFile record, @RequestParam("details") String details)
-            throws Exception {
+    public ResponseEntity<ApiResponse<Object>> createProblem(
+            @RequestParam(value = "proof", required = false) MultipartFile proof,
+            @RequestParam(value = "record",required = false) MultipartFile record,
+            @RequestParam("details") String details) throws Exception {
         try {
             CreateProblemDto dto = Mapper.createProblemDto(details, proof, record);
             Object ob = problemServiceImpl.createAProblem(dto);
@@ -33,6 +34,7 @@ public class ProblemController {
             return ResponseHandler.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 
     @GetMapping("/my/asked")
     public ResponseEntity<ApiResponse<Object>> getMyAskedProblems() {

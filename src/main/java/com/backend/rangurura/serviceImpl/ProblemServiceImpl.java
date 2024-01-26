@@ -47,7 +47,6 @@ public class ProblemServiceImpl implements ProblemService {
             UserResponse user = getLoggedUser.getLoggedUser();
 
             if (dto.getCategory() == null || dto.getUrwego() == null || dto.getPhoneNumber() == null
-                    || dto.getProof() == null
                     || (dto.getIkibazo() == null && dto.getRecord() == null)) {
                 throw new BadRequestException(
                         "Vuga ikibazo cyawe byibuze ushyireho urwego na kategori yacyo na \'proof\' ubundi wohereze!");
@@ -69,8 +68,10 @@ public class ProblemServiceImpl implements ProblemService {
 
             System.out.println(recordUrl);
             System.out.println(dto.getRecord());
-
-            String docUrl = uploadDoc.uploadDoc(dto.getProof());
+            String docUrl = null;
+            if (dto.getProof() != null) {
+                docUrl = uploadDoc.uploadDoc(dto.getProof());
+            }
 
             // create the object
             Problem problem = Problem.builder()

@@ -5,11 +5,13 @@ import com.backend.rangurura.enums.EProblem_Status;
 import com.backend.rangurura.enums.EUrwego;
 
 import lombok.*;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
+@DynamicUpdate
 @Builder
 @Data
 @Getter
@@ -30,13 +32,13 @@ public class Problem {
     @Column(nullable = false)
     private String phoneNumber;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String ikibazo;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String proofUrl;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String recordUrl;
 
     @Column(nullable = false)
