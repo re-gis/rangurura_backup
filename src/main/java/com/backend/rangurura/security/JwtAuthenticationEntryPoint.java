@@ -1,32 +1,40 @@
 package com.backend.rangurura.security;
 
-import com.backend.rangurura.response.ErrorResponse;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
-import org.springframework.security.core.AuthenticationException;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.Serializable;
 import java.io.OutputStream;
+import java.util.*;
 
 @Component
-@RequiredArgsConstructor
-public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
+public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, Serializable {
+
+    private static final long serialVersionUID = -7858869558953243875L;
+
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        ResponseEntity<Object> entity = ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(new ErrorResponse("Sorry, you are not authorized to access this resource", authException.getMessage()));
-
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+    public void commence(HttpServletRequest request,
+            HttpServletResponse response,
+            AuthenticationException authException) throws IOException {
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json");
-        OutputStream out = response.getOutputStream();
-        new ObjectMapper().writeValue(out, entity.getBody());
-        out.flush();  }
 
+        Map<String, Object> errorDetails = new HashMap<>();
+        errorDetails.put("status", HttpStatus.UNAUTHORIZED.value());
+        errorDetails.put("error", "Unauthorized");
+        errorDetails.put("message", "You are not authorised to access this resource!");
+        errorDetails.put("path", request.getRequestURI());
+
+        OutputStream out = response.getOutputStream();
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.writeValue(out, errorDetails);
+        out.flush();
+    }
 }

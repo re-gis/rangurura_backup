@@ -1,5 +1,7 @@
 package com.backend.rangurura.response;
 
+import com.backend.rangurura.enums.URole;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,4 +20,6 @@ public class UserResponse {
     private String village;
     private String nationalId;
     private String phoneNumber;
+    private URole role;
+    private boolean isVerified;
 }

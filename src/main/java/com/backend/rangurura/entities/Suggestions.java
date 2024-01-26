@@ -1,10 +1,12 @@
 package com.backend.rangurura.entities;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import javax.persistence.*;
+
+import com.backend.rangurura.enums.ECategory;
+import com.backend.rangurura.enums.ESuggestion;
+import com.backend.rangurura.enums.EUrwego;
 
 @Entity
 @Table(name = "suggestions")
@@ -12,24 +14,33 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Builder
-public class Suggestions{
+public class Suggestions {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(nullable = false)
+    @Column
     private String phoneNumber;
 
+    @Column(nullable = false)
+    private String nationalId;
 
     @Column(nullable = false)
-    private String urwego;
+    private EUrwego urwego;
 
     @Column(nullable = false)
-    private String category;
+    private String location;
+
+    @Column
+    private String upperLevel;
+
+    @Column(nullable = false)
+    private ECategory category;
 
     @Column(nullable = false)
     private String igitekerezo;
 
-
+    @Enumerated(EnumType.STRING)
+    private ESuggestion status;
 
 }

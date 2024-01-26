@@ -24,6 +24,7 @@ public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
     private final JwtAuthenticationEntryPoint unauthorizedHandler;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
@@ -34,18 +35,32 @@ public class SecurityConfig {
                 .and()
                 .exceptionHandling()
                 /**
-                 * @description error for unauthorised access
+                 * @description error for unauthorized access
                  */
                 .authenticationEntryPoint(unauthorizedHandler)
                 .and()
-                .authorizeHttpRequests()
+                .authorizeRequests()
                 /**
-                 * @description methods to access with authorisation
+                 * @description methods to access with authorization
                  */
-                .requestMatchers("/api/v1/admin/**", "/api/v1/auth/**", "api/v1/users/register", "api/v1/users/account/verify","/api/v1/suggestions/send_idea","/ap/v1/leaders/**")
+                .antMatchers(
+                        "/api/v1/admin/**",
+                        "/api/v1/auth/**",
+                        "/api/v1/users/register",
+                        "/api/v1/users/account/verify",
+                        "/api/v1/suggestions/send_idea",
+                        "/ap/v1/leaders/**",
+                        "/ap/v1/leaders/**",
+                        "/v2/api-docs",
+                        "/swagger-resources/**",
+                        "/swagger-ui.html",
+                        "/webjars/**",
+                        "/h2-console/**",
+                        "/swagger-ui/index.html"
+                )
                 .permitAll()
                 /**
-                 * @description authorise all others
+                 * @description authorize all others
                  */
                 .anyRequest()
                 .authenticated()
@@ -55,7 +70,7 @@ public class SecurityConfig {
                 .and()
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 }
-

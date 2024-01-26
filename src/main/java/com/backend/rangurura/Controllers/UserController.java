@@ -15,7 +15,7 @@ import com.backend.rangurura.response.ApiResponse;
 import com.backend.rangurura.serviceImpl.UserServiceImpl;
 import com.backend.rangurura.utils.ResponseHandler;
 
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController

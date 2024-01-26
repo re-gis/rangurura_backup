@@ -4,11 +4,10 @@ import com.backend.rangurura.dtos.LoginDto;
 import com.backend.rangurura.entities.User;
 import com.backend.rangurura.exceptions.BadRequestException;
 import com.backend.rangurura.exceptions.NotFoundException;
-import com.backend.rangurura.exceptions.ServiceException;
 import com.backend.rangurura.exceptions.UnauthorisedException;
 import com.backend.rangurura.repositories.UserRepository;
 import com.backend.rangurura.response.ApiResponse;
-import com.backend.rangurura.services.JwtService;
+import com.backend.rangurura.Services.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -40,7 +39,7 @@ public class AuthService {
             throw new UnauthorisedException("Verify the account to continue!");
         }
 
-        var token = jwtService.generateToken(user);
+        var token = jwtService.generateToken(user);        
         return ApiResponse.builder()
                 .success(true)
                 .data(token)

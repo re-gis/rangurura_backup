@@ -3,15 +3,11 @@ package com.backend.rangurura.serviceImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.backend.rangurura.exceptions.MessageSendingException;
 import com.backend.rangurura.Services.OtpService;
 import com.nexmo.client.NexmoClient;
 import com.nexmo.client.sms.MessageStatus;
 import com.nexmo.client.sms.SmsSubmissionResponse;
 import com.nexmo.client.sms.messages.TextMessage;
-import com.twilio.Twilio;
-import com.twilio.rest.api.v2010.account.Message;
-import com.twilio.type.PhoneNumber;
 import java.security.SecureRandom;
 
 import lombok.RequiredArgsConstructor;
@@ -19,13 +15,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Service
 public class OtpServiceImpl implements OtpService {
-    @Value("${twilio.account.sid}")
+    @Value("${nexmo.api.key}")
     private String accountSid;
 
-    @Value("${twilio.auth.token}")
+    @Value("${nexmo.secret.key}")
     private String authToken;
 
-    @Value("${twilio.phone.number}")
+    @Value("${nexmo.phone.number}")
     private String twilioPhoneNumber;
 
     @Override

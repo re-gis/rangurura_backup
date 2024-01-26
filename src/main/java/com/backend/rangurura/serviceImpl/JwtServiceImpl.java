@@ -1,6 +1,8 @@
 package com.backend.rangurura.serviceImpl;
 
-import com.backend.rangurura.services.JwtService;
+import com.backend.rangurura.Services.JwtService;
+import com.backend.rangurura.entities.User;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -45,7 +47,12 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails);
+        User user = (User) userDetails;
+
+        // Additional claims, including the user role
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("role", user.getRole());
+        return generateToken(claims, userDetails);
     }
 
     @Override
@@ -53,9 +60,9 @@ public class JwtServiceImpl implements JwtService {
         return Jwts.builder().setClaims(extraClaims).setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
+                .claim("role", extraClaims.get("role"))
                 .signWith(getSigninKey(), SignatureAlgorithm.HS256).compact();
     }
-
 
     @Override
     public Boolean isTokenValid(String token, UserDetails userDetails) {

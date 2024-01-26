@@ -1,5 +1,8 @@
 package com.backend.rangurura.dtos;
 
+import com.backend.rangurura.enums.ECategory;
+import com.backend.rangurura.enums.EUrwego;
+
 import lombok.*;
 
 @Data
@@ -8,11 +11,12 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Setter
-
 public class SuggestionDto {
-    private String  phoneNumber;
-    private String category;
-    private String urwego;
+    private String phoneNumber;
+    private ECategory category;
+    private EUrwego urwego;
     private String igitekerezo;
+    private String nationalId;
+    private String upperLevel;
+    private String location;
 }
-

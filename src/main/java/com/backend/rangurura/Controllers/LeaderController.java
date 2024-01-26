@@ -1,19 +1,16 @@
 package com.backend.rangurura.Controllers;
 
 import com.backend.rangurura.dtos.RegisterLeaderDto;
-import com.backend.rangurura.dtos.SuggestionDto;
-import com.backend.rangurura.entities.Leaders;
 
 import com.backend.rangurura.response.ApiResponse;
 import com.backend.rangurura.serviceImpl.LeaderServiceImpl;
 import com.backend.rangurura.utils.ResponseHandler;
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor

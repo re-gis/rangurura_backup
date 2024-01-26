@@ -1,12 +1,12 @@
-package com.backend.rangurura.entities;
+package com.backend.rangurura.entities;//package com.backend.rangurura.entities;
 
+import com.backend.rangurura.enums.ECategory;
+import com.backend.rangurura.enums.EUrwego;
 import com.backend.rangurura.enums.URole;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import javax.persistence.*;
 
 @Entity
 @Table(name = "leaders")
@@ -23,10 +23,13 @@ public class Leaders {
     private String nationalId;
 
     @Column(nullable = false)
-    private String origanizationLevel;
+    private String phoneNumber;
 
-    @Column(nullable = false)
-    private String category;
+    @Enumerated(EnumType.STRING)
+    private EUrwego origanizationLevel;
+
+    @Enumerated(EnumType.STRING)
+    private ECategory category;
 
     @Column(nullable = false)
     private String location;
@@ -34,7 +37,7 @@ public class Leaders {
     @Enumerated(EnumType.STRING)
     private URole role;
 
-//    @Column(nullable = false)
-//    private boolean verified;
+    @Column(nullable = false)
+    private boolean verified;
 
 }
