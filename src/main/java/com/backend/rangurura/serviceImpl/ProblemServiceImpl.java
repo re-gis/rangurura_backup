@@ -224,7 +224,6 @@ public class ProblemServiceImpl implements ProblemService {
         }
     }
 
-
     @PreAuthorize("hasRole('UMUYOBOZI')")
     @Override
     public ApiResponse<Object> getMyLocalProblems() throws Exception {
@@ -313,6 +312,38 @@ public class ProblemServiceImpl implements ProblemService {
         }
     }
 
-    
+    @Override
+    public ApiResponse<Object> getProblemById(Long id) throws Exception {
+        try {
+            UserResponse user = getLoggedUser.getLoggedUser();
+            // get the problem if it is urs or you are a leader
+            Optional<Problem> problem = problemRepository.findById(id);
+            if(!problem.isPresent()){
+                throw new NotFoundException("Problem " + id + " not found!");
+            }
+
+            if(user.getRole() == URole.UMUYOBOZI){
+                // get that leader
+                Optional<Leaders> leader = leaderRepository.findByNationalId(user.getNationalId());
+                if(!leader.isPresent()){
+                    throw new NotFoundException("Leader " + user.getNationalId() + " not found!");
+                }
+
+                // check if the problem's target is the same with the leader's location or below
+                Optional<User> probOwner = userRepository.findByNationalId(problem.get().getOwner());
+                if(!probOwner.isPresent()){
+                    throw new NotFoundException("Problem owner not found!");
+                }
+
+                // check the locations
+
+            }else {
+                // if the user is not a UMUYOBOZI, check the user if is the owner
+            }
+        } catch (Exception e) {
+            throw new Exception("Internal server error...");
+        }
+        return null;
+    }
 
 }

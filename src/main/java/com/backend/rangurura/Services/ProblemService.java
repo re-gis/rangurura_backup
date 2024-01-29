@@ -15,6 +15,7 @@ public interface ProblemService {
 
     public ApiResponse<Object> getMyLocalProblems() throws Exception;
 
+    public ApiResponse<Object> getProblemById(Long id) throws Exception;
    
     
 }
