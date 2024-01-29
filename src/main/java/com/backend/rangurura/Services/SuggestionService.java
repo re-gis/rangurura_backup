@@ -16,4 +16,8 @@ public interface SuggestionService {
 
     ApiResponse<Object> getMyLocalSuggestions() throws Exception;
 
+    ApiResponse<Object> deleteMySuggestion(Long id) throws Exception;
+
+    ApiResponse<Object> getSuggestionById(Long id) throws Exception;
+
 }

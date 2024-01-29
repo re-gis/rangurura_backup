@@ -224,4 +224,51 @@ public class SuggestionServiceImpl implements SuggestionService {
 
         return suggestions;
     }
+
+    @Override
+    public ApiResponse<Object> deleteMySuggestion(Long id) throws Exception {
+        try {
+            // get the logged user
+            UserResponse user = getLoggedUser.getLoggedUser();
+            // get the suggestion
+            Optional<Suggestions> suggestion = suggestionRepository.findById(id);
+            if (!suggestion.isPresent()) {
+                throw new NotFoundException("Suggestion " + id + " not found!");
+            }
+
+            // check the owner
+            String ownerId = suggestion.get().getNationalId();
+
+            if (user.getNationalId() == ownerId || user.getRole() == URole.ADMIN) {
+                // delete the suggestion
+                suggestionRepository.delete(suggestion.get());
+                return ApiResponse.builder()
+                        .data("Suggestion successfully deleted!")
+                        .success(true)
+                        .build();
+            }
+            throw new UnauthorisedException("You are not authorised to perform this action!");
+        } catch (NotFoundException e) {
+            throw new NotFoundException(e.getMessage());
+        } catch (UnauthorisedException e) {
+            throw new UnauthorisedException(e.getMessage());
+        } catch (Exception e) {
+            throw new Exception("Internal server error...");
+        }
+    }
+
+    @Override
+    public ApiResponse<Object> getSuggestionById(Long id) throws Exception {
+        try {
+            // get the suggestion
+            Optional<Suggestions> suggestion = suggestionRepository.findById(id);
+            if (!suggestion.isPresent()) {
+                throw new NotFoundException("Suggestion " + id + " not found!");
+            }
+
+            return ApiResponse.builder().data(suggestion).success(true).build();
+        } catch (Exception e) {
+            throw new Exception("Internal server error...");
+        }
+    }
 }
