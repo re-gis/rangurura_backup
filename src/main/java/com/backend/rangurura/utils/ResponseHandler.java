@@ -1,6 +1,6 @@
-package com.backend.rangurura.utils;
+package com.backend.proj.utils;
 
-import com.backend.rangurura.response.ApiResponse;
+import com.backend.proj.response.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 

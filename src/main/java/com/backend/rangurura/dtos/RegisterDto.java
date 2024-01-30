@@ -1,4 +1,4 @@
-package com.backend.rangurura.dtos;
+package com.backend.proj.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

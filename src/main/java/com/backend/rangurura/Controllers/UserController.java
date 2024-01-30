@@ -1,6 +1,6 @@
-package com.backend.rangurura.Controllers;
+package com.backend.proj.Controllers;
 
-import com.backend.rangurura.dtos.UserUpdateDto;
+import com.backend.proj.dtos.UserUpdateDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.backend.rangurura.dtos.RegisterDto;
-import com.backend.rangurura.dtos.VerifyOtpDto;
-import com.backend.rangurura.response.ApiResponse;
-import com.backend.rangurura.serviceImpl.UserServiceImpl;
-import com.backend.rangurura.utils.ResponseHandler;
+import com.backend.proj.dtos.RegisterDto;
+import com.backend.proj.dtos.VerifyOtpDto;
+import com.backend.proj.response.ApiResponse;
+import com.backend.proj.serviceImpl.UserServiceImpl;
+import com.backend.proj.utils.ResponseHandler;
 
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;

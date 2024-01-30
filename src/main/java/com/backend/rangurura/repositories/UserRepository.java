@@ -1,6 +1,6 @@
-package com.backend.rangurura.repositories;
+package com.backend.proj.repositories;
 
-import com.backend.rangurura.entities.User;
+import com.backend.proj.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

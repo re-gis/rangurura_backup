@@ -1,10 +1,10 @@
-package com.backend.rangurura.Controllers;
+package com.backend.proj.Controllers;
 
-import com.backend.rangurura.dtos.RegisterLeaderDto;
+import com.backend.proj.dtos.RegisterLeaderDto;
 
-import com.backend.rangurura.response.ApiResponse;
-import com.backend.rangurura.serviceImpl.LeaderServiceImpl;
-import com.backend.rangurura.utils.ResponseHandler;
+import com.backend.proj.response.ApiResponse;
+import com.backend.proj.serviceImpl.LeaderServiceImpl;
+import com.backend.proj.utils.ResponseHandler;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 

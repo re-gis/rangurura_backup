@@ -1,4 +1,4 @@
-package com.backend.rangurura.response;
+package com.backend.proj.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

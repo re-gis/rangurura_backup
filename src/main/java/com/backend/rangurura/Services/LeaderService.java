@@ -1,7 +1,7 @@
-package com.backend.rangurura.Services;
-import com.backend.rangurura.dtos.RegisterLeaderDto;
+package com.backend.proj.Services;
+import com.backend.proj.dtos.RegisterLeaderDto;
 
-import com.backend.rangurura.response.ApiResponse;
+import com.backend.proj.response.ApiResponse;
 
 import org.springframework.stereotype.Service;
 

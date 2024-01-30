@@ -1,4 +1,4 @@
-package com.backend.rangurura.entities;
+package com.backend.proj.entities;
 
 
 import javax.persistence.*;

@@ -1,8 +1,8 @@
-package com.backend.rangurura.entities;//package com.backend.rangurura.entities;
+package com.backend.proj.entities;//package com.backend.proj.entities;
 
-import com.backend.rangurura.enums.ECategory;
-import com.backend.rangurura.enums.EUrwego;
-import com.backend.rangurura.enums.URole;
+import com.backend.proj.enums.ECategory;
+import com.backend.proj.enums.EUrwego;
+import com.backend.proj.enums.URole;
 
 import lombok.*;
 

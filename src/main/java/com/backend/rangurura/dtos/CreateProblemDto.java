@@ -1,9 +1,9 @@
-package com.backend.rangurura.dtos;
+package com.backend.proj.dtos;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import com.backend.rangurura.enums.ECategory;
-import com.backend.rangurura.enums.EUrwego;
+import com.backend.proj.enums.ECategory;
+import com.backend.proj.enums.EUrwego;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

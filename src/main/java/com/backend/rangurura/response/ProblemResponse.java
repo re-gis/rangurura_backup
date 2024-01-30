@@ -1,6 +1,6 @@
-package com.backend.rangurura.response;
+package com.backend.proj.response;
 
-import com.backend.rangurura.entities.Problem;
+import com.backend.proj.entities.Problem;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

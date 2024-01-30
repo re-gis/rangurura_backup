@@ -1,22 +1,22 @@
-package com.backend.rangurura.serviceImpl;
+package com.backend.proj.serviceImpl;
 
-import com.backend.rangurura.Services.LeaderService;
-import com.backend.rangurura.dtos.RegisterLeaderDto;
-import com.backend.rangurura.entities.Leaders;
-import com.backend.rangurura.entities.Otp;
-import com.backend.rangurura.entities.User;
-import com.backend.rangurura.enums.ECategory;
-import com.backend.rangurura.enums.EUrwego;
-import com.backend.rangurura.enums.URole;
-import com.backend.rangurura.exceptions.BadRequestException;
-import com.backend.rangurura.exceptions.NotFoundException;
-import com.backend.rangurura.exceptions.UnauthorisedException;
-import com.backend.rangurura.repositories.LeaderRepository;
-import com.backend.rangurura.repositories.OtpRepository;
-import com.backend.rangurura.repositories.UserRepository;
-import com.backend.rangurura.response.ApiResponse;
-import com.backend.rangurura.response.UserResponse;
-import com.backend.rangurura.utils.GetLoggedUser;
+import com.backend.proj.Services.LeaderService;
+import com.backend.proj.dtos.RegisterLeaderDto;
+import com.backend.proj.entities.Leaders;
+import com.backend.proj.entities.Otp;
+import com.backend.proj.entities.User;
+import com.backend.proj.enums.ECategory;
+import com.backend.proj.enums.EUrwego;
+import com.backend.proj.enums.URole;
+import com.backend.proj.exceptions.BadRequestException;
+import com.backend.proj.exceptions.NotFoundException;
+import com.backend.proj.exceptions.UnauthorisedException;
+import com.backend.proj.repositories.LeaderRepository;
+import com.backend.proj.repositories.OtpRepository;
+import com.backend.proj.repositories.UserRepository;
+import com.backend.proj.response.ApiResponse;
+import com.backend.proj.response.UserResponse;
+import com.backend.proj.utils.GetLoggedUser;
 
 import java.util.List;
 import java.util.Optional;
@@ -68,11 +68,11 @@ public class LeaderServiceImpl implements LeaderService {
                 if (dto.getName() == null || dto.getCell() == null || dto.getDistrict() == null
                         || dto.getProvince() == null || dto.getVillage() == null || dto.getSector() == null) {
                     throw new BadRequestException(
-                            "Since the leader is new to RANGURURA, your all credentials and location information...");
+                            "Since the leader is new to proj, your all credentials and location information...");
                 }
                 String o = otpServiceImpl.generateOtp(6);
                 System.out.println(o);
-                String message = "Your verification code to RANGURURA is: " + o
+                String message = "Your verification code to proj is: " + o
                         + "\n and you are now registered as a leader of " + dto.getLocation();
                 otpServiceImpl.sendMessage(dto.getPhoneNumber(), message);
 
@@ -106,7 +106,7 @@ public class LeaderServiceImpl implements LeaderService {
             }
 
             return ApiResponse.builder()
-                    .data("Leader successfully registered, verify to continue to RANGURURA... \n Password is the given national id")
+                    .data("Leader successfully registered, verify to continue to proj... \n Password is the given national id")
                     .success(true)
                     .build();
         } catch (UnauthorisedException e) {

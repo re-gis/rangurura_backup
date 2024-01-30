@@ -1,17 +1,17 @@
-package com.backend.rangurura.Controllers;
+package com.backend.proj.Controllers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.backend.rangurura.dtos.CreateProblemDto;
-import com.backend.rangurura.dtos.UpdateProblemDto;
-import com.backend.rangurura.entities.Problem;
-import com.backend.rangurura.response.ApiResponse;
-import com.backend.rangurura.serviceImpl.ProblemServiceImpl;
-import com.backend.rangurura.utils.Mapper;
-import com.backend.rangurura.utils.ResponseHandler;
+import com.backend.proj.dtos.CreateProblemDto;
+import com.backend.proj.dtos.UpdateProblemDto;
+import com.backend.proj.entities.Problem;
+import com.backend.proj.response.ApiResponse;
+import com.backend.proj.serviceImpl.ProblemServiceImpl;
+import com.backend.proj.utils.Mapper;
+import com.backend.proj.utils.ResponseHandler;
 
 import lombok.RequiredArgsConstructor;
 

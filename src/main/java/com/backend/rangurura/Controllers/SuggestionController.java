@@ -1,9 +1,9 @@
-package com.backend.rangurura.Controllers;
+package com.backend.proj.Controllers;
 
-import com.backend.rangurura.dtos.SuggestionDto;
-import com.backend.rangurura.response.ApiResponse;
-import com.backend.rangurura.serviceImpl.SuggestionServiceImpl;
-import com.backend.rangurura.utils.ResponseHandler;
+import com.backend.proj.dtos.SuggestionDto;
+import com.backend.proj.response.ApiResponse;
+import com.backend.proj.serviceImpl.SuggestionServiceImpl;
+import com.backend.proj.utils.ResponseHandler;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

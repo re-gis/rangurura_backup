@@ -1,6 +1,6 @@
-package com.backend.rangurura.repositories;
-import com.backend.rangurura.entities.Leaders;
-import com.backend.rangurura.enums.EUrwego;
+package com.backend.proj.repositories;
+import com.backend.proj.entities.Leaders;
+import com.backend.proj.enums.EUrwego;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

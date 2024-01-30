@@ -1,12 +1,12 @@
-package com.backend.rangurura.entities;
+package com.backend.proj.entities;
 
 import lombok.*;
 
 import javax.persistence.*;
 
-import com.backend.rangurura.enums.ECategory;
-import com.backend.rangurura.enums.ESuggestion;
-import com.backend.rangurura.enums.EUrwego;
+import com.backend.proj.enums.ECategory;
+import com.backend.proj.enums.ESuggestion;
+import com.backend.proj.enums.EUrwego;
 
 @Entity
 @Table(name = "suggestions")

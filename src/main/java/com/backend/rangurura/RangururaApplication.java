@@ -1,4 +1,4 @@
-package com.backend.rangurura;
+package com.backend.proj;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -8,11 +8,11 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 @SpringBootApplication
 @Component
-public class RangururaApplication {
+public class projApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(RangururaApplication.class, args);
-		System.out.println("Rangurura is running ....");
+		SpringApplication.run(projApplication.class, args);
+		System.out.println("proj is running ....");
 	}
 
 }

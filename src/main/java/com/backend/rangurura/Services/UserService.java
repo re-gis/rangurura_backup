@@ -1,9 +1,9 @@
-package com.backend.rangurura.Services;
+package com.backend.proj.Services;
 
-import com.backend.rangurura.dtos.RegisterDto;
-import com.backend.rangurura.dtos.UserUpdateDto;
-import com.backend.rangurura.dtos.VerifyOtpDto;
-import com.backend.rangurura.response.ApiResponse;
+import com.backend.proj.dtos.RegisterDto;
+import com.backend.proj.dtos.UserUpdateDto;
+import com.backend.proj.dtos.VerifyOtpDto;
+import com.backend.proj.response.ApiResponse;
 
 public interface UserService {
     public ApiResponse<Object> registerUser(RegisterDto dto) throws Exception;

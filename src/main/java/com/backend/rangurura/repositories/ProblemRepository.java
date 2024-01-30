@@ -1,12 +1,12 @@
-package com.backend.rangurura.repositories;
+package com.backend.proj.repositories;
 
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.backend.rangurura.entities.Problem;
-import com.backend.rangurura.enums.ECategory;
-import com.backend.rangurura.enums.EUrwego;
+import com.backend.proj.entities.Problem;
+import com.backend.proj.enums.ECategory;
+import com.backend.proj.enums.EUrwego;
 
 public interface ProblemRepository extends JpaRepository<Problem, Long> {
 

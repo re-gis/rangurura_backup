@@ -1,6 +1,6 @@
-package com.backend.rangurura.config;
+package com.backend.proj.config;
 
-import com.backend.rangurura.repositories.UserRepository;
+import com.backend.proj.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

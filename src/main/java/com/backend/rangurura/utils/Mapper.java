@@ -1,8 +1,8 @@
-package com.backend.rangurura.utils;
+package com.backend.proj.utils;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import com.backend.rangurura.dtos.CreateProblemDto;
+import com.backend.proj.dtos.CreateProblemDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.io.IOException;

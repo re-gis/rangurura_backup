@@ -1,4 +1,4 @@
-package com.backend.rangurura.utils;
+package com.backend.proj.utils;
 
 import java.io.IOException;
 import java.util.Map;
@@ -6,8 +6,8 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.backend.rangurura.config.CloudinaryConfig;
-import com.backend.rangurura.exceptions.BadRequestException;
+import com.backend.proj.config.CloudinaryConfig;
+import com.backend.proj.exceptions.BadRequestException;
 import com.cloudinary.utils.ObjectUtils;
 
 import lombok.RequiredArgsConstructor;

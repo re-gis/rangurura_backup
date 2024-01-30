@@ -1,4 +1,4 @@
-package com.backend.rangurura.exceptions;
+package com.backend.proj.exceptions;
 
 public class ServiceException extends RuntimeException {
     public ServiceException(String message) {

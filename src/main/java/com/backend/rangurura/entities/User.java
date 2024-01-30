@@ -1,6 +1,6 @@
-package com.backend.rangurura.entities;
+package com.backend.proj.entities;
 
-import com.backend.rangurura.enums.URole;
+import com.backend.proj.enums.URole;
 import lombok.*;
 
 import javax.persistence.*;

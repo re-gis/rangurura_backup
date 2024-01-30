@@ -1,8 +1,8 @@
-package com.backend.rangurura.entities;
+package com.backend.proj.entities;
 
-import com.backend.rangurura.enums.ECategory;
-import com.backend.rangurura.enums.EProblem_Status;
-import com.backend.rangurura.enums.EUrwego;
+import com.backend.proj.enums.ECategory;
+import com.backend.proj.enums.EProblem_Status;
+import com.backend.proj.enums.EUrwego;
 
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;

@@ -1,6 +1,6 @@
-package com.backend.rangurura.response;
+package com.backend.proj.response;
 
-import com.backend.rangurura.enums.URole;
+import com.backend.proj.enums.URole;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

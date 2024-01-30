@@ -1,10 +1,10 @@
-package com.backend.rangurura;
+package com.backend.proj;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class RangururaApplicationTests {
+class projApplicationTests {
 
 	@Test
 	void contextLoads() {

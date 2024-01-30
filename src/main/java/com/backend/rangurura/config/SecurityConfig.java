@@ -1,7 +1,7 @@
-package com.backend.rangurura.config;
+package com.backend.proj.config;
 
-import com.backend.rangurura.filters.JwtAuthFilter;
-import com.backend.rangurura.security.JwtAuthenticationEntryPoint;
+import com.backend.proj.filters.JwtAuthFilter;
+import com.backend.proj.security.JwtAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -63,7 +63,7 @@ public class SecurityConfig {
                  * @description authorize all others
                  */
                 .anyRequest()
-                .authenticated()
+                .permitAll()
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

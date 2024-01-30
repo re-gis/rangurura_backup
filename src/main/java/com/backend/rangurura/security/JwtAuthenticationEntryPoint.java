@@ -1,4 +1,4 @@
-package com.backend.rangurura.security;
+package com.backend.proj.security;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;

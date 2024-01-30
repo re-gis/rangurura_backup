@@ -1,9 +1,9 @@
-package com.backend.rangurura.Services;
+package com.backend.proj.Services;
 
-import com.backend.rangurura.dtos.SuggestionDto;
-import com.backend.rangurura.dtos.SuggestionUpdateDto;
-import com.backend.rangurura.enums.ESuggestion;
-import com.backend.rangurura.response.ApiResponse;
+import com.backend.proj.dtos.SuggestionDto;
+import com.backend.proj.dtos.SuggestionUpdateDto;
+import com.backend.proj.enums.ESuggestion;
+import com.backend.proj.response.ApiResponse;
 
 public interface SuggestionService {
     ApiResponse<Object> PostSuggestion(SuggestionDto dto) throws Exception;

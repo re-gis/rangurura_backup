@@ -1,4 +1,4 @@
-name: Build, Test and Deploy rangurura App
+name: Build, Test and Deploy proj App
 
 on:
   push:
@@ -25,15 +25,15 @@ jobs:
           version: v0.7.0
 
       - name: Build Docker Image
-        run: docker build -t rangurura .
+        run: docker build -t proj .
 
       - name: Tag Docker Image
-        run: docker tag rangurura:latest docker.io/valens200/rangurura:latest
+        run: docker tag proj:latest docker.io/valens200/proj:latest
 
       - name: Docker Login and Push
         run: |
           echo "Kiwikwingi2003" | docker login -u valens200 --password-stdin docker.io
-          docker push docker.io/valens200/rangurura:latest
+          docker push docker.io/valens200/proj:latest
 
   deploy:
     needs: build
@@ -66,7 +66,7 @@ jobs:
           fingerprint: ${{ secrets.DEPLOY_FINGERPRINT }}
           script: |
             echo "Kiwikwingi2003" | docker login -u "valens200" --password-stdin docker.io
-            sudo docker pull docker.io/valens200/rangurura
-            sudo docker stop rangurura || true
-            sudo docker rm rangurura || true
-            sudo docker run -d --name rangurura -p 7300:5000 docker.io/valens200/rangurura
+            sudo docker pull docker.io/valens200/proj
+            sudo docker stop proj || true
+            sudo docker rm proj || true
+            sudo docker run -d --name proj -p 7300:5000 docker.io/valens200/proj

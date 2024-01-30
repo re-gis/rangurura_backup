@@ -1,4 +1,4 @@
-package com.backend.rangurura.dtos;
+package com.backend.proj.dtos;
 
 public class SuggestionUpdateDto {
     // private String  phoneNumber;

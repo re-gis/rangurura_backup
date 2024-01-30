@@ -1,8 +1,8 @@
-package com.backend.rangurura.Services;
+package com.backend.proj.Services;
 
-import com.backend.rangurura.dtos.CreateProblemDto;
-import com.backend.rangurura.dtos.UpdateProblemDto;
-import com.backend.rangurura.response.ApiResponse;
+import com.backend.proj.dtos.CreateProblemDto;
+import com.backend.proj.dtos.UpdateProblemDto;
+import com.backend.proj.response.ApiResponse;
 
 public interface ProblemService {
     public ApiResponse<Object> createAProblem(CreateProblemDto dto) throws Exception;

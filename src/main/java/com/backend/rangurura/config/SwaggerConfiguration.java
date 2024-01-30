@@ -1,4 +1,4 @@
-package com.backend.rangurura.config;
+package com.backend.proj.config;
 
 
 import org.springframework.context.annotation.Bean;
@@ -15,8 +15,8 @@ import java.util.Collections;
 public class SwaggerConfiguration {
 
     private ApiInfo apiInfo() {
-        return new ApiInfo(" RANGURURA APIs",
-                "REST APIs for RANGURURA Application",
+        return new ApiInfo(" proj APIs",
+                "REST APIs for proj Application",
                 "1.0",
                 "Terms of service",
                 new Contact("SIBOMANA Edouard", "https://www.linkedin.com/in/edouard-sibomana-529698262/", "sibomanaedouard974@gmail.com"),

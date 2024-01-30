@@ -1,4 +1,4 @@
-package com.backend.rangurura.enums;
+package com.backend.proj.enums;
 
 public enum ESuggestion {
     ACCEPTED,

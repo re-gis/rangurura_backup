@@ -1,33 +1,33 @@
-package com.backend.rangurura.serviceImpl;
+package com.backend.proj.serviceImpl;
 
 //import org.apache.coyote.BadRequestException;
-import com.backend.rangurura.exceptions.BadRequestException;
-import com.backend.rangurura.exceptions.NotFoundException;
-import com.backend.rangurura.exceptions.UnauthorisedException;
+import com.backend.proj.exceptions.BadRequestException;
+import com.backend.proj.exceptions.NotFoundException;
+import com.backend.proj.exceptions.UnauthorisedException;
 
 import java.util.*;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
-import com.backend.rangurura.response.ApiResponse;
-import com.backend.rangurura.response.ProblemResponse;
-import com.backend.rangurura.response.UserResponse;
-import com.backend.rangurura.utils.GetLoggedUser;
-import com.backend.rangurura.utils.UploadDoc;
-import com.backend.rangurura.Services.ProblemService;
-import com.backend.rangurura.dtos.CreateProblemDto;
-import com.backend.rangurura.dtos.UpdateProblemDto;
-import com.backend.rangurura.entities.Leaders;
-import com.backend.rangurura.entities.Problem;
-import com.backend.rangurura.entities.User;
-import com.backend.rangurura.enums.ECategory;
-import com.backend.rangurura.enums.EProblem_Status;
-import com.backend.rangurura.enums.EUrwego;
-import com.backend.rangurura.enums.URole;
-import com.backend.rangurura.repositories.LeaderRepository;
-import com.backend.rangurura.repositories.ProblemRepository;
-import com.backend.rangurura.repositories.UserRepository;
+import com.backend.proj.response.ApiResponse;
+import com.backend.proj.response.ProblemResponse;
+import com.backend.proj.response.UserResponse;
+import com.backend.proj.utils.GetLoggedUser;
+import com.backend.proj.utils.UploadDoc;
+import com.backend.proj.Services.ProblemService;
+import com.backend.proj.dtos.CreateProblemDto;
+import com.backend.proj.dtos.UpdateProblemDto;
+import com.backend.proj.entities.Leaders;
+import com.backend.proj.entities.Problem;
+import com.backend.proj.entities.User;
+import com.backend.proj.enums.ECategory;
+import com.backend.proj.enums.EProblem_Status;
+import com.backend.proj.enums.EUrwego;
+import com.backend.proj.enums.URole;
+import com.backend.proj.repositories.LeaderRepository;
+import com.backend.proj.repositories.ProblemRepository;
+import com.backend.proj.repositories.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 

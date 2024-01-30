@@ -1,28 +1,28 @@
-package com.backend.rangurura.serviceImpl;
+package com.backend.proj.serviceImpl;
 
 import java.util.Optional;
 
-import com.backend.rangurura.dtos.UserUpdateDto;
+import com.backend.proj.dtos.UserUpdateDto;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.backend.rangurura.dtos.RegisterDto;
-import com.backend.rangurura.dtos.VerifyOtpDto;
-import com.backend.rangurura.entities.Otp;
-import com.backend.rangurura.entities.User;
-import com.backend.rangurura.enums.URole;
-import com.backend.rangurura.exceptions.BadRequestException;
-import com.backend.rangurura.exceptions.MessageSendingException;
-import com.backend.rangurura.exceptions.NotFoundException;
-import com.backend.rangurura.repositories.OtpRepository;
-import com.backend.rangurura.repositories.UserRepository;
-import com.backend.rangurura.response.ApiResponse;
-import com.backend.rangurura.response.UserResponse;
-import com.backend.rangurura.Services.UserService;
-import com.backend.rangurura.utils.GetLoggedUser;
+import com.backend.proj.dtos.RegisterDto;
+import com.backend.proj.dtos.VerifyOtpDto;
+import com.backend.proj.entities.Otp;
+import com.backend.proj.entities.User;
+import com.backend.proj.enums.URole;
+import com.backend.proj.exceptions.BadRequestException;
+import com.backend.proj.exceptions.MessageSendingException;
+import com.backend.proj.exceptions.NotFoundException;
+import com.backend.proj.repositories.OtpRepository;
+import com.backend.proj.repositories.UserRepository;
+import com.backend.proj.response.ApiResponse;
+import com.backend.proj.response.UserResponse;
+import com.backend.proj.Services.UserService;
+import com.backend.proj.utils.GetLoggedUser;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -55,7 +55,7 @@ public class UserServiceImpl implements UserService {
             Optional<User> euser = userRepository.findOneByPhone(dto.getPhoneNumber());
             if (eUser.isPresent() || euser.isPresent()) {
                 return ApiResponse.builder()
-                        .data("Indangamuntu cyangwa numero yawe isanzwe muri Rangurura yihindure wongere ugerageze cyangwa winjire...")
+                        .data("Indangamuntu cyangwa numero yawe isanzwe muri proj yihindure wongere ugerageze cyangwa winjire...")
                         .success(false)
                         .build();
             }
@@ -63,7 +63,7 @@ public class UserServiceImpl implements UserService {
             // send the message
             String o = otpServiceImpl.generateOtp(6);
             System.out.println(o);
-            String message = "Your verification code to RANGURURA is: " + o;
+            String message = "Your verification code to proj is: " + o;
             otpServiceImpl.sendMessage(dto.getPhoneNumber(), message);
 
             Otp otp = new Otp();
@@ -96,7 +96,7 @@ public class UserServiceImpl implements UserService {
             userRepository.save(user);
             return ApiResponse.builder()
                     .success(true)
-                    .data("Urakoze kwiyandikisha muri Rangurura! Ubu ushobora kwinjiramo ugatanga ikibazo cyawe!")
+                    .data("Urakoze kwiyandikisha muri proj! Ubu ushobora kwinjiramo ugatanga ikibazo cyawe!")
                     .build();
         } catch (BadRequestException e) {
             throw new BadRequestException("All credentials are required!");

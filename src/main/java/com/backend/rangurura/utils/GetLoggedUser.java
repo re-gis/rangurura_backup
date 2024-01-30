@@ -1,4 +1,4 @@
-package com.backend.rangurura.utils;
+package com.backend.proj.utils;
 
 import java.util.Optional;
 
@@ -6,11 +6,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import com.backend.rangurura.entities.User;
-import com.backend.rangurura.exceptions.NotFoundException;
-import com.backend.rangurura.exceptions.UnauthorisedException;
-import com.backend.rangurura.repositories.UserRepository;
-import com.backend.rangurura.response.UserResponse;
+import com.backend.proj.entities.User;
+import com.backend.proj.exceptions.NotFoundException;
+import com.backend.proj.exceptions.UnauthorisedException;
+import com.backend.proj.repositories.UserRepository;
+import com.backend.proj.response.UserResponse;
 
 import lombok.RequiredArgsConstructor;
 

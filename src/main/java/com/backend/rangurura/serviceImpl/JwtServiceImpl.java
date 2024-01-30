@@ -1,8 +1,8 @@
-package com.backend.rangurura.serviceImpl;
+package com.backend.proj.serviceImpl;
 
-import com.backend.rangurura.entities.User;
+import com.backend.proj.entities.User;
 
-import com.backend.rangurura.Services.JwtService;
+import com.backend.proj.Services.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

@@ -1,8 +1,8 @@
-package com.backend.rangurura.repositories;
+package com.backend.proj.repositories;
 
-import com.backend.rangurura.entities.Suggestions;
-import com.backend.rangurura.enums.ECategory;
-import com.backend.rangurura.enums.EUrwego;
+import com.backend.proj.entities.Suggestions;
+import com.backend.proj.enums.ECategory;
+import com.backend.proj.enums.EUrwego;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

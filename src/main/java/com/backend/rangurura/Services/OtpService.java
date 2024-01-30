@@ -1,4 +1,4 @@
-package com.backend.rangurura.Services;
+package com.backend.proj.Services;
 
 
 public interface OtpService {

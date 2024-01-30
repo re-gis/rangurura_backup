@@ -1,8 +1,8 @@
-package com.backend.rangurura.auth;
+package com.backend.proj.auth;
 
-import com.backend.rangurura.dtos.LoginDto;
-import com.backend.rangurura.response.ApiResponse;
-import com.backend.rangurura.utils.ResponseHandler;
+import com.backend.proj.dtos.LoginDto;
+import com.backend.proj.response.ApiResponse;
+import com.backend.proj.utils.ResponseHandler;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

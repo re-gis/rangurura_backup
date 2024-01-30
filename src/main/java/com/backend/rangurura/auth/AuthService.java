@@ -1,13 +1,13 @@
-package com.backend.rangurura.auth;
+package com.backend.proj.auth;
 
-import com.backend.rangurura.dtos.LoginDto;
-import com.backend.rangurura.entities.User;
-import com.backend.rangurura.exceptions.BadRequestException;
-import com.backend.rangurura.exceptions.NotFoundException;
-import com.backend.rangurura.exceptions.UnauthorisedException;
-import com.backend.rangurura.repositories.UserRepository;
-import com.backend.rangurura.response.ApiResponse;
-import com.backend.rangurura.Services.JwtService;
+import com.backend.proj.dtos.LoginDto;
+import com.backend.proj.entities.User;
+import com.backend.proj.exceptions.BadRequestException;
+import com.backend.proj.exceptions.NotFoundException;
+import com.backend.proj.exceptions.UnauthorisedException;
+import com.backend.proj.repositories.UserRepository;
+import com.backend.proj.response.ApiResponse;
+import com.backend.proj.Services.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

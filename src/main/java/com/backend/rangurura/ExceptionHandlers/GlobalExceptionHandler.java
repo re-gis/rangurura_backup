@@ -1,10 +1,10 @@
-package com.backend.rangurura.ExceptionHandlers;
+package com.backend.proj.ExceptionHandlers;
 
-import com.backend.rangurura.exceptions.BadRequestException;
-import com.backend.rangurura.exceptions.MessageSendingException;
-import com.backend.rangurura.exceptions.NotFoundException;
-import com.backend.rangurura.exceptions.UnauthorisedException;
-import com.backend.rangurura.response.ApiResponse;
+import com.backend.proj.exceptions.BadRequestException;
+import com.backend.proj.exceptions.MessageSendingException;
+import com.backend.proj.exceptions.NotFoundException;
+import com.backend.proj.exceptions.UnauthorisedException;
+import com.backend.proj.response.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

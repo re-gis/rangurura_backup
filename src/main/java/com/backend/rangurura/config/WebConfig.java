@@ -1,4 +1,4 @@
-package com.backend.rangurura.config;
+package com.backend.proj.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -34,7 +34,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
 }
-//package com.backend.rangurura.config;
+//package com.backend.proj.config;
 //
 //import org.springframework.context.annotation.Configuration;
 //import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
