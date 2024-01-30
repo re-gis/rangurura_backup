@@ -1,10 +1,20 @@
-FROM eclipse-temurin:17-jdk-alpine
+# Use a Maven image to build and package the application
+FROM maven:3.8.4-openjdk-17 AS builder
+WORKDIR /app
+COPY . .
+RUN mvn clean package
 
+# Create the final image with the packaged JAR
+FROM openjdk:17
 WORKDIR /app
 
-COPY target/rangurura-0.0.1-SNAPSHOT.jar /app/app.jar
+# Create the directory
+RUN mkdir -p /opt/uploads/rangurura-backend/uploads
 
+# Set directory permissions
+RUN chmod 777 /opt/uploads/rangurura-backend/uploads
 
-CMD ["java", "-jar", "app.jar"]
+# Copy the packaged JAR
+COPY --from=builder /app/target/*.jar lab.jar
 
-EXPOSE 5000
+ENTRYPOINT ["java", "-jar", "lab.jar"]
