@@ -47,7 +47,7 @@ jobs:
         run: touch $HOME/.ssh/known_hosts
 
       - name: Remove Old Host Key
-        run: ssh-keygen -R ${{ secrets.DEPLOY_HOST }}
+        run: ssh-keygen -R 194.163.167.131
 
       - name: Add and Display Updated Host Key
         run: |
@@ -58,15 +58,15 @@ jobs:
       - name: Deploy to server
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.DEPLOY_HOST }}
-          port: ${{ secrets.DEPLOY_PORT }}
-          username: ${{ secrets.DEPLOY_USER }}
+          host: 194.163.167.131
+          port: 22
+          username: root
           key: ${{ secrets.DEPLOY_PRIVATE_KEY }}
-          password: ${{ secrets.DEPLOY_PASSWORD }}
+          password: bxnnHBAuNECS3a6m
           fingerprint: ${{ secrets.DEPLOY_FINGERPRINT }}
           script: |
-            echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin docker.io
+            echo "Kiwikwingi2003" | docker login -u "valens200" --password-stdin docker.io
             sudo docker pull docker.io/valens200/rangurura
-            sudo docker stop rangurura-app || true
-            sudo docker rm rangurura-app || true
+            sudo docker stop rangurura || true
+            sudo docker rm rangurura || true
             sudo docker run -d --name rangurura -p 7300:5000 docker.io/valens200/rangurura
