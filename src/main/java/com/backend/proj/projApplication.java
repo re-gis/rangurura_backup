@@ -12,7 +12,7 @@ public class projApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(projApplication.class, args);
-		System.out.println("proj is running ....");
+		System.out.println("Rangurura is running ....");
 	}
 
 }
