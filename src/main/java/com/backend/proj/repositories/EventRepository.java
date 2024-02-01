@@ -9,6 +9,6 @@ import java.util.Optional;
 
 public interface EventRepository extends JpaRepository<Events , Long> {
     Events[] findAllByOwner(String owner_id);
-    List<Events> findAllByOrganizationLevelAndLocation(String organizationLevel,String location);
+    List<Events> findAllByOrganizationLevel(String organizationLevel);
 
 }

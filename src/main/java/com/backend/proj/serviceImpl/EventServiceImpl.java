@@ -225,8 +225,15 @@ public class EventServiceImpl implements EventsService {
 //        try {
 //            UserResponse user = getLoggedUser.getLoggedUser();
 //
-//            // Find all events by owner
-//            List<Events> receivedEvents = List.of(eventRepository.findAllByOrganizationLevelAndLocation(user.));
+//             //Find all events by the one to receive them
+//            List<Events> receivedEvents = List.of(eventRepository.findAllByOrganizationLevel(
+//                    switch (organicazationLever){
+//                        case:"UMUDUGUDU";
+//                        default:
+//                            throw new Exception("");
+//
+//                    }
+//            ));
 //
 //            // Check if the list is empty
 //            if (receivedEvents.isEmpty()) {
