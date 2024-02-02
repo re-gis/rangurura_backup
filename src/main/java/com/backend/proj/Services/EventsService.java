@@ -10,7 +10,7 @@ public interface EventsService {
     ApiResponse<Object> updateMyEvent(UpdateEventDto dto, Long id) throws Exception;
     ApiResponse<Object> deleteMyEvent(Long id) throws Exception;
     ApiResponse<Object> myRecentEvent() throws Exception;
-//    ApiResponse<Object> receivedEvent() throws Exception;
+    ApiResponse<Object> receivedEvent() throws Exception;
 
 
 

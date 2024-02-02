@@ -58,4 +58,13 @@ public class EventsControllers {
 
         }
     }
+    @GetMapping("/receive_event")
+    public ResponseEntity<ApiResponse<Object>>receivedEvent() throws Exception{
+        try{
+            Object ob=eventServiceImpl.receivedEvent();
+            return ResponseHandler.success(ob,HttpStatus.OK);
+        }catch (Exception e){
+            return ResponseHandler.error(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
