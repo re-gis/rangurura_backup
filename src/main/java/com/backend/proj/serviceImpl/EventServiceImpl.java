@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -220,34 +221,37 @@ public class EventServiceImpl implements EventsService {
         }
     }
 
-//    @Override
-//    public ApiResponse<Object> receivedEvent() throws Exception {
-//        try {
-//            UserResponse user = getLoggedUser.getLoggedUser();
-//
-//            // Find all events by owner
-//            List<Events> receivedEvents = List.of(eventRepository.findAllByOrganizationLevelAndLocation(user.));
-//
-//            // Check if the list is empty
-//            if (receivedEvents.isEmpty()) {
-//                throw new NotFoundException("No events found in your system!");
-//            }
-//
-//            // You can further process the list of events as needed
-//
-//            return ApiResponse.builder()
-//                    .data(receivedEvents)
-//                    .success(true)
-//                    .build();
-//        } catch (NotFoundException e) {
-//            throw e;
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            throw new Exception("Internal server error...");
-//        }
-//    }
+    //this is to receive the events from our leaders
+    @Override
+    public ApiResponse<Object> receivedEvent() throws Exception {
+        try {
+            UserResponse user = getLoggedUser.getLoggedUser();
+            String userVillage = user.getVillage();
+            String userSector = user.getSector();
+            String userCell = user.getCell();
+            String userDistrict = user.getDistrict();
+            String userProvince = user.getProvince();
 
+            List<Events> receivedEvents = eventRepository.findAllByLocationAttributesAndOrganizationLevel(
+                    userVillage, userSector, userCell, userDistrict, userProvince);
 
+            // Check if the list is empty
+            if (receivedEvents.isEmpty()) {
+                throw new NotFoundException("No events found for the user!");
+            }
 
+            // You can further process the list of events as needed
+
+            return ApiResponse.builder()
+                    .data(receivedEvents)
+                    .success(true)
+                    .build();
+        } catch (NotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception("Internal server error...");
+        }
+    }
 
 }
