@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.backend.proj.dtos.CreateProblemDto;
 import com.backend.proj.dtos.UpdateProblemDto;
 import com.backend.proj.entities.Problem;
+import com.backend.proj.enums.EProblem_Status;
 import com.backend.proj.response.ApiResponse;
 import com.backend.proj.serviceImpl.ProblemServiceImpl;
 import com.backend.proj.utils.Mapper;
@@ -24,7 +25,7 @@ public class ProblemController {
     @PostMapping("/create")
     public ResponseEntity<ApiResponse<Object>> createProblem(
             @RequestParam(value = "proof", required = false) MultipartFile proof,
-            @RequestParam(value = "record",required = false) MultipartFile record,
+            @RequestParam(value = "record", required = false) MultipartFile record,
             @RequestParam("details") String details) throws Exception {
         try {
             CreateProblemDto dto = Mapper.createProblemDto(details, proof, record);
@@ -34,7 +35,6 @@ public class ProblemController {
             return ResponseHandler.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
 
     @GetMapping("/my/asked")
     public ResponseEntity<ApiResponse<Object>> getMyAskedProblems() {
@@ -62,6 +62,34 @@ public class ProblemController {
             return ResponseHandler.success(problemServiceImpl.updateMyProblem(dto, id), HttpStatus.CREATED);
         } catch (Exception e) {
             e.printStackTrace();
+            return ResponseHandler.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/local")
+    public ResponseEntity<ApiResponse<Object>> getMyLocalProblems() {
+        try {
+            return ResponseHandler.success(problemServiceImpl.getMyLocalProblems(), HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseHandler.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<Object>> getProblemById(@PathVariable("id") Long id) {
+        try {
+            return ResponseHandler.success(problemServiceImpl.getProblemById(id), HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseHandler.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+
+        }
+    }
+
+    @GetMapping("/{status}")
+    public ResponseEntity<ApiResponse<Object>> getProblemByStatus(@PathVariable("status") EProblem_Status status) {
+        try {
+            return ResponseHandler.success(problemServiceImpl.getProblemsByStatus(status), HttpStatus.OK);
+        } catch (Exception e) {
             return ResponseHandler.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

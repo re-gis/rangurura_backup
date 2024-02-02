@@ -1,4 +1,4 @@
-package com.backend.rangurura.config;
+package com.backend.proj.config;
 
 
 import org.springframework.context.annotation.Bean;

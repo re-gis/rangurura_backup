@@ -66,13 +66,74 @@ public class SuggestionServiceImpl implements SuggestionService {
     }
 
     @Override
-    public ApiResponse<Object> UpdateSuggestion(SuggestionUpdateDto dto) throws Exception {
+    public ApiResponse<Object> UpdateSuggestion(SuggestionUpdateDto dto, Long id) throws Exception {
         try {
+            UserResponse user = getLoggedUser.getLoggedUser();
+            Optional<Suggestions> existingSuggestionOptional = suggestionRepository.findById(id);
+            if (!existingSuggestionOptional.isPresent()) {
+                throw new NotFoundException("Suggestion " + id + " not found!");
+            }
+            // check if the owner is the logged user
+            if (user.getNationalId() != existingSuggestionOptional.get().getNationalId()) {
+                throw new UnauthorisedException("You are not authorised to perform this action!");
+            }
 
+            // update the suggestion
+            Suggestions eSuggestion = existingSuggestionOptional.get();
+            if (dto.getCategory() != null) {
+                eSuggestion.setCategory(dto.getCategory());
+            }
+
+            if (dto.getIgitekerezo() != null) {
+                eSuggestion.setIgitekerezo(dto.getIgitekerezo());
+            }
+
+            if (dto.getLocation() != null && dto.getUrwego() == null) {
+
+                eSuggestion.setLocation(dto.getLocation());
+            }
+
+            if (dto.getPhoneNumber() != null) {
+                eSuggestion.setPhoneNumber(dto.getPhoneNumber());
+            }
+
+            if (dto.getUrwego() != null) {
+                if (dto.getUrwego() == EUrwego.AKARERE || dto.getUrwego() == EUrwego.INTARA) {
+                    // no prob about the upper level so
+                    eSuggestion.setUpperLevel("none");
+                }
+
+                if (dto.getUpperLevel() == null) {
+                    EUrwego missingUrwego = null;
+                    switch (dto.getUrwego()) {
+                        case AKAGARI:
+                            missingUrwego = EUrwego.UMURENGE;
+                            break;
+                        case UMURENGE:
+                            missingUrwego = EUrwego.AKAGARI;
+                            break;
+                        case UMUDUGUDU:
+                            missingUrwego = EUrwego.AKAGARI;
+                            break;
+                        default:
+                            throw new BadRequestException(String.format("%s level is not found!", dto.getUrwego()));
+                    }
+                    throw new BadRequestException("Which " + missingUrwego + " is " + dto.getLocation() + " located!");
+                }
+
+                // update the upper level
+                eSuggestion.setUrwego(dto.getUrwego());
+                eSuggestion.setUpperLevel(dto.getUpperLevel());
+            }
+
+            Suggestions updatedSuggestion = suggestionRepository.save(eSuggestion);
+            return ApiResponse.builder()
+                    .data(updatedSuggestion)
+                    .success(true)
+                    .build();
         } catch (Exception e) {
             throw new Exception("Internal server error...");
         }
-        return null;
     }
 
     @Override

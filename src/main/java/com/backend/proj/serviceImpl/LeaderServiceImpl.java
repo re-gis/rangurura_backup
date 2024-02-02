@@ -5,11 +5,8 @@ import com.backend.proj.dtos.RegisterLeaderDto;
 import com.backend.proj.entities.Leaders;
 import com.backend.proj.entities.Otp;
 import com.backend.proj.entities.User;
-import com.backend.proj.enums.ECategory;
-import com.backend.proj.enums.EUrwego;
 import com.backend.proj.enums.URole;
 import com.backend.proj.exceptions.BadRequestException;
-import com.backend.proj.exceptions.NotFoundException;
 import com.backend.proj.exceptions.UnauthorisedException;
 import com.backend.proj.repositories.LeaderRepository;
 import com.backend.proj.repositories.OtpRepository;
@@ -18,10 +15,8 @@ import com.backend.proj.response.ApiResponse;
 import com.backend.proj.response.UserResponse;
 import com.backend.proj.utils.GetLoggedUser;
 
-import java.util.List;
 import java.util.Optional;
 
-import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.security.access.prepost.PreAuthorize;

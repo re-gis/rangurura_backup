@@ -8,7 +8,7 @@ import com.backend.proj.response.ApiResponse;
 public interface SuggestionService {
     ApiResponse<Object> PostSuggestion(SuggestionDto dto) throws Exception;
 
-    ApiResponse<Object> UpdateSuggestion(SuggestionUpdateDto dto) throws Exception;
+    ApiResponse<Object> UpdateSuggestion(SuggestionUpdateDto dto, Long id) throws Exception;
 
     ApiResponse<Object> getAllMySuggestions() throws Exception;
 

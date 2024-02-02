@@ -315,35 +315,44 @@ public class ProblemServiceImpl implements ProblemService {
     @Override
     public ApiResponse<Object> getProblemById(Long id) throws Exception {
         try {
-            UserResponse user = getLoggedUser.getLoggedUser();
-            // get the problem if it is urs or you are a leader
             Optional<Problem> problem = problemRepository.findById(id);
-            if(!problem.isPresent()){
+            if (!problem.isPresent()) {
                 throw new NotFoundException("Problem " + id + " not found!");
             }
 
-            if(user.getRole() == URole.UMUYOBOZI){
-                // get that leader
-                Optional<Leaders> leader = leaderRepository.findByNationalId(user.getNationalId());
-                if(!leader.isPresent()){
-                    throw new NotFoundException("Leader " + user.getNationalId() + " not found!");
-                }
+            return ApiResponse.builder()
+                    .data(problem)
+                    .success(true)
+                    .build();
 
-                // check if the problem's target is the same with the leader's location or below
-                Optional<User> probOwner = userRepository.findByNationalId(problem.get().getOwner());
-                if(!probOwner.isPresent()){
-                    throw new NotFoundException("Problem owner not found!");
-                }
-
-                // check the locations
-
-            }else {
-                // if the user is not a UMUYOBOZI, check the user if is the owner
-            }
+        } catch (NotFoundException e) {
+            throw new NotFoundException(e.getMessage());
         } catch (Exception e) {
             throw new Exception("Internal server error...");
         }
-        return null;
+    }
+
+    @PreAuthorize("hasRole('UMUYOBOZI')")
+    @Override
+    public ApiResponse<Object> getProblemsByStatus(EProblem_Status status) throws Exception {
+        try {
+            List<Problem> problems = (List<Problem>) getMyLocalProblems().getData();
+
+            // filter according to the status provided
+            List<Problem> filteredProblems = new ArrayList<>();
+            for (Problem problem : problems) {
+                if (problem.getStatus() == status) {
+                    filteredProblems.add(problem);
+                }
+            }
+
+            return ApiResponse.builder()
+                    .data(filteredProblems)
+                    .success(true)
+                    .build();
+        } catch (Exception e) {
+            throw new Exception("Internal server error...");
+        }
     }
 
 }

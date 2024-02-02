@@ -2,7 +2,6 @@ package com.backend.proj.entities;
 
 import com.backend.proj.enums.ECategory;
 import com.backend.proj.enums.EUrwego;
-import com.backend.proj.enums.URole;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
