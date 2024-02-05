@@ -1,0 +1,255 @@
+package com.backend.proj.serviceImpl;
+
+import com.backend.proj.Services.EventsService;
+import com.backend.proj.dtos.CreateEventsDto;
+import com.backend.proj.dtos.UpdateEventDto;
+import com.backend.proj.entities.Events;
+import com.backend.proj.exceptions.BadRequestException;
+import com.backend.proj.exceptions.NotFoundException;
+import com.backend.proj.exceptions.ServiceException;
+import com.backend.proj.repositories.EventRepository;
+import com.backend.proj.response.ApiResponse;
+import com.backend.proj.response.EventsResponse;
+import com.backend.proj.response.UserResponse;
+import com.backend.proj.utils.GetLoggedUser;
+import lombok.Builder;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+
+@Service
+@Builder
+@RequiredArgsConstructor
+public class EventServiceImpl implements EventsService {
+
+    private final GetLoggedUser getLoggedUser;
+    private final EventRepository eventRepository;
+
+
+    @Override
+    public ApiResponse<Object> createAEvent(CreateEventsDto dto) throws Exception {
+        try {
+            //this is to get logged user
+            UserResponse user = getLoggedUser.getLoggedUser();
+            // Validate the input DTO
+            validateInput(dto);
+
+            // Convert DTO to entity
+            Events eventEntity = convertDtoToEntity(dto,user);
+
+            // Save the event to the repository
+            Events savedEvent = eventRepository.save(eventEntity);
+
+            if (savedEvent != null) {
+                EventsResponse response = new EventsResponse();
+                response.setMessage("Announcement sent successfully");
+                response.setEvents(savedEvent);
+                return ApiResponse.builder()
+                        .data(response)
+                        .success(true)
+                        .build();
+            } else {
+                throw new ServiceException("Failed to send announcement!");
+            }
+        } catch (ServiceException | BadRequestException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ServiceException("Internal server error... " + e);
+        }
+    }
+
+    private void validateInput(CreateEventsDto dto) {
+        if (dto.getCategory() == null || dto.getLocation() == null || dto.getEndDate() == null ||
+                dto.getEventName() == null || dto.getOrganizationLevel() == null ||
+                dto.getDescriptions() == null || dto.getEndTime() == null || dto.getStartTime() == null ||
+                dto.getStartDate() == null || dto.getEndDate() == null) {
+            throw new BadRequestException("Please provide all required details for your  announcement!");
+        }
+    }
+
+    private Events convertDtoToEntity(CreateEventsDto dto,UserResponse user) {
+
+
+        // Implement logic to convert DTO to Entity
+        Events events = new Events();
+        events.setOrganizationLevel(dto.getOrganizationLevel());
+        events.setEventName(dto.getEventName());
+        events.setDescriptions(dto.getDescriptions());
+        events.setStartTime(dto.getStartTime());
+        events.setEndTime(dto.getEndTime());
+        events.setStartDate(dto.getStartDate());
+        events.setLocation(dto.getLocation());
+        events.setEndDate(dto.getEndDate());
+        events.setCategory(dto.getCategory());
+        events.setOwner(user.getNationalId());
+
+
+        return events;
+    }
+
+    //the logic to update the event
+    @Override
+    public ApiResponse<Object> updateMyEvent(UpdateEventDto dto, Long id) throws Exception {
+        try {
+            UserResponse user = getLoggedUser.getLoggedUser();
+            if (id == null) {
+                throw new BadRequestException("Event id is required!");
+            }
+
+            // get the events by user and id
+            Events[] events = eventRepository.findAllByOwner(user.getNationalId());
+
+            if (events.length == 0) {
+                throw new NotFoundException("No Events found for user: " + user.getName());
+            }
+
+            // Find the event to update
+            Optional<Events> eventToUpdate = Arrays.stream(events)
+                    .filter(event -> event.getId().equals(id))
+                    .findFirst();
+
+            if (eventToUpdate.isEmpty()) {
+                throw new NotFoundException("Event " + id + " not found!");
+            }
+
+            // Now you have the event to update (eventToUpdate.get())
+            Events existingEvent = eventToUpdate.get();
+            // Perform the update using data from the DTO
+            existingEvent.setEventName(dto.getEventName());
+            existingEvent.setOrganizationLevel(dto.getOrganizationLevel());;
+            existingEvent.setCategory(dto.getCategory());
+            existingEvent.setLocation(dto.getLocation());
+            existingEvent.setStartDate(dto.getStartDate());
+            existingEvent.setEndDate(dto.getEndDate());
+            existingEvent.setStartTime(dto.getStartTime());
+            existingEvent.setEndTime(dto.getEndTime());
+            existingEvent.setDescriptions(dto.getDescriptions());
+
+            // Save the updated event
+            Events updatedEvent = eventRepository.save(existingEvent);
+
+           if(updatedEvent!=null){
+               EventsResponse response = new EventsResponse();
+               response.setMessage("Announcement updated successfully");
+               response.setEvents(updatedEvent);
+               return ApiResponse.builder()
+                       .data(response)
+                       .success(true)
+                       .build();
+           } else {
+               throw new ServiceException("Failed to update announcement!");
+           }
+
+
+        } catch (NotFoundException e) {
+            throw new NotFoundException(e.getMessage());
+        } catch (BadRequestException e) {
+            throw new BadRequestException(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception("Internal server error...");
+        }
+    }
+    //this is to delete my events
+    @Override
+    public ApiResponse<Object> deleteMyEvent(Long id) throws Exception {
+        try {
+            UserResponse user = getLoggedUser.getLoggedUser();
+            if (id == null) {
+                throw new BadRequestException("Event Id is required!");
+            }
+
+            // Find the event by id
+            Optional<Events> eventToDelete = eventRepository.findById(id);
+
+            // Check if the event exists
+            if (eventToDelete.isEmpty()) {
+                throw new NotFoundException("Event with id " + id + " not found!");
+            }
+
+            // Check if the logged user is the owner of the event
+            Events event = eventToDelete.get();
+            if (!event.getOwner().equals(user.getNationalId())) {
+                throw new BadRequestException("You do not have permission to delete this event!");
+            }
+
+            // Delete the event
+            eventRepository.deleteById(id);
+
+            return ApiResponse.builder()
+                    .data("Announcement  deleted successfully")
+                    .success(true)
+                    .build();
+        } catch (NotFoundException | BadRequestException e) {
+            throw e;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception("Internal server error...");
+        }
+    }
+
+    @Override
+    public ApiResponse<Object> myRecentEvent() throws Exception {
+        try {
+            UserResponse user = getLoggedUser.getLoggedUser();
+
+            // Find all events by owner
+            List<Events> recentEvents = List.of(eventRepository.findAllByOwner(user.getNationalId()));
+
+            // Check if the list is empty
+            if (recentEvents.isEmpty()) {
+                throw new NotFoundException("No events found in your system!");
+            }
+
+            // You can further process the list of events as needed
+
+            return ApiResponse.builder()
+                    .data(recentEvents)
+                    .success(true)
+                    .build();
+        } catch (NotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception("Internal server error...");
+        }
+    }
+
+    //this is to receive the events from our leaders
+    @Override
+    public ApiResponse<Object> receivedEvent() throws Exception {
+        try {
+            UserResponse user = getLoggedUser.getLoggedUser();
+            String userVillage = user.getVillage();
+            String userSector = user.getSector();
+            String userCell = user.getCell();
+            String userDistrict = user.getDistrict();
+            String userProvince = user.getProvince();
+
+            List<Events> receivedEvents = eventRepository.findAllByLocationAttributesAndOrganizationLevel(
+                    userVillage, userSector, userCell, userDistrict, userProvince);
+
+            // Check if the list is empty
+            if (receivedEvents.isEmpty()) {
+                throw new NotFoundException("No events found for the user!");
+            }
+
+            // You can further process the list of events as needed
+
+            return ApiResponse.builder()
+                    .data(receivedEvents)
+                    .success(true)
+                    .build();
+        } catch (NotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception("Internal server error...");
+        }
+    }
+
+}
