@@ -60,7 +60,7 @@ jobs:
         with:
           host: ${{ secrets.HOST}}
           port: ${{ secrets.HOST_PORT}}
-          username: ${{ secrets.USERNAME}}
+          username: ${{ secrets.HOST_USERNAME}}
           key: ${{ secrets.DEPLOY_PRIVATE_KEY }}
           password: ${{ secrets.HOST_PASSWORD}}
           fingerprint: ${{ secrets.DEPLOY_FINGERPRINT }}
