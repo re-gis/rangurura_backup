@@ -69,4 +69,4 @@ jobs:
             sudo docker pull docker.io/valens200/proj
             sudo docker stop proj || true
             sudo docker rm proj || true
-            sudo docker run -d --name proj -p 7300:5000 docker.io/valens200/proj
+            sudo docker run -d --name proj -p 7400:5000 docker.io/valens200/proj
