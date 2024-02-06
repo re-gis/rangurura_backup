@@ -121,196 +121,26 @@ public class LeaderServiceImpl implements LeaderService {
 
     @Override
     public ApiResponse<Object> getLeaders() throws Exception {
+
+
+
+        throw new UnsupportedOperationException("Unimplemented method 'getLeaders'");
+    }
+
+    @Override
+    public ApiResponse<Object> deleteLeader() throws Exception {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getLeaders'");
     }
 
-    // @Override
-    // public ApiResponse<Object> registerNewLeader(@Valid RegisterLeaderDto dto)
-    // throws Exception {
-    // try {
-    // // before registering the leader you must be a leader of a higher level
-    // UserResponse user = getLoggedUser.getLoggedUser();
-
-    // if (user.getRole() != URole.UMUYOBOZI) {
-    // throw new UnauthorisedException("You are not allowed to perform this
-    // action...");
-    // }
-
-    // Leaders loggedLeader =
-    // leaderRepository.findByNationalId(user.getNationalId())
-    // .orElseThrow(() -> new NotFoundException("Leader not found!"));
-
-    // EUrwego urwego = dto.getOrganizationLevel();
-    // Leaders savedLeader = null;
-    // switch (urwego) {
-    // case AKAGARI:
-    // // check if the leader's akagari = the dto's akagari
-    // if ((loggedLeader.getOriganizationLevel() == EUrwego.UMURENGE
-    // || loggedLeader.getOriganizationLevel() == EUrwego.AKAGARI)
-    // && loggedLeader.getCategory() == ECategory.IMIYOBORERE) {
-    // // register the leader
-    // // this is to convert DTO to entity
-    // Leaders leadersEntity = convertDtoToEntity(dto);
-
-    // savedLeader = leaderRepository.save(leadersEntity);
-    // }
-    // break;
-    // case AKARERE:
-    // // check if the leader's akarere = the dto's akarere
-    // if ((loggedLeader.getOriganizationLevel() == EUrwego.INTARA
-    // || loggedLeader.getOriganizationLevel() == EUrwego.AKARERE)
-    // && loggedLeader.getCategory() == ECategory.IMIYOBORERE) {
-    // // register the leader
-    // // this is to convert DTO to entity
-    // Leaders leadersEntity = convertDtoToEntity(dto);
-
-    // savedLeader = leaderRepository.save(leadersEntity);
-
-    // }
-    // break;
-    // case INTARA:
-    // // check if the leader's intara = the dto's intara
-    // if (dto.getLocation() == user.getProvince()
-    // && (loggedLeader.getOriganizationLevel() == EUrwego.INTARA
-    // || user.getRole() == URole.ADMIN)
-    // && loggedLeader.getCategory() == ECategory.IMIYOBORERE) {
-    // // register the leader
-    // // this is to convert DTO to entity
-    // Leaders leadersEntity = convertDtoToEntity(dto);
-
-    // savedLeader = leaderRepository.save(leadersEntity);
-
-    // }
-    // break;
-    // case UMUDUGUDU:
-    // // check if the leader's umudugudu = the dto's umudugudu
-    // if (dto.getLocation() == user.getVillage()
-    // && (loggedLeader.getOriganizationLevel() == EUrwego.AKAGARI
-    // || loggedLeader.getOriganizationLevel() == EUrwego.UMUDUGUDU)
-    // && loggedLeader.getCategory() == ECategory.IMIYOBORERE) {
-    // // register the leader
-    // // this is to convert DTO to entity
-    // Leaders leadersEntity = convertDtoToEntity(dto);
-
-    // savedLeader = leaderRepository.save(leadersEntity);
-
-    // }
-    // break;
-    // case UMURENGE:
-    // // check if the leader's umurenge = the dto's umurenge
-    // if (dto.getLocation() == user.getDistrict()
-    // && (loggedLeader.getOriganizationLevel() == EUrwego.UMURENGE
-    // || loggedLeader.getOriganizationLevel() == EUrwego.AKARERE)
-    // && loggedLeader.getCategory() == ECategory.IMIYOBORERE) {
-    // // register the leader
-    // // this is to convert DTO to entity
-    // Leaders leadersEntity = convertDtoToEntity(dto);
-
-    // savedLeader = leaderRepository.save(leadersEntity);
-
-    // }
-    // break;
-    // default:
-    // throw new Exception("Unknown Organisational level provided!");
-    // }
-    // if (savedLeader != null) {
-    // // send an sms to verify
-    // String message = String.format("Uri umuyobozi w'%s \n Bikozwe na %s \n numero
-    // ya telephone: %s",
-    // savedLeader.getLocation(), user.getName(), user.getPhoneNumber());
-
-    // otpServiceImpl.sendMessage(dto.getPhoneNumber(), message);
-    // return ApiResponse.builder()
-    // .data("Leader is added successfully!")
-    // .success(true)
-    // .build();
-    // } else {
-    // return ApiResponse.builder()
-    // .data("Failed to add leader to position")
-    // .success(false)
-    // .build();
-    // }
-
-    // } catch (NotFoundException e) {
-    // throw new NotFoundException(e.getMessage());
-    // } catch (UnauthorisedException e) {
-    // throw new UnauthorisedException(e.getMessage());
-    // } catch (Exception e) {
-    // e.printStackTrace();
-    // throw new Exception("Failed to add new leader to the system please try
-    // again!");
-    // }
-
-    // }
-
-    // @PreAuthorize("hasRole('UMUYOBOZI')")
-    // @Override
-    // public ApiResponse<Object> getLocalLeaders() throws Exception {
-    // try {
-    // UserResponse user = getLoggedUser.getLoggedUser();
-    // if (user.getRole() != URole.UMUYOBOZI) {
-    // throw new UnauthorisedException("You are not allowed to perform this
-    // action!");
-    // }
-    // // get the leader
-    // Optional<Leaders> leader =
-    // leaderRepository.findByNationalId(user.getNationalId());
-    // if (!leader.isPresent()) {
-    // throw new NotFoundException("Leader " + user.getNationalId() + " not
-    // found!");
-    // }
-
-    // List<Leaders> allLeaders =
-    // leaderRepository.findAllByLocationAndOriganizationLevel(
-    // leader.get().getLocation(), leader.get().getOriganizationLevel());
-    // if (allLeaders.isEmpty()) {
-    // throw new NotFoundException("No leaders found!");
-    // }
-
-    // // return those leaders in the same location and same level
-    // return ApiResponse.builder()
-    // .data(allLeaders)
-    // .success(true)
-    // .build();
-
-    // } catch (NotFoundException e) {
-    // throw new NotFoundException(e.getMessage());
-    // } catch (UnauthorisedException e) {
-    // throw new UnauthorisedException(e.getMessage());
-    // } catch (Exception e) {
-    // throw new Exception("Internal server error...");
-    // }
-    // }
-
-    // @PreAuthorize("hasRole('UMUYOBOZI')")
-    // @Override
-    // public ApiResponse<Object> getLeaders() throws Exception {
-    // try {
-    // UserResponse user = getLoggedUser.getLoggedUser();
-    // if (user.getRole() != URole.UMUYOBOZI) {
-    // throw new UnauthorisedException("You are not allowed to perform this
-    // action!");
-    // }
-
-    // } catch (Exception e) {
-    // throw new Exception("Internal server error...");
-    // }
-
-    // return null;
-    // }
+    @Override
+    public ApiResponse<Object> updateLeader() throws Exception {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getLeaders'");
+    }
 
     // this is the function to convert dto to entity
     private Leaders convertDtoToEntity(RegisterLeaderDto dto) {
-
-        // // check if the leader existed as a user
-        // Optional<User> user = userRepository.findByNationalId(dto.getNationalId());
-        // if (user.isPresent()) {
-        // user.get().setRole(URole.UMUYOBOZI);
-        // // save the user
-        // userRepository.save(user.get());
-        // }
-
         // Implement logic to convert DTO to Entity
         Leaders leaders = new Leaders();
 

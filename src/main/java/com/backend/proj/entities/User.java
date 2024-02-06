@@ -56,7 +56,7 @@ public class User implements UserDetails {
     private boolean verified;
 
     @Enumerated(EnumType.STRING)
-    private URole Role;
+    private URole role;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

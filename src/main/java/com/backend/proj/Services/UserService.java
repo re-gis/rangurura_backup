@@ -11,8 +11,15 @@ public interface UserService {
 
     public ApiResponse<Object> getLoggedInUser() throws Exception;
 
+    //this is to get admins
+    ApiResponse<Object> getAdmins() throws Exception;
+
     //this is to update the user details
     ApiResponse<Object> updateUser(UserUpdateDto dto) throws Exception;
+    ApiResponse<Object> getLeaders() throws Exception;
+
+
+
 
 
 }
