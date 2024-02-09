@@ -63,7 +63,7 @@ public class LeaderServiceImpl implements LeaderService {
                 if (dto.getName() == null || dto.getCell() == null || dto.getDistrict() == null
                         || dto.getProvince() == null || dto.getVillage() == null || dto.getSector() == null) {
                     throw new BadRequestException(
-                            "Since the leader is new to proj, your all credentials and location information...");
+                            "Since the leader is new to system, your all credentials and location information...");
                 }
                 String o = otpServiceImpl.generateOtp(6);
                 System.out.println(o);
@@ -101,7 +101,7 @@ public class LeaderServiceImpl implements LeaderService {
             }
 
             return ApiResponse.builder()
-                    .data("Leader successfully registered, verify to continue to proj... \n Password is the given national id")
+                    .data("Leader successfully registered, verify to continue to system... \n Password is the given national id")
                     .success(true)
                     .build();
         } catch (UnauthorisedException e) {
@@ -147,7 +147,7 @@ public class LeaderServiceImpl implements LeaderService {
         leaders.setNationalId(dto.getNationalId());
         leaders.setLocation(dto.getLocation());
         leaders.setCategory(dto.getCategory());
-        leaders.setOriganizationLevel(dto.getOrganizationLevel());
+        leaders.setOrganizationLevel(dto.getOrganizationLevel());
         leaders.setVerified(false);
         leaders.setRole(URole.UMUYOBOZI);
         leaders.setPhoneNumber(dto.getPhoneNumber());
