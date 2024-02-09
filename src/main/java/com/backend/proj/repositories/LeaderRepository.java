@@ -11,6 +11,6 @@ public interface LeaderRepository  extends  JpaRepository<Leaders,Long>{
 
     Optional<Leaders>findByNationalId(String national_id);
 
-    List<Leaders> findAllByLocationAndOriganizationLevel(String location, EUrwego origanizationLevel);
+    List<Leaders> findAllByLocationAndOrganizationLevel(String location, EUrwego organizationLevel);
 
 }

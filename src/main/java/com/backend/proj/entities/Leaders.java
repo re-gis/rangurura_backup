@@ -26,7 +26,7 @@ public class Leaders {
     private String phoneNumber;
 
     @Enumerated(EnumType.STRING)
-    private EUrwego origanizationLevel;
+    private EUrwego organizationLevel;
 
     @Enumerated(EnumType.STRING)
     private ECategory category;

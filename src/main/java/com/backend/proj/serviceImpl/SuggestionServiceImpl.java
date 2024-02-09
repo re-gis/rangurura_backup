@@ -175,7 +175,7 @@ public class SuggestionServiceImpl implements SuggestionService {
 
             // get the suggestions zaho ayoboye
             List<Suggestions> suggestions = suggestionRepository.findAllByUrwegoAndLocationAndCategory(
-                    leader.get().getOriganizationLevel(), leader.get().getLocation(), leader.get().getCategory());
+                    leader.get().getOrganizationLevel(), leader.get().getLocation(), leader.get().getCategory());
 
             if (suggestions.isEmpty()) {
                 throw new NotFoundException(String.format("No suggestions found in %s and category: %s",
@@ -216,7 +216,7 @@ public class SuggestionServiceImpl implements SuggestionService {
 
             // get the suggestions zaho ayoboye
             List<Suggestions> suggestions = suggestionRepository.findAllByUrwegoAndLocationAndCategory(
-                    leader.get().getOriganizationLevel(), leader.get().getLocation(), leader.get().getCategory());
+                    leader.get().getOrganizationLevel(), leader.get().getLocation(), leader.get().getCategory());
 
             if (suggestions.isEmpty()) {
                 throw new NotFoundException(String.format("No suggestions found in %s and category: %s",

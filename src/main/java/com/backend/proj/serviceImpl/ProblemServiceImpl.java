@@ -241,14 +241,14 @@ public class ProblemServiceImpl implements ProblemService {
             }
 
             // get all the problems and filter them
-            List<Problem> problems = problemRepository.findAllByUrwegoAndCategory(leader.get().getOriganizationLevel(),
+            List<Problem> problems = problemRepository.findAllByUrwegoAndCategory(leader.get().getOrganizationLevel(),
                     leader.get().getCategory());
             if (problems.isEmpty()) {
                 throw new NotFoundException("No problems found!");
             }
 
             List<Problem> filteredProblems = new ArrayList<>();
-            EUrwego urwego = leader.get().getOriganizationLevel();
+            EUrwego urwego = leader.get().getOrganizationLevel();
             for (Problem problem : problems) {
                 String owner = problem.getOwner();
                 // get the same user
