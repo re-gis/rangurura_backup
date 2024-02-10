@@ -68,16 +68,6 @@ public class UserController {
         }
     }
 
-    @GetMapping("/leaders")
-    public ResponseEntity<ApiResponse<Object>> getLeaders() throws Exception{
-        try {
-            Object ob=userServiceImpl.getLeaders();
-            return ResponseHandler.success(ob,HttpStatus.OK);
-
-        }catch (Exception e){
-            return  ResponseHandler.error(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
     @GetMapping("/admins")
     public ResponseEntity<ApiResponse<Object>> getAdmin() throws Exception{
         try {
