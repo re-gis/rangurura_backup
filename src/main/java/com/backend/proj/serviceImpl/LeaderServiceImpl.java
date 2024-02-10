@@ -2,11 +2,14 @@ package com.backend.proj.serviceImpl;
 
 import com.backend.proj.Services.LeaderService;
 import com.backend.proj.dtos.RegisterLeaderDto;
+import com.backend.proj.dtos.UpdateLeaderDto;
+import com.backend.proj.dtos.UserLeaderDto;
 import com.backend.proj.entities.Leaders;
 import com.backend.proj.entities.Otp;
 import com.backend.proj.entities.User;
 import com.backend.proj.enums.URole;
 import com.backend.proj.exceptions.BadRequestException;
+import com.backend.proj.exceptions.NotFoundException;
 import com.backend.proj.exceptions.UnauthorisedException;
 import com.backend.proj.repositories.LeaderRepository;
 import com.backend.proj.repositories.OtpRepository;
@@ -15,6 +18,8 @@ import com.backend.proj.response.ApiResponse;
 import com.backend.proj.response.UserResponse;
 import com.backend.proj.utils.GetLoggedUser;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
@@ -33,14 +38,15 @@ public class LeaderServiceImpl implements LeaderService {
     private final PasswordEncoder passwordEncoder;
     private final OtpRepository otpRepository;
 
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     @Override
     public ApiResponse<Object> registerNewLeader(RegisterLeaderDto dto) throws Exception {
         try {
             UserResponse userResponse = getLoggedUser.getLoggedUser();
-            if (userResponse.getRole() != URole.ADMIN) {
+            if (userResponse.getRole() != URole.ADMIN && userResponse.getRole() != URole.UMUYOBOZI) {
                 throw new UnauthorisedException("You are not allowed to perform this action!");
             }
+
 
             if (!userResponse.isVerified()) {
                 throw new UnauthorisedException("Verify the account to continue please!");
@@ -101,7 +107,7 @@ public class LeaderServiceImpl implements LeaderService {
             }
 
             return ApiResponse.builder()
-                    .data("Leader successfully registered, verify to continue to system... \n Password is the given national id")
+                    .data("Leader successfully registered, verify to continue to system... ")
                     .success(true)
                     .build();
         } catch (UnauthorisedException e) {
@@ -113,31 +119,153 @@ public class LeaderServiceImpl implements LeaderService {
         }
     }
 
-    @Override
-    public ApiResponse<Object> getLocalLeaders() throws Exception {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getLocalLeaders'");
-    }
+    //this is to get all leaders
 
     @Override
     public ApiResponse<Object> getLeaders() throws Exception {
+        try {
+            // Perform the JOIN operation using a custom query
+            List<Object[]> userLeaderPairs = userRepository.findAllUsersAndLeaders();
 
+            // Check if the list is empty
+            if (userLeaderPairs.isEmpty()) {
+                throw new NotFoundException("No leaders found in the system!");
+            }
 
+            // Process the list of pairs to extract leaders and users
+            List<UserLeaderDto> userLeaderDtos = new ArrayList<>();
+            for (Object[] pair : userLeaderPairs) {
+                User user = (User) pair[0];
+                Leaders leader = (Leaders) pair[1];
 
-        throw new UnsupportedOperationException("Unimplemented method 'getLeaders'");
+                // Create a DTO object to hold combined data from User and Leader
+                UserLeaderDto dto = new UserLeaderDto();
+                dto.setUser(user);
+                dto.setLeader(leader);
+
+                userLeaderDtos.add(dto);
+            }
+
+            // You can further process the list of userLeaderDtos as needed
+
+            return ApiResponse.builder()
+                    .data(userLeaderDtos)
+                    .success(true)
+                    .build();
+        } catch (NotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception("Internal server error...");
+        }
     }
+
+
+    //this is to delete the leader
+    @Override
+    public ApiResponse<Object> deleteLeader(Long id) throws Exception {
+        try {
+            UserResponse userResponse = getLoggedUser.getLoggedUser();
+
+            // Check if the leader ID is provided
+            if (id == null) {
+                throw new BadRequestException("Leader ID is required!");
+            }
+
+            // Check if the user has the required role
+            if (userResponse.getRole() != URole.ADMIN && userResponse.getRole() != URole.UMUYOBOZI) {
+                throw new UnauthorisedException("You are not allowed to perform this action!");
+            }
+
+            // Retrieve the leader by ID
+            Optional<Leaders> optionalLeader = leaderRepository.findById(id);
+
+            if (optionalLeader.isEmpty()) {
+                throw new NotFoundException("Leader not found with ID: " + id);
+            }
+
+            Leaders leader = optionalLeader.get();
+            Optional<User> optionalUser = userRepository.findByNationalId(leader.getNationalId());
+            if (optionalUser.isEmpty()) {
+                throw new NotFoundException("User not found with national ID: " + leader.getNationalId());
+            }
+            User user = optionalUser.get();
+            user.setRole(URole.UMUTURAGE);
+            // Save the updated user
+            userRepository.save(user);
+
+
+            // Delete the leader from the database
+            leaderRepository.delete(leader);
+
+            return ApiResponse.builder()
+                    .data(leader + " Was deleted successfully! ")
+                    .success(true)
+                    .build();
+        } catch (BadRequestException | NotFoundException | UnauthorisedException e) {
+            throw e; // Re-throw the known exceptions
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception("Internal server error...");
+        }
+    }
+
 
     @Override
-    public ApiResponse<Object> deleteLeader() throws Exception {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getLeaders'");
+    public ApiResponse<Object> updateLeader(UpdateLeaderDto dto, Long id) throws Exception {
+        try {
+            UserResponse userResponse = getLoggedUser.getLoggedUser();
+
+            // Check if the ID is provided
+            if (id == null) {
+                throw new BadRequestException("Leader ID is required!");
+            }
+
+            // Check if the user has the required role
+            if (userResponse.getRole() != URole.ADMIN && userResponse.getRole() != URole.UMUYOBOZI) {
+                throw new UnauthorisedException("You are not allowed to perform this action!");
+            }
+
+            // Retrieve the leader by ID
+            Optional<Leaders> optionalLeader = leaderRepository.findById(id);
+            if (optionalLeader.isEmpty()) {
+                throw new NotFoundException("Leader not found with ID: " + id);
+            }
+            Leaders leader = optionalLeader.get();
+
+            // Retrieve the user by nationalId
+            Optional<User> optionalUser = userRepository.findByNationalId(leader.getNationalId());
+            if (optionalUser.isEmpty()) {
+                throw new NotFoundException("User not found with national ID: " + leader.getNationalId());
+            }
+            User user = optionalUser.get();
+
+            // Update the nationalId in the User entity
+            user.setNationalId(dto.getNationalId());
+            // Save the updated user
+            userRepository.save(user);
+
+            leader.setNationalId(dto.getNationalId());
+            leader.setOrganizationLevel(dto.getOrganizationLevel());
+            leader.setLocation(dto.getLocation());
+            leader.setCategory(dto.getCategory());
+            // Save the updated leader
+            leaderRepository.save(leader);
+
+            return ApiResponse.builder()
+                    .data(leader + " Was deleted successfully!" )
+                    .success(true)
+                    .build();
+        } catch (BadRequestException | NotFoundException | UnauthorisedException e) {
+            throw e; // Re-throw the known exceptions
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception("Internal server error...");
+        }
     }
 
-    @Override
-    public ApiResponse<Object> updateLeader() throws Exception {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getLeaders'");
-    }
+
+
 
     // this is the function to convert dto to entity
     private Leaders convertDtoToEntity(RegisterLeaderDto dto) {
@@ -150,7 +278,7 @@ public class LeaderServiceImpl implements LeaderService {
         leaders.setOrganizationLevel(dto.getOrganizationLevel());
         leaders.setVerified(false);
         leaders.setRole(URole.UMUYOBOZI);
-        leaders.setPhoneNumber(dto.getPhoneNumber());
+//        leaders.setPhoneNumber(dto.getPhoneNumber());
 
         return leaders;
     }

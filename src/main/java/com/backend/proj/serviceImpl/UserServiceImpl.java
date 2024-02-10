@@ -1,9 +1,12 @@
 package com.backend.proj.serviceImpl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.backend.proj.dtos.UserLeaderDto;
 import com.backend.proj.dtos.UserUpdateDto;
+import com.backend.proj.entities.Leaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -182,33 +185,6 @@ public class UserServiceImpl implements UserService {
 
         return null;
     }
-
-    //this is to get  all leaders
-    @Override
-    public ApiResponse<Object> getLeaders() throws Exception {
-        try {
-            // find all leaders
-            List<User> leaders = userRepository.findByRole(URole.valueOf("UMUYOBOZI"));
-
-            // Check if the list is empty
-            if (leaders.isEmpty()) {
-                throw new NotFoundException("No leaders found in  system!");
-            }
-
-            // You can further process the list of events as needed
-
-            return ApiResponse.builder()
-                    .data(leaders)
-                    .success(true)
-                    .build();
-        } catch (NotFoundException e) {
-            throw e;
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new Exception("Internal server error...");
-        }
-    }
-
 
     //this is to get admins
     @Override
