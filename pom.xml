@@ -6,16 +6,17 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.7.11</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath/>
+		<!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.backend</groupId>
 	<artifactId>proj</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>proj</name>
 	<description>Demo project for Spring Boot</description>
-<!--	<properties>-->
-<!--		<java.version>17</java.version>-->
-<!--	</properties>-->
+	<!--	<properties>-->
+	<!--		<java.version>17</java.version>-->
+	<!--	</properties>-->
 
 	<properties>
 		<java.version>18</java.version>
@@ -71,11 +72,6 @@
 			<version>8.0.0</version>
 		</dependency>
 		<dependency>
-			<groupId>com.nexmo</groupId>
-			<artifactId>client</artifactId>
-			<version>5.5.0</version>
-		</dependency>
-		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt-api</artifactId>
 			<version>0.11.5</version>
@@ -116,12 +112,12 @@
 		<dependency>
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger2</artifactId>
-			<version>2.7.0</version>
+			<version>2.9.2</version>
 		</dependency>
 		<dependency>
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger-ui</artifactId>
-			<version>2.7.0</version>
+			<version>2.9.2</version>
 		</dependency>
 		<dependency>
 			<groupId>jakarta.servlet</groupId>
@@ -129,6 +125,7 @@
 			<version>5.0.0</version>
 			<scope>provided</scope>
 		</dependency>
+
 
 	</dependencies>
 
