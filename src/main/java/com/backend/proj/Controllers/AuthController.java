@@ -1,5 +1,6 @@
-package com.backend.proj.auth;
+package com.backend.proj.Controllers;
 
+import com.backend.proj.auth.AuthService;
 import com.backend.proj.dtos.LoginDto;
 import com.backend.proj.response.ApiResponse;
 import com.backend.proj.utils.ResponseHandler;
