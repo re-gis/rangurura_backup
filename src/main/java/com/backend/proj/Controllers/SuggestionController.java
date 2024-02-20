@@ -29,7 +29,7 @@ public class SuggestionController {
     @PostMapping("/send_idea")
     public ResponseEntity<ApiResponse<Object>> PostSuggestion(@Valid @RequestBody SuggestionDto dto) throws Exception {
 
-        Object ob = suggestionServiceImpl.PostSuggestion(dto);
+        Object ob = suggestionServiceImpl.PostSuggestion(dto).getData();
         return ResponseHandler.success(ob, HttpStatus.CREATED);
 
     }
@@ -37,7 +37,7 @@ public class SuggestionController {
     @GetMapping("/mine")
     public ResponseEntity<ApiResponse<Object>> getMySuggestions() throws Exception {
 
-        return ResponseHandler.success(suggestionServiceImpl.getAllMySuggestions(), HttpStatus.OK);
+        return ResponseHandler.success(suggestionServiceImpl.getAllMySuggestions().getData(), HttpStatus.OK);
 
     }
 
@@ -45,7 +45,7 @@ public class SuggestionController {
     public ResponseEntity<ApiResponse<Object>> updateSuggestion(@RequestBody SuggestionUpdateDto dto,
             @PathVariable("id") Long id) throws Exception {
 
-        return ResponseHandler.success(suggestionServiceImpl.UpdateSuggestion(dto, id), HttpStatus.OK);
+        return ResponseHandler.success(suggestionServiceImpl.UpdateSuggestion(dto, id).getData(), HttpStatus.OK);
 
     }
 
@@ -53,28 +53,28 @@ public class SuggestionController {
     public ResponseEntity<ApiResponse<Object>> getSuggestionsByStatus(@PathVariable("status") ESuggestion status)
             throws Exception {
 
-        return ResponseHandler.success(suggestionServiceImpl.getSuggestionsByStatus(status), HttpStatus.OK);
+        return ResponseHandler.success(suggestionServiceImpl.getSuggestionsByStatus(status).getData(), HttpStatus.OK);
 
     }
 
     @GetMapping("/local")
     public ResponseEntity<ApiResponse<Object>> getMyLocalSuggestions() throws Exception {
 
-        return ResponseHandler.success(suggestionServiceImpl.getMyLocalSuggestions(), HttpStatus.OK);
+        return ResponseHandler.success(suggestionServiceImpl.getMyLocalSuggestions().getData(), HttpStatus.OK);
 
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<ApiResponse<Object>> deleteMySuggestion(@PathVariable("id") Long id) throws Exception {
 
-        return ResponseHandler.success(suggestionServiceImpl.deleteMySuggestion(id), HttpStatus.OK);
+        return ResponseHandler.success(suggestionServiceImpl.deleteMySuggestion(id).getData(), HttpStatus.OK);
 
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<Object>> getSuggestionById(@PathVariable("id") Long id) throws Exception {
 
-        return ResponseHandler.success(suggestionServiceImpl.getSuggestionById(id), HttpStatus.OK);
+        return ResponseHandler.success(suggestionServiceImpl.getSuggestionById(id).getData(), HttpStatus.OK);
 
     }
 

@@ -21,7 +21,7 @@ public class EventsControllers {
     @PostMapping("/send_event")
     public ResponseEntity<ApiResponse<Object>> createAEvent(@Valid @RequestBody CreateEventsDto dto) throws Exception {
 
-        Object ob = eventServiceImpl.createAEvent(dto);
+        Object ob = eventServiceImpl.createAEvent(dto).getData();
         return ResponseHandler.success(ob, HttpStatus.CREATED);
 
     }
@@ -30,7 +30,7 @@ public class EventsControllers {
     public ResponseEntity<ApiResponse<Object>> updateMyEvent(@PathVariable("id") Long id,
             @RequestBody UpdateEventDto dto) throws Exception {
 
-        Object ob = eventServiceImpl.updateMyEvent(dto, id);
+        Object ob = eventServiceImpl.updateMyEvent(dto, id).getData();
         return ResponseHandler.success(ob, HttpStatus.CREATED);
 
     }
@@ -38,7 +38,7 @@ public class EventsControllers {
     @DeleteMapping("/delete_event/{id}")
     public ResponseEntity<ApiResponse<Object>> deleteMyEvent(@PathVariable("id") Long id) throws Exception {
 
-        Object ob = eventServiceImpl.deleteMyEvent(id);
+        Object ob = eventServiceImpl.deleteMyEvent(id).getData();
         return ResponseHandler.success(ob, HttpStatus.OK);
 
     }
@@ -46,13 +46,13 @@ public class EventsControllers {
     @GetMapping("/my_events")
     public ResponseEntity<ApiResponse<Object>> myRecentEvent() throws Exception {
 
-        Object ob = eventServiceImpl.myRecentEvent();
+        Object ob = eventServiceImpl.myRecentEvent().getData();
         return ResponseHandler.success(ob, HttpStatus.OK);
     }
 
     @GetMapping("/receive_event")
     public ResponseEntity<ApiResponse<Object>> receivedEvent() throws Exception {
-        Object ob = eventServiceImpl.receivedEvent();
+        Object ob = eventServiceImpl.receivedEvent().getData();
         return ResponseHandler.success(ob, HttpStatus.OK);
     }
 }

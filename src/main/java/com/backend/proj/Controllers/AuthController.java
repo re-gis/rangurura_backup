@@ -21,7 +21,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<Object>> loginUser(@Valid @RequestBody LoginDto dto) throws Exception{
-            Object ob = authService.loginUser(dto);
+            Object ob = authService.loginUser(dto).getData();
             return ResponseHandler.success(ob, HttpStatus.OK);
     }
 }

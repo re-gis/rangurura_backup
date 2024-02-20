@@ -3,7 +3,6 @@ package com.backend.proj.Controllers;
 import com.backend.proj.dtos.RegisterLeaderDto;
 
 import com.backend.proj.dtos.UpdateLeaderDto;
-import com.backend.proj.dtos.UpdateProblemDto;
 import com.backend.proj.response.ApiResponse;
 import com.backend.proj.serviceImpl.LeaderServiceImpl;
 import com.backend.proj.utils.ResponseHandler;
@@ -26,7 +25,7 @@ public class LeaderController {
     public ResponseEntity<ApiResponse<Object>> PostSuggestion(@Valid @RequestBody RegisterLeaderDto dto)
             throws Exception {
 
-        Object ob = leaderServiceImpl.registerNewLeader(dto);
+        Object ob = leaderServiceImpl.registerNewLeader(dto).getData();
         return ResponseHandler.success(ob, HttpStatus.CREATED);
     }
 
@@ -34,7 +33,7 @@ public class LeaderController {
     @GetMapping("/leaders")
     public ResponseEntity<ApiResponse<Object>> getLeaders() throws Exception {
 
-        Object ob = leaderServiceImpl.getLeaders();
+        Object ob = leaderServiceImpl.getLeaders().getData();
         return ResponseHandler.success(ob, HttpStatus.OK);
 
     }
@@ -44,7 +43,7 @@ public class LeaderController {
     public ResponseEntity<ApiResponse<Object>> updateLeader(@PathVariable("id") Long id,
             @RequestBody UpdateLeaderDto dto) throws Exception {
 
-        return ResponseHandler.success(leaderServiceImpl.updateLeader(dto, id), HttpStatus.CREATED);
+        return ResponseHandler.success(leaderServiceImpl.updateLeader(dto, id).getData(), HttpStatus.CREATED);
 
     }
 
@@ -52,7 +51,7 @@ public class LeaderController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<ApiResponse<Object>> deleteLeader(@PathVariable("id") Long id) throws Exception {
 
-        return ResponseHandler.success(leaderServiceImpl.deleteLeader(id), HttpStatus.OK);
+        return ResponseHandler.success(leaderServiceImpl.deleteLeader(id).getData(), HttpStatus.OK);
     }
 
 }

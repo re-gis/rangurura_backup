@@ -1,6 +1,5 @@
 package com.backend.proj.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,7 +9,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import lombok.RequiredArgsConstructor;
-import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.*;
@@ -108,14 +106,4 @@ public class SwaggerConfiguration extends WebMvcConfigurationSupport {
                 "API license URL",
                 Collections.emptyList());
     }
-
-    // @Bean
-    // public Docket api() {
-    // return new Docket(DocumentationType.SWAGGER_2)
-    // .apiInfo(apiInfo())
-    // .select()
-    // .apis(RequestHandlerSelectors.any())
-    // .paths(PathSelectors.any())
-    // .build();
-    // }
 }

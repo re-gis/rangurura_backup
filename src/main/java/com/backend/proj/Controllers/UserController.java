@@ -27,7 +27,7 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<Object>> registerUser(@Valid @RequestBody RegisterDto dto) throws Exception {
 
-        Object ob = userServiceImpl.registerUser(dto);
+        Object ob = userServiceImpl.registerUser(dto).getData();
         return ResponseHandler.success(ob, HttpStatus.CREATED);
 
     }
@@ -35,7 +35,7 @@ public class UserController {
     @PostMapping("/account/verify")
     public ResponseEntity<ApiResponse<Object>> verifyAccount(@Valid @RequestBody VerifyOtpDto dto) throws Exception {
 
-        Object ob = userServiceImpl.verifyOtp(dto);
+        Object ob = userServiceImpl.verifyOtp(dto).getData();
         return ResponseHandler.success(ob, HttpStatus.OK);
 
     }
@@ -50,7 +50,7 @@ public class UserController {
     @PostMapping("/updateprofile")
     public ResponseEntity<ApiResponse<Object>> updateUser(@Valid @RequestBody UserUpdateDto dto) throws Exception {
 
-        Object ob = userServiceImpl.updateUser(dto);
+        Object ob = userServiceImpl.updateUser(dto).getData();
         return ResponseHandler.success(ob, HttpStatus.OK);
 
     }
@@ -58,7 +58,7 @@ public class UserController {
     @GetMapping("/admins")
     public ResponseEntity<ApiResponse<Object>> getAdmin() throws Exception {
 
-        Object ob = userServiceImpl.getAdmins();
+        Object ob = userServiceImpl.getAdmins().getData();
         return ResponseHandler.success(ob, HttpStatus.OK);
 
     }

@@ -29,7 +29,7 @@ public class ProblemController {
             @RequestParam("details") String details) throws Exception {
 
         CreateProblemDto dto = Mapper.createProblemDto(details, proof, record);
-        Object ob = problemServiceImpl.createAProblem(dto);
+        Object ob = problemServiceImpl.createAProblem(dto).getData();
         return ResponseHandler.success(ob, HttpStatus.CREATED);
 
     }
@@ -54,20 +54,20 @@ public class ProblemController {
     public ResponseEntity<ApiResponse<Object>> updateMyAskedProblem(@PathVariable("id") Long id, UpdateProblemDto dto)
             throws Exception {
 
-        return ResponseHandler.success(problemServiceImpl.updateMyProblem(dto, id), HttpStatus.CREATED);
+        return ResponseHandler.success(problemServiceImpl.updateMyProblem(dto, id).getData(), HttpStatus.CREATED);
     }
 
     @GetMapping("/local")
     public ResponseEntity<ApiResponse<Object>> getMyLocalProblems() throws Exception {
 
-        return ResponseHandler.success(problemServiceImpl.getMyLocalProblems(), HttpStatus.OK);
+        return ResponseHandler.success(problemServiceImpl.getMyLocalProblems().getData(), HttpStatus.OK);
 
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<Object>> getProblemById(@PathVariable("id") Long id) throws Exception {
 
-        return ResponseHandler.success(problemServiceImpl.getProblemById(id), HttpStatus.OK);
+        return ResponseHandler.success(problemServiceImpl.getProblemById(id).getData(), HttpStatus.OK);
 
     }
 
@@ -75,7 +75,7 @@ public class ProblemController {
     public ResponseEntity<ApiResponse<Object>> getProblemByStatus(@PathVariable("status") EProblem_Status status)
             throws Exception {
 
-        return ResponseHandler.success(problemServiceImpl.getProblemsByStatus(status), HttpStatus.OK);
+        return ResponseHandler.success(problemServiceImpl.getProblemsByStatus(status).getData(), HttpStatus.OK);
 
     }
 }
