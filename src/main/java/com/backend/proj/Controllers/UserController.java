@@ -26,59 +26,40 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<Object>> registerUser(@Valid @RequestBody RegisterDto dto) throws Exception {
-        try {
 
-            Object ob = userServiceImpl.registerUser(dto);
-            return ResponseHandler.success(ob, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return ResponseHandler.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        Object ob = userServiceImpl.registerUser(dto);
+        return ResponseHandler.success(ob, HttpStatus.CREATED);
+
     }
 
     @PostMapping("/account/verify")
     public ResponseEntity<ApiResponse<Object>> verifyAccount(@Valid @RequestBody VerifyOtpDto dto) throws Exception {
-        try {
 
-            Object ob = userServiceImpl.verifyOtp(dto);
-            return ResponseHandler.success(ob, HttpStatus.OK);
-        } catch (Exception e) {
-            return ResponseHandler.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        Object ob = userServiceImpl.verifyOtp(dto);
+        return ResponseHandler.success(ob, HttpStatus.OK);
+
     }
 
     @GetMapping("/me")
-    public ResponseEntity<ApiResponse<Object>> getMyProfile() {
-        try {
-            return ResponseHandler.success(userServiceImpl.getLoggedInUser().getData(), HttpStatus.OK);
-        } catch (Exception e) {
-            return ResponseHandler.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<ApiResponse<Object>> getMyProfile() throws Exception {
+
+        return ResponseHandler.success(userServiceImpl.getLoggedInUser().getData(), HttpStatus.OK);
+
     }
 
-
-
     @PostMapping("/updateprofile")
-    public ResponseEntity<ApiResponse<Object>> updateUser(@Valid @RequestBody UserUpdateDto dto) throws Exception{
-        try {
-            Object ob=userServiceImpl.updateUser(dto);
-            return ResponseHandler.success(ob,HttpStatus.OK);
+    public ResponseEntity<ApiResponse<Object>> updateUser(@Valid @RequestBody UserUpdateDto dto) throws Exception {
 
-        }catch (Exception e){
-            return  ResponseHandler.error(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        Object ob = userServiceImpl.updateUser(dto);
+        return ResponseHandler.success(ob, HttpStatus.OK);
+
     }
 
     @GetMapping("/admins")
-    public ResponseEntity<ApiResponse<Object>> getAdmin() throws Exception{
-        try {
-            Object ob=userServiceImpl.getAdmins();
-            return ResponseHandler.success(ob,HttpStatus.OK);
+    public ResponseEntity<ApiResponse<Object>> getAdmin() throws Exception {
 
-        }catch (Exception e){
-            return  ResponseHandler.error(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        Object ob = userServiceImpl.getAdmins();
+        return ResponseHandler.success(ob, HttpStatus.OK);
+
     }
 }
-
-
-

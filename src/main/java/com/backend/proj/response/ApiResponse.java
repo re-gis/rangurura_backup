@@ -1,5 +1,7 @@
 package com.backend.proj.response;
 
+import org.springframework.http.HttpStatus;
+
 import lombok.*;
 
 @Data
@@ -12,6 +14,7 @@ public class ApiResponse<T> {
     private boolean success;
     private T data;
     private String error;
+    private HttpStatus status;
 
     // Constructor for success response
     public ApiResponse(T data) {

@@ -11,60 +11,48 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/api/v1/events")
 public class EventsControllers {
     private final EventServiceImpl eventServiceImpl;
 
-
     @PostMapping("/send_event")
-    public ResponseEntity<ApiResponse<Object>>createAEvent(@Valid  @RequestBody CreateEventsDto dto) throws Exception{
-    try{
-        Object ob=eventServiceImpl.createAEvent(dto);
-        return  ResponseHandler.success(ob,HttpStatus.CREATED);
+    public ResponseEntity<ApiResponse<Object>> createAEvent(@Valid @RequestBody CreateEventsDto dto) throws Exception {
 
-    }catch (Exception e){
-        return ResponseHandler.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        Object ob = eventServiceImpl.createAEvent(dto);
+        return ResponseHandler.success(ob, HttpStatus.CREATED);
+
     }
-    }
+
     @PutMapping("/update_event/{id}")
-    public ResponseEntity<ApiResponse<Object>>updateMyEvent(@PathVariable("id") Long id, @RequestBody UpdateEventDto dto) throws Exception{
-        try{
-            Object ob=eventServiceImpl.updateMyEvent(dto,id);
-            return ResponseHandler.success(ob,HttpStatus.CREATED);
+    public ResponseEntity<ApiResponse<Object>> updateMyEvent(@PathVariable("id") Long id,
+            @RequestBody UpdateEventDto dto) throws Exception {
 
-        }catch (Exception e){
-            return ResponseHandler.error(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        Object ob = eventServiceImpl.updateMyEvent(dto, id);
+        return ResponseHandler.success(ob, HttpStatus.CREATED);
+
     }
+
     @DeleteMapping("/delete_event/{id}")
-    public ResponseEntity<ApiResponse<Object>>deleteMyEvent(@PathVariable("id") Long id) throws Exception{
-        try{
-            Object ob=eventServiceImpl.deleteMyEvent(id);
-            return ResponseHandler.success(ob,HttpStatus.OK);
+    public ResponseEntity<ApiResponse<Object>> deleteMyEvent(@PathVariable("id") Long id) throws Exception {
 
-        }catch (Exception e){
-            return ResponseHandler.error(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        Object ob = eventServiceImpl.deleteMyEvent(id);
+        return ResponseHandler.success(ob, HttpStatus.OK);
+
     }
+
     @GetMapping("/my_events")
-    public ResponseEntity<ApiResponse<Object>>myRecentEvent() throws Exception{
-        try{
-            Object ob=eventServiceImpl.myRecentEvent();
-            return ResponseHandler.success(ob,HttpStatus.OK);
-        }catch (Exception e){
-            return ResponseHandler.error(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<ApiResponse<Object>> myRecentEvent() throws Exception {
 
-        }
+        Object ob = eventServiceImpl.myRecentEvent();
+        return ResponseHandler.success(ob, HttpStatus.OK);
     }
+
     @GetMapping("/receive_event")
-    public ResponseEntity<ApiResponse<Object>>receivedEvent() throws Exception{
-        try{
-            Object ob=eventServiceImpl.receivedEvent();
-            return ResponseHandler.success(ob,HttpStatus.OK);
-        }catch (Exception e){
-            return ResponseHandler.error(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<ApiResponse<Object>> receivedEvent() throws Exception {
+        Object ob = eventServiceImpl.receivedEvent();
+        return ResponseHandler.success(ob, HttpStatus.OK);
     }
 }

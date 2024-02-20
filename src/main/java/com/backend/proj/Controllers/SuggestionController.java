@@ -28,68 +28,54 @@ public class SuggestionController {
 
     @PostMapping("/send_idea")
     public ResponseEntity<ApiResponse<Object>> PostSuggestion(@Valid @RequestBody SuggestionDto dto) throws Exception {
-        try {
 
-            Object ob = suggestionServiceImpl.PostSuggestion(dto);
-            return ResponseHandler.success(ob, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return ResponseHandler.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        Object ob = suggestionServiceImpl.PostSuggestion(dto);
+        return ResponseHandler.success(ob, HttpStatus.CREATED);
+
     }
 
     @GetMapping("/mine")
-    public ResponseEntity<ApiResponse<Object>> getMySuggestions() {
-        try {
-            return ResponseHandler.success(suggestionServiceImpl.getAllMySuggestions(), HttpStatus.OK);
-        } catch (Exception e) {
-            return ResponseHandler.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<ApiResponse<Object>> getMySuggestions() throws Exception {
+
+        return ResponseHandler.success(suggestionServiceImpl.getAllMySuggestions(), HttpStatus.OK);
+
     }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<ApiResponse<Object>> updateSuggestion(@RequestBody SuggestionUpdateDto dto,
-            @PathVariable("id") Long id) {
-        try {
-            return ResponseHandler.success(suggestionServiceImpl.UpdateSuggestion(dto, id), HttpStatus.OK);
-        } catch (Exception e) {
-            return ResponseHandler.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+            @PathVariable("id") Long id) throws Exception {
+
+        return ResponseHandler.success(suggestionServiceImpl.UpdateSuggestion(dto, id), HttpStatus.OK);
+
     }
 
     @GetMapping("/{status}")
-    public ResponseEntity<ApiResponse<Object>> getSuggestionsByStatus(@PathVariable("status") ESuggestion status) {
-        try {
-            return ResponseHandler.success(suggestionServiceImpl.getSuggestionsByStatus(status), HttpStatus.OK);
-        } catch (Exception e) {
-            return ResponseHandler.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<ApiResponse<Object>> getSuggestionsByStatus(@PathVariable("status") ESuggestion status)
+            throws Exception {
+
+        return ResponseHandler.success(suggestionServiceImpl.getSuggestionsByStatus(status), HttpStatus.OK);
+
     }
 
     @GetMapping("/local")
-    public ResponseEntity<ApiResponse<Object>> getMyLocalSuggestions() {
-        try {
-            return ResponseHandler.success(suggestionServiceImpl.getMyLocalSuggestions(), HttpStatus.OK);
-        } catch (Exception e) {
-            return ResponseHandler.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<ApiResponse<Object>> getMyLocalSuggestions() throws Exception {
+
+        return ResponseHandler.success(suggestionServiceImpl.getMyLocalSuggestions(), HttpStatus.OK);
+
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<ApiResponse<Object>> deleteMySuggestion(@PathVariable("id") Long id) {
-        try {
-            return ResponseHandler.success(suggestionServiceImpl.deleteMySuggestion(id), HttpStatus.OK);
-        } catch (Exception e) {
-            return ResponseHandler.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<ApiResponse<Object>> deleteMySuggestion(@PathVariable("id") Long id) throws Exception {
+
+        return ResponseHandler.success(suggestionServiceImpl.deleteMySuggestion(id), HttpStatus.OK);
+
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Object>> getSuggestionById(@PathVariable("id") Long id) {
-        try {
-            return ResponseHandler.success(suggestionServiceImpl.getSuggestionById(id), HttpStatus.OK);
-        } catch (Exception e) {
-            return ResponseHandler.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<ApiResponse<Object>> getSuggestionById(@PathVariable("id") Long id) throws Exception {
+
+        return ResponseHandler.success(suggestionServiceImpl.getSuggestionById(id), HttpStatus.OK);
+
     }
 
 }

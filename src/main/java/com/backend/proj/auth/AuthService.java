@@ -9,6 +9,8 @@ import com.backend.proj.repositories.UserRepository;
 import com.backend.proj.response.ApiResponse;
 import com.backend.proj.Services.JwtService;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
@@ -43,6 +45,7 @@ public class AuthService {
         return ApiResponse.builder()
                 .success(true)
                 .data(token)
+                .status(HttpStatus.OK)
                 .build();
 
     }

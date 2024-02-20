@@ -27,70 +27,55 @@ public class ProblemController {
             @RequestParam(value = "proof", required = false) MultipartFile proof,
             @RequestParam(value = "record", required = false) MultipartFile record,
             @RequestParam("details") String details) throws Exception {
-        try {
-            CreateProblemDto dto = Mapper.createProblemDto(details, proof, record);
-            Object ob = problemServiceImpl.createAProblem(dto);
-            return ResponseHandler.success(ob, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return ResponseHandler.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+
+        CreateProblemDto dto = Mapper.createProblemDto(details, proof, record);
+        Object ob = problemServiceImpl.createAProblem(dto);
+        return ResponseHandler.success(ob, HttpStatus.CREATED);
+
     }
 
     @GetMapping("/my/asked")
-    public ResponseEntity<ApiResponse<Object>> getMyAskedProblems() {
-        try {
-            Problem[] problems = problemServiceImpl.getMyAskedProblems();
-            return ResponseHandler.success(problems, HttpStatus.OK);
-        } catch (Exception e) {
-            return ResponseHandler.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<ApiResponse<Object>> getMyAskedProblems() throws Exception {
+
+        Problem[] problems = problemServiceImpl.getMyAskedProblems();
+        return ResponseHandler.success(problems, HttpStatus.OK);
+
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<ApiResponse<Object>> deleteMyProblem(@PathVariable("id") Long id) {
-        try {
-            String response = problemServiceImpl.deleteQuestion(id);
-            return ResponseHandler.success(response, HttpStatus.OK);
-        } catch (Exception e) {
-            return ResponseHandler.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<ApiResponse<Object>> deleteMyProblem(@PathVariable("id") Long id) throws Exception {
+
+        String response = problemServiceImpl.deleteQuestion(id);
+        return ResponseHandler.success(response, HttpStatus.OK);
+
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<ApiResponse<Object>> updateMyAskedProblem(@PathVariable("id") Long id, UpdateProblemDto dto) {
-        try {
-            return ResponseHandler.success(problemServiceImpl.updateMyProblem(dto, id), HttpStatus.CREATED);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseHandler.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<ApiResponse<Object>> updateMyAskedProblem(@PathVariable("id") Long id, UpdateProblemDto dto)
+            throws Exception {
+
+        return ResponseHandler.success(problemServiceImpl.updateMyProblem(dto, id), HttpStatus.CREATED);
     }
 
     @GetMapping("/local")
-    public ResponseEntity<ApiResponse<Object>> getMyLocalProblems() {
-        try {
-            return ResponseHandler.success(problemServiceImpl.getMyLocalProblems(), HttpStatus.OK);
-        } catch (Exception e) {
-            return ResponseHandler.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<ApiResponse<Object>> getMyLocalProblems() throws Exception {
+
+        return ResponseHandler.success(problemServiceImpl.getMyLocalProblems(), HttpStatus.OK);
+
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Object>> getProblemById(@PathVariable("id") Long id) {
-        try {
-            return ResponseHandler.success(problemServiceImpl.getProblemById(id), HttpStatus.OK);
-        } catch (Exception e) {
-            return ResponseHandler.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<ApiResponse<Object>> getProblemById(@PathVariable("id") Long id) throws Exception {
 
-        }
+        return ResponseHandler.success(problemServiceImpl.getProblemById(id), HttpStatus.OK);
+
     }
 
     @GetMapping("/{status}")
-    public ResponseEntity<ApiResponse<Object>> getProblemByStatus(@PathVariable("status") EProblem_Status status) {
-        try {
-            return ResponseHandler.success(problemServiceImpl.getProblemsByStatus(status), HttpStatus.OK);
-        } catch (Exception e) {
-            return ResponseHandler.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<ApiResponse<Object>> getProblemByStatus(@PathVariable("status") EProblem_Status status)
+            throws Exception {
+
+        return ResponseHandler.success(problemServiceImpl.getProblemsByStatus(status), HttpStatus.OK);
+
     }
 }

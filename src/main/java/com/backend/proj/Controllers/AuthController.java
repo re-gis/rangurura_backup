@@ -20,12 +20,8 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<Object>> loginUser(@Valid @RequestBody LoginDto dto){
-        try{
+    public ResponseEntity<ApiResponse<Object>> loginUser(@Valid @RequestBody LoginDto dto) throws Exception{
             Object ob = authService.loginUser(dto);
             return ResponseHandler.success(ob, HttpStatus.OK);
-        }catch (Exception e){
-            return ResponseHandler.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
     }
 }

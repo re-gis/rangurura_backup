@@ -19,55 +19,40 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(path = "/api/v1/leaders")
 public class LeaderController {
 
-private final LeaderServiceImpl leaderServiceImpl;
+    private final LeaderServiceImpl leaderServiceImpl;
 
-//registering leaders
+    // registering leaders
     @PostMapping("/addLeader")
-    public ResponseEntity<ApiResponse<Object>> PostSuggestion(@Valid @RequestBody RegisterLeaderDto dto) throws Exception {
-        try {
+    public ResponseEntity<ApiResponse<Object>> PostSuggestion(@Valid @RequestBody RegisterLeaderDto dto)
+            throws Exception {
 
-            Object ob =leaderServiceImpl.registerNewLeader(dto);
-            return ResponseHandler.success(ob, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return ResponseHandler.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        Object ob = leaderServiceImpl.registerNewLeader(dto);
+        return ResponseHandler.success(ob, HttpStatus.CREATED);
     }
 
-    //getting all leaders on the system
+    // getting all leaders on the system
     @GetMapping("/leaders")
-    public ResponseEntity<ApiResponse<Object>> getLeaders() throws Exception{
-        try {
-            Object ob=leaderServiceImpl.getLeaders();
-            return ResponseHandler.success(ob,HttpStatus.OK);
+    public ResponseEntity<ApiResponse<Object>> getLeaders() throws Exception {
 
-        }catch (Exception e){
-            return  ResponseHandler.error(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        Object ob = leaderServiceImpl.getLeaders();
+        return ResponseHandler.success(ob, HttpStatus.OK);
+
     }
 
-
-    //updating leaders
+    // updating leaders
     @PutMapping("/update/{id}")
-    public ResponseEntity<ApiResponse<Object>> updateLeader(@PathVariable("id") Long id,@RequestBody UpdateLeaderDto dto) {
-        try {
-            return ResponseHandler.success(leaderServiceImpl.updateLeader(dto, id), HttpStatus.CREATED);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseHandler.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<ApiResponse<Object>> updateLeader(@PathVariable("id") Long id,
+            @RequestBody UpdateLeaderDto dto) throws Exception {
+
+        return ResponseHandler.success(leaderServiceImpl.updateLeader(dto, id), HttpStatus.CREATED);
+
     }
 
-    //delete leader
+    // delete leader
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<ApiResponse<Object>> deleteLeader(@PathVariable("id") Long id) {
-        try {
-            return ResponseHandler.success(leaderServiceImpl.deleteLeader( id), HttpStatus.OK);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseHandler.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<ApiResponse<Object>> deleteLeader(@PathVariable("id") Long id) throws Exception {
+
+        return ResponseHandler.success(leaderServiceImpl.deleteLeader(id), HttpStatus.OK);
     }
-
-
 
 }
