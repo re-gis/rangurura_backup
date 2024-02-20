@@ -15,6 +15,7 @@ import com.backend.proj.exceptions.UnauthorisedException;
 import com.backend.proj.repositories.LeaderRepository;
 import com.backend.proj.repositories.SuggestionRepository;
 import com.backend.proj.response.ApiResponse;
+import com.backend.proj.response.NotFoundResponse;
 import com.backend.proj.response.SuggestionResponse;
 import com.backend.proj.response.UserResponse;
 import com.backend.proj.utils.GetLoggedUser;
@@ -71,7 +72,14 @@ public class SuggestionServiceImpl implements SuggestionService {
             UserResponse user = getLoggedUser.getLoggedUser();
             Optional<Suggestions> existingSuggestionOptional = suggestionRepository.findById(id);
             if (!existingSuggestionOptional.isPresent()) {
-                throw new NotFoundException("Suggestion " + id + " not found!");
+                NotFoundResponse response = NotFoundResponse.builder()
+                        .message(String.format("Suggestion %s not found!",
+                                id))
+                        .build();
+                return ApiResponse.builder()
+                        .data(response)
+                        .success(true)
+                        .build();
             }
             // check if the owner is the logged user
             if (user.getNationalId() != existingSuggestionOptional.get().getNationalId()) {
@@ -145,7 +153,14 @@ public class SuggestionServiceImpl implements SuggestionService {
             // the nationalid is like the owner of the suggestion
             List<Suggestions> suggestions = suggestionRepository.findAllByNationalId(nationalId);
             if (suggestions.isEmpty()) {
-                throw new NotFoundException("No suggestions found for user: " + nationalId);
+                NotFoundResponse response = NotFoundResponse.builder()
+                        .message(String.format("No suggestions found for user %s!",
+                                nationalId))
+                        .build();
+                return ApiResponse.builder()
+                        .data(response)
+                        .success(true)
+                        .build();
             }
 
             return ApiResponse.builder()
@@ -178,15 +193,27 @@ public class SuggestionServiceImpl implements SuggestionService {
                     leader.get().getOrganizationLevel(), leader.get().getLocation(), leader.get().getCategory());
 
             if (suggestions.isEmpty()) {
-                throw new NotFoundException(String.format("No suggestions found in %s and category: %s",
-                        leader.get().getLocation(), leader.get().getCategory()));
+                NotFoundResponse response = NotFoundResponse.builder()
+                        .message(String.format("No suggestions found in %s and category: %s",
+                                leader.get().getLocation(), leader.get().getCategory()))
+                        .build();
+                return ApiResponse.builder()
+                        .data(response)
+                        .success(true)
+                        .build();
             }
 
             List<Suggestions> filteredSuggestions = suggestions.stream().filter(sugg -> sugg.getStatus() == status)
                     .collect(Collectors.toList());
 
             if (filteredSuggestions.isEmpty()) {
-                throw new NotFoundException("No " + status + " suggestions found!");
+                NotFoundResponse response = NotFoundResponse.builder()
+                        .message("No " + status + " found!")
+                        .build();
+                return ApiResponse.builder()
+                        .data(response)
+                        .success(true)
+                        .build();
             }
 
             return ApiResponse.builder()
@@ -219,8 +246,14 @@ public class SuggestionServiceImpl implements SuggestionService {
                     leader.get().getOrganizationLevel(), leader.get().getLocation(), leader.get().getCategory());
 
             if (suggestions.isEmpty()) {
-                throw new NotFoundException(String.format("No suggestions found in %s and category: %s",
-                        leader.get().getLocation(), leader.get().getCategory()));
+                NotFoundResponse response = NotFoundResponse.builder()
+                        .message(String.format("No suggestions found in %s and category: %s",
+                                leader.get().getLocation(), leader.get().getCategory()))
+                        .build();
+                return ApiResponse.builder()
+                        .data(response)
+                        .success(true)
+                        .build();
             }
 
             return ApiResponse.builder()
@@ -294,7 +327,12 @@ public class SuggestionServiceImpl implements SuggestionService {
             // get the suggestion
             Optional<Suggestions> suggestion = suggestionRepository.findById(id);
             if (!suggestion.isPresent()) {
-                throw new NotFoundException("Suggestion " + id + " not found!");
+                NotFoundResponse response = NotFoundResponse.builder()
+                        .message("Suggestion " + id + " not found!").build();
+                return ApiResponse.builder()
+                        .data(response)
+                        .success(true)
+                        .build();
             }
 
             // check the owner
@@ -324,7 +362,12 @@ public class SuggestionServiceImpl implements SuggestionService {
             // get the suggestion
             Optional<Suggestions> suggestion = suggestionRepository.findById(id);
             if (!suggestion.isPresent()) {
-                throw new NotFoundException("Suggestion " + id + " not found!");
+                NotFoundResponse response = NotFoundResponse.builder()
+                        .message("Suggestion " + id + " not found!").build();
+                return ApiResponse.builder()
+                        .data(response)
+                        .success(true)
+                        .build();
             }
 
             return ApiResponse.builder().data(suggestion).success(true).build();

@@ -15,6 +15,7 @@ import com.backend.proj.repositories.LeaderRepository;
 import com.backend.proj.repositories.OtpRepository;
 import com.backend.proj.repositories.UserRepository;
 import com.backend.proj.response.ApiResponse;
+import com.backend.proj.response.NotFoundResponse;
 import com.backend.proj.response.UserResponse;
 import com.backend.proj.utils.GetLoggedUser;
 
@@ -37,7 +38,7 @@ public class LeaderServiceImpl implements LeaderService {
     private final PasswordEncoder passwordEncoder;
     private final OtpRepository otpRepository;
 
-//    @PreAuthorize("hasRole('ADMIN')")
+    // @PreAuthorize("hasRole('ADMIN')")
     @Override
     public ApiResponse<Object> registerNewLeader(RegisterLeaderDto dto) throws Exception {
         try {
@@ -45,7 +46,6 @@ public class LeaderServiceImpl implements LeaderService {
             if (userResponse.getRole() != URole.ADMIN && userResponse.getRole() != URole.UMUYOBOZI) {
                 throw new UnauthorisedException("You are not allowed to perform this action!");
             }
-
 
             if (!userResponse.isVerified()) {
                 throw new UnauthorisedException("Verify the account to continue please!");
@@ -118,7 +118,7 @@ public class LeaderServiceImpl implements LeaderService {
         }
     }
 
-    //this is to get all leaders
+    // this is to get all leaders
 
     @Override
     public ApiResponse<Object> getLeaders() throws Exception {
@@ -128,7 +128,13 @@ public class LeaderServiceImpl implements LeaderService {
 
             // Check if the list is empty
             if (userLeaderPairs.isEmpty()) {
-                throw new NotFoundException("No leaders found in the system!");
+                NotFoundResponse response = NotFoundResponse.builder()
+                        .message("No leaders found!")
+                        .build();
+                return ApiResponse.builder()
+                        .data(response)
+                        .success(true)
+                        .build();
             }
 
             // Process the list of pairs to extract leaders and users
@@ -159,8 +165,7 @@ public class LeaderServiceImpl implements LeaderService {
         }
     }
 
-
-    //this is to delete the leader
+    // this is to delete the leader
     @Override
     public ApiResponse<Object> deleteLeader(Long id) throws Exception {
         try {
@@ -180,19 +185,32 @@ public class LeaderServiceImpl implements LeaderService {
             Optional<Leaders> optionalLeader = leaderRepository.findById(id);
 
             if (optionalLeader.isEmpty()) {
-                throw new NotFoundException("Leader not found with ID: " + id);
+                NotFoundResponse response = NotFoundResponse.builder()
+                        .message("Leader not found with ID: "
+                                + id)
+                        .build();
+                return ApiResponse.builder()
+                        .data(response)
+                        .success(true)
+                        .build();
             }
 
             Leaders leader = optionalLeader.get();
             Optional<User> optionalUser = userRepository.findByNationalId(leader.getNationalId());
             if (optionalUser.isEmpty()) {
-                throw new NotFoundException("User not found with national ID: " + leader.getNationalId());
+                NotFoundResponse response = NotFoundResponse.builder()
+                        .message("User not found with national ID: " + leader
+                                .getNationalId())
+                        .build();
+                return ApiResponse.builder()
+                        .data(response)
+                        .success(true)
+                        .build();
             }
             User user = optionalUser.get();
             user.setRole(URole.UMUTURAGE);
             // Save the updated user
             userRepository.save(user);
-
 
             // Delete the leader from the database
             leaderRepository.delete(leader);
@@ -208,7 +226,6 @@ public class LeaderServiceImpl implements LeaderService {
             throw new Exception("Internal server error...");
         }
     }
-
 
     @Override
     public ApiResponse<Object> updateLeader(UpdateLeaderDto dto, Long id) throws Exception {
@@ -228,14 +245,28 @@ public class LeaderServiceImpl implements LeaderService {
             // Retrieve the leader by ID
             Optional<Leaders> optionalLeader = leaderRepository.findById(id);
             if (optionalLeader.isEmpty()) {
-                throw new NotFoundException("Leader not found with ID: " + id);
+                NotFoundResponse response = NotFoundResponse.builder()
+                        .message("Leader not found with ID: "
+                                + id)
+                        .build();
+                return ApiResponse.builder()
+                        .data(response)
+                        .success(true)
+                        .build();
             }
             Leaders leader = optionalLeader.get();
 
             // Retrieve the user by nationalId
             Optional<User> optionalUser = userRepository.findByNationalId(leader.getNationalId());
             if (optionalUser.isEmpty()) {
-                throw new NotFoundException("User not found with national ID: " + leader.getNationalId());
+                NotFoundResponse response = NotFoundResponse.builder()
+                        .message("User not found with national ID: " + leader
+                                .getNationalId())
+                        .build();
+                return ApiResponse.builder()
+                        .data(response)
+                        .success(true)
+                        .build();
             }
             User user = optionalUser.get();
 
@@ -252,7 +283,7 @@ public class LeaderServiceImpl implements LeaderService {
             leaderRepository.save(leader);
 
             return ApiResponse.builder()
-                    .data(leader + " Was deleted successfully!" )
+                    .data(leader + " Was deleted successfully!")
                     .success(true)
                     .build();
         } catch (BadRequestException | NotFoundException | UnauthorisedException e) {
@@ -262,9 +293,6 @@ public class LeaderServiceImpl implements LeaderService {
             throw new Exception("Internal server error...");
         }
     }
-
-
-
 
     // this is the function to convert dto to entity
     private Leaders convertDtoToEntity(RegisterLeaderDto dto) {
@@ -277,7 +305,7 @@ public class LeaderServiceImpl implements LeaderService {
         leaders.setOrganizationLevel(dto.getOrganizationLevel());
         leaders.setVerified(false);
         leaders.setRole(URole.UMUYOBOZI);
-//        leaders.setPhoneNumber(dto.getPhoneNumber());
+        // leaders.setPhoneNumber(dto.getPhoneNumber());
 
         return leaders;
     }

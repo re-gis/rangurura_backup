@@ -10,6 +10,7 @@ import com.backend.proj.exceptions.ServiceException;
 import com.backend.proj.repositories.EventRepository;
 import com.backend.proj.response.ApiResponse;
 import com.backend.proj.response.EventsResponse;
+import com.backend.proj.response.NotFoundResponse;
 import com.backend.proj.response.UserResponse;
 import com.backend.proj.utils.GetLoggedUser;
 import lombok.Builder;
@@ -20,7 +21,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-
 @Service
 @Builder
 @RequiredArgsConstructor
@@ -29,17 +29,16 @@ public class EventServiceImpl implements EventsService {
     private final GetLoggedUser getLoggedUser;
     private final EventRepository eventRepository;
 
-
     @Override
     public ApiResponse<Object> createAEvent(CreateEventsDto dto) throws Exception {
         try {
-            //this is to get logged user
+            // this is to get logged user
             UserResponse user = getLoggedUser.getLoggedUser();
             // Validate the input DTO
             validateInput(dto);
 
             // Convert DTO to entity
-            Events eventEntity = convertDtoToEntity(dto,user);
+            Events eventEntity = convertDtoToEntity(dto, user);
 
             // Save the event to the repository
             Events savedEvent = eventRepository.save(eventEntity);
@@ -71,8 +70,7 @@ public class EventServiceImpl implements EventsService {
         }
     }
 
-    private Events convertDtoToEntity(CreateEventsDto dto,UserResponse user) {
-
+    private Events convertDtoToEntity(CreateEventsDto dto, UserResponse user) {
 
         // Implement logic to convert DTO to Entity
         Events events = new Events();
@@ -87,11 +85,10 @@ public class EventServiceImpl implements EventsService {
         events.setCategory(dto.getCategory());
         events.setOwner(user.getNationalId());
 
-
         return events;
     }
 
-    //the logic to update the event
+    // the logic to update the event
     @Override
     public ApiResponse<Object> updateMyEvent(UpdateEventDto dto, Long id) throws Exception {
         try {
@@ -104,7 +101,13 @@ public class EventServiceImpl implements EventsService {
             Events[] events = eventRepository.findAllByOwner(user.getNationalId());
 
             if (events.length == 0) {
-                throw new NotFoundException("No Events found for user: " + user.getName());
+                NotFoundResponse response = NotFoundResponse.builder()
+                        .message("No events found for user: " + user.getName())
+                        .build();
+                return ApiResponse.builder()
+                        .data(response)
+                        .success(true)
+                        .build();
             }
 
             // Find the event to update
@@ -113,14 +116,22 @@ public class EventServiceImpl implements EventsService {
                     .findFirst();
 
             if (eventToUpdate.isEmpty()) {
-                throw new NotFoundException("Event " + id + " not found!");
+                NotFoundResponse response = NotFoundResponse.builder()
+                        .message("Event " + id
+                                + " not found!")
+                        .build();
+                return ApiResponse.builder()
+                        .data(response)
+                        .success(true)
+                        .build();
             }
 
             // Now you have the event to update (eventToUpdate.get())
             Events existingEvent = eventToUpdate.get();
             // Perform the update using data from the DTO
             existingEvent.setEventName(dto.getEventName());
-            existingEvent.setOrganizationLevel(dto.getOrganizationLevel());;
+            existingEvent.setOrganizationLevel(dto.getOrganizationLevel());
+            ;
             existingEvent.setCategory(dto.getCategory());
             existingEvent.setLocation(dto.getLocation());
             existingEvent.setStartDate(dto.getStartDate());
@@ -132,18 +143,17 @@ public class EventServiceImpl implements EventsService {
             // Save the updated event
             Events updatedEvent = eventRepository.save(existingEvent);
 
-           if(updatedEvent!=null){
-               EventsResponse response = new EventsResponse();
-               response.setMessage("Announcement updated successfully");
-               response.setEvents(updatedEvent);
-               return ApiResponse.builder()
-                       .data(response)
-                       .success(true)
-                       .build();
-           } else {
-               throw new ServiceException("Failed to update announcement!");
-           }
-
+            if (updatedEvent != null) {
+                EventsResponse response = new EventsResponse();
+                response.setMessage("Announcement updated successfully");
+                response.setEvents(updatedEvent);
+                return ApiResponse.builder()
+                        .data(response)
+                        .success(true)
+                        .build();
+            } else {
+                throw new ServiceException("Failed to update announcement!");
+            }
 
         } catch (NotFoundException e) {
             throw new NotFoundException(e.getMessage());
@@ -154,7 +164,8 @@ public class EventServiceImpl implements EventsService {
             throw new Exception("Internal server error...");
         }
     }
-    //this is to delete my events
+
+    // this is to delete my events
     @Override
     public ApiResponse<Object> deleteMyEvent(Long id) throws Exception {
         try {
@@ -168,7 +179,14 @@ public class EventServiceImpl implements EventsService {
 
             // Check if the event exists
             if (eventToDelete.isEmpty()) {
-                throw new NotFoundException("Event with id " + id + " not found!");
+                NotFoundResponse response = NotFoundResponse.builder()
+                        .message("Event " + id
+                                + " not found!")
+                        .build();
+                return ApiResponse.builder()
+                        .data(response)
+                        .success(true)
+                        .build();
             }
 
             // Check if the logged user is the owner of the event
@@ -202,7 +220,13 @@ public class EventServiceImpl implements EventsService {
 
             // Check if the list is empty
             if (recentEvents.isEmpty()) {
-                throw new NotFoundException("No events found in your system!");
+                NotFoundResponse response = NotFoundResponse.builder()
+                        .message("No events found in your system!")
+                        .build();
+                return ApiResponse.builder()
+                        .data(response)
+                        .success(true)
+                        .build();
             }
 
             // You can further process the list of events as needed
@@ -219,7 +243,7 @@ public class EventServiceImpl implements EventsService {
         }
     }
 
-    //this is to receive the events from our leaders
+    // this is to receive the events from our leaders
     @Override
     public ApiResponse<Object> receivedEvent() throws Exception {
         try {
@@ -235,10 +259,15 @@ public class EventServiceImpl implements EventsService {
 
             // Check if the list is empty
             if (receivedEvents.isEmpty()) {
-                throw new NotFoundException("No events found for the user!");
+                NotFoundResponse response = NotFoundResponse.builder()
+                        .message("No events found for the user!")
+                        .build();
+                return ApiResponse.builder()
+                        .data(response)
+                        .success(true)
+                        .build();
             }
 
-            // You can further process the list of events as needed
 
             return ApiResponse.builder()
                     .data(receivedEvents)

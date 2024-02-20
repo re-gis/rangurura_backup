@@ -21,6 +21,7 @@ import com.backend.proj.exceptions.NotFoundException;
 import com.backend.proj.repositories.OtpRepository;
 import com.backend.proj.repositories.UserRepository;
 import com.backend.proj.response.ApiResponse;
+import com.backend.proj.response.NotFoundResponse;
 import com.backend.proj.response.UserResponse;
 import com.backend.proj.Services.UserService;
 import com.backend.proj.utils.GetLoggedUser;
@@ -183,7 +184,7 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
-    //this is to get admins
+    // this is to get admins
     @Override
     public ApiResponse<Object> getAdmins() throws Exception {
         try {
@@ -193,7 +194,14 @@ public class UserServiceImpl implements UserService {
 
             // Check if the list is empty
             if (leaders.isEmpty()) {
-                throw new NotFoundException("No admins found in system!");
+                NotFoundResponse response = NotFoundResponse.builder()
+                        .message(
+                                "No admins found in system!")
+                        .build();
+                return ApiResponse.builder()
+                        .data(response)
+                        .success(true)
+                        .build();
             }
 
             // You can further process the list of events as needed
@@ -209,7 +217,6 @@ public class UserServiceImpl implements UserService {
             throw new Exception("Internal server error...");
         }
     }
-
 
     // this is to update the user details
     @Override

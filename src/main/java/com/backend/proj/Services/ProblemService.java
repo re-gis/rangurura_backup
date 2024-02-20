@@ -10,7 +10,7 @@ public interface ProblemService {
 
     public Object getMyAskedProblems() throws Exception;
 
-    public String deleteQuestion(Long id) throws Exception;
+    public ApiResponse<Object> deleteQuestion(Long id) throws Exception;
 
     public ApiResponse<Object> updateMyProblem(UpdateProblemDto dto, Long id) throws Exception;
 

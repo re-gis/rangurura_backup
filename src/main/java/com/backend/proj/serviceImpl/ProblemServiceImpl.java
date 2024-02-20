@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import com.backend.proj.response.ApiResponse;
+import com.backend.proj.response.NotFoundResponse;
 import com.backend.proj.response.ProblemResponse;
 import com.backend.proj.response.UserResponse;
 import com.backend.proj.utils.GetLoggedUser;
@@ -104,16 +105,26 @@ public class ProblemServiceImpl implements ProblemService {
     }
 
     @Override
-    public Problem[] getMyAskedProblems() throws Exception {
+    public ApiResponse<Object> getMyAskedProblems() throws Exception {
         try {
             UserResponse user = getLoggedUser.getLoggedUser();
             // get problems I own
             Problem[] problems = problemRepository.findAllByOwner(user.getNationalId());
             if (problems.length == 0) {
-                throw new NotFoundException("No problems found for user: " + user.getName());
+                NotFoundResponse response = NotFoundResponse.builder()
+                        .message("No problems found for user: " + user
+                                .getName())
+                        .build();
+                return ApiResponse.builder()
+                        .data(response)
+                        .success(true)
+                        .build();
             }
 
-            return problems;
+            return ApiResponse.builder()
+                    .data(problems)
+                    .success(true)
+                    .build();
         } catch (NotFoundException e) {
             throw new NotFoundException(e.getMessage());
         } catch (Exception e) {
@@ -122,13 +133,20 @@ public class ProblemServiceImpl implements ProblemService {
     }
 
     @Override
-    public String deleteQuestion(Long id) throws Exception {
+    public ApiResponse<Object> deleteQuestion(Long id) throws Exception {
         try {
             UserResponse user = getLoggedUser.getLoggedUser();
             // find the problem of the logged user to be deleted
             Problem[] problems = problemRepository.findAllByOwner(user.getNationalId());
             if (problems.length == 0) {
-                throw new NotFoundException("No problems found for user: " + user.getName());
+                NotFoundResponse response = NotFoundResponse.builder()
+                        .message("No problems found for user: " + user
+                                .getName())
+                        .build();
+                return ApiResponse.builder()
+                        .data(response)
+                        .success(true)
+                        .build();
             }
 
             if (id == null) {
@@ -141,12 +159,19 @@ public class ProblemServiceImpl implements ProblemService {
                     .findFirst();
 
             if (problemToDelete.isEmpty()) {
-                throw new NotFoundException("Problem " + id + " not found!");
+                NotFoundResponse response = NotFoundResponse.builder()
+                        .message("Problem " + id
+                                + " not found!")
+                        .build();
+                return ApiResponse.builder()
+                        .data(response)
+                        .success(true)
+                        .build();
             }
 
             problemRepository.delete(problemToDelete.get());
 
-            return "Problem " + id + " deleted successfully!";
+            return ApiResponse.builder().data("Problem " + id + " deleted successfully!").build();
         } catch (BadRequestException e) {
             throw new BadRequestException("Problem id is required!");
         } catch (NotFoundException e) {
@@ -168,14 +193,28 @@ public class ProblemServiceImpl implements ProblemService {
             // get the problem by user and id
             Problem[] problems = problemRepository.findAllByOwner(user.getNationalId());
             if (problems.length == 0) {
-                throw new NotFoundException("No problems found for user: " + user.getName());
+                NotFoundResponse response = NotFoundResponse.builder()
+                        .message("No problems found for user: " + user
+                                .getName())
+                        .build();
+                return ApiResponse.builder()
+                        .data(response)
+                        .success(true)
+                        .build();
             }
             Optional<Problem> problemToUpdate = Arrays.stream(problems)
                     .filter(problem -> problem.getId().equals(id))
                     .findFirst();
 
             if (problemToUpdate.isEmpty()) {
-                throw new NotFoundException("Problem " + id + " not found!");
+                NotFoundResponse response = NotFoundResponse.builder()
+                        .message("Problem " + id
+                                + " not found!")
+                        .build();
+                return ApiResponse.builder()
+                        .data(response)
+                        .success(true)
+                        .build();
             }
 
             Problem problem = problemToUpdate.get();
@@ -237,14 +276,28 @@ public class ProblemServiceImpl implements ProblemService {
             // get the leader
             Optional<Leaders> leader = leaderRepository.findByNationalId(user.getNationalId());
             if (!leader.isPresent()) {
-                throw new NotFoundException("Leader not found!");
+                NotFoundResponse response = NotFoundResponse.builder()
+                        .message(
+                                "Leader not found!")
+                        .build();
+                return ApiResponse.builder()
+                        .data(response)
+                        .success(true)
+                        .build();
             }
 
             // get all the problems and filter them
             List<Problem> problems = problemRepository.findAllByUrwegoAndCategory(leader.get().getOrganizationLevel(),
                     leader.get().getCategory());
             if (problems.isEmpty()) {
-                throw new NotFoundException("No problems found!");
+                NotFoundResponse response = NotFoundResponse.builder()
+                        .message(
+                                "No problems found!")
+                        .build();
+                return ApiResponse.builder()
+                        .data(response)
+                        .success(true)
+                        .build();
             }
 
             List<Problem> filteredProblems = new ArrayList<>();
@@ -254,7 +307,15 @@ public class ProblemServiceImpl implements ProblemService {
                 // get the same user
                 Optional<User> userResponse = userRepository.findByNationalId(owner);
                 if (!userResponse.isPresent()) {
-                    throw new NotFoundException("Owner " + owner + " not found!");
+                    NotFoundResponse response = NotFoundResponse.builder()
+                            .message(
+                                    "Owner " + owner
+                                            + " not found!")
+                            .build();
+                    return ApiResponse.builder()
+                            .data(response)
+                            .success(true)
+                            .build();
                 }
 
                 // get the user's location same to that of the leader
@@ -289,13 +350,27 @@ public class ProblemServiceImpl implements ProblemService {
                         }
                         break;
                     default:
-                        throw new NotFoundException("No problems found in your location!");
+                        NotFoundResponse response = NotFoundResponse.builder()
+                                .message(
+                                        "No problems found in your location!")
+                                .build();
+                        return ApiResponse.builder()
+                                .data(response)
+                                .success(true)
+                                .build();
 
                 }
             }
 
             if (filteredProblems.isEmpty()) {
-                throw new NotFoundException("No problems found!");
+                NotFoundResponse response = NotFoundResponse.builder()
+                        .message(
+                                "No problems found!")
+                        .build();
+                return ApiResponse.builder()
+                        .data(response)
+                        .success(true)
+                        .build();
             }
 
             return ApiResponse.builder()
@@ -317,7 +392,15 @@ public class ProblemServiceImpl implements ProblemService {
         try {
             Optional<Problem> problem = problemRepository.findById(id);
             if (!problem.isPresent()) {
-                throw new NotFoundException("Problem " + id + " not found!");
+                NotFoundResponse response = NotFoundResponse.builder()
+                        .message(
+                                "Problem " + id
+                                        + " not found!")
+                        .build();
+                return ApiResponse.builder()
+                        .data(response)
+                        .success(true)
+                        .build();
             }
 
             return ApiResponse.builder()

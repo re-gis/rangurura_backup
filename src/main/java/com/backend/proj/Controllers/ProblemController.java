@@ -37,7 +37,7 @@ public class ProblemController {
     @GetMapping("/my/asked")
     public ResponseEntity<ApiResponse<Object>> getMyAskedProblems() throws Exception {
 
-        Problem[] problems = problemServiceImpl.getMyAskedProblems();
+        Object problems = problemServiceImpl.getMyAskedProblems();
         return ResponseHandler.success(problems, HttpStatus.OK);
 
     }
@@ -45,7 +45,7 @@ public class ProblemController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<ApiResponse<Object>> deleteMyProblem(@PathVariable("id") Long id) throws Exception {
 
-        String response = problemServiceImpl.deleteQuestion(id);
+        Object response = problemServiceImpl.deleteQuestion(id);
         return ResponseHandler.success(response, HttpStatus.OK);
 
     }
