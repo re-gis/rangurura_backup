@@ -56,19 +56,17 @@ public class ProblemServiceImpl implements ProblemService {
             String recordUrl = "null";
             String ikibazo = "null";
 
-            if (dto.getIkibazo() != null) {
+            if (dto.getIkibazo() != null && dto.getRecord() != null) {
+                ikibazo = dto.getIkibazo();
+                recordUrl = uploadDoc.uploadRecord(dto.getRecord());
+            } else if (dto.getIkibazo() != null) {
                 ikibazo = dto.getIkibazo();
             } else if (dto.getRecord() != null) {
-                recordUrl = uploadDoc.uploadRecord(dto.getRecord());
-            } else if (dto.getIkibazo() != null && dto.getRecord() != null) {
-                ikibazo = dto.getIkibazo();
                 recordUrl = uploadDoc.uploadRecord(dto.getRecord());
             } else {
                 throw new BadRequestException("At least a record or text is required!");
             }
 
-            System.out.println(recordUrl);
-            System.out.println(dto.getRecord());
             String docUrl = null;
             if (dto.getProof() != null) {
                 docUrl = uploadDoc.uploadDoc(dto.getProof());

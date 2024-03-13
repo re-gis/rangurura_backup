@@ -61,13 +61,13 @@ public class UserServiceImpl implements UserService {
                         .success(false)
                         .build();
             }
-
+            
             // send the message
             String o = otpServiceImpl.generateOtp(6);
             System.out.println(o);
             String message = "Your verification code to proj is: " + o;
             otpServiceImpl.sendMessage(dto.getPhoneNumber(), message);
-
+            
             Otp otp = new Otp();
             otp.setNumber(dto.getPhoneNumber());
             otp.setOtp(passwordEncoder.encode(o));
@@ -89,15 +89,15 @@ public class UserServiceImpl implements UserService {
             Optional<Otp> eOtp = otpRepository.findOneByNumber(dto.getPhoneNumber());
             if (eOtp.isPresent()) {
                 return ApiResponse.builder()
-                        .data("User already signed up, verify to continue...")
-                        .success(false)
-                        .build();
+                .data("User already signed up, verify to continue...")
+                .success(false)
+                .build();
             }
-
+            
             otpRepository.save(otp);
             userRepository.save(user);
             return ApiResponse.builder()
-                    .success(true)
+            .success(true)
                     .data("Urakoze kwiyandikisha muri proj! Ubu ushobora kwinjiramo ugatanga ikibazo cyawe!")
                     .build();
         } catch (BadRequestException e) {

@@ -15,5 +15,4 @@ import lombok.Setter;
 @Builder
 public class NotFoundResponse {
     private String message;
-    private boolean success;
 }
