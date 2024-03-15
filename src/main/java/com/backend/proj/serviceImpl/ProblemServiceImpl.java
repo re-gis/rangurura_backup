@@ -45,7 +45,7 @@ public class ProblemServiceImpl implements ProblemService {
     public ApiResponse<Object> createAProblem(CreateProblemDto dto) throws Exception {
         try {
             // get logged in user
-            UserResponse user = getLoggedUser.getLoggedUser();
+            // UserResponse user = getLoggedUser.getLoggedUser();
 
             if (dto.getCategory() == null || dto.getUrwego() == null || dto.getPhoneNumber() == null
                     || (dto.getIkibazo() == null && dto.getRecord() == null)) {
@@ -80,7 +80,7 @@ public class ProblemServiceImpl implements ProblemService {
                     .proofUrl(docUrl)
                     .recordUrl(recordUrl)
                     .status(EProblem_Status.PENDING)
-                    .owner(user.getNationalId())
+                    .owner(dto.getPhoneNumber())
                     .urwego(dto.getUrwego())
                     .build();
 
