@@ -22,4 +22,5 @@ public class CreateProblemDto {
     private MultipartFile proof;
     private MultipartFile record;
     private String nationalId;
+    private String target;
 }

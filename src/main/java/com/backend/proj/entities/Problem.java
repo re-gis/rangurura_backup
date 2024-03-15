@@ -29,6 +29,9 @@ public class Problem {
     @Enumerated(EnumType.STRING)
     private EUrwego urwego;
 
+    @Column(nullable=false)
+    private String target;
+
     @Column(nullable = false)
     private String phoneNumber;
 

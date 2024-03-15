@@ -82,6 +82,7 @@ public class ProblemServiceImpl implements ProblemService {
                     .status(EProblem_Status.PENDING)
                     .owner(dto.getNationalId())
                     .urwego(dto.getUrwego())
+                    .target(dto.getTarget())
                     .build();
 
             problemRepository.save(problem);
