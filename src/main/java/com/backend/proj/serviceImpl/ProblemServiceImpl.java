@@ -80,7 +80,7 @@ public class ProblemServiceImpl implements ProblemService {
                     .proofUrl(docUrl)
                     .recordUrl(recordUrl)
                     .status(EProblem_Status.PENDING)
-                    .owner(dto.getPhoneNumber())
+                    .owner(dto.getNationalId())
                     .urwego(dto.getUrwego())
                     .build();
 

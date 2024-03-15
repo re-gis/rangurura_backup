@@ -21,4 +21,5 @@ public class CreateProblemDto {
     private String phoneNumber;
     private MultipartFile proof;
     private MultipartFile record;
+    private String nationalId;
 }
