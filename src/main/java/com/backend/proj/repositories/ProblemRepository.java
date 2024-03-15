@@ -13,5 +13,7 @@ public interface ProblemRepository extends JpaRepository<Problem, Long> {
     Problem[] findAllByOwner(String owner_id);
 
     List<Problem> findAllByUrwegoAndCategory(EUrwego origanizationLevel, ECategory category);
+
+    List<Problem> findAllByUrwegoAndCategoryAndTarget(EUrwego organizationLevel, ECategory category, String location);
     
 }

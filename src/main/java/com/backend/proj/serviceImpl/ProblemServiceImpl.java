@@ -262,11 +262,12 @@ public class ProblemServiceImpl implements ProblemService {
         }
     }
 
-    @PreAuthorize("hasRole('UMUYOBOZI')")
+    // @PreAuthorize("hasRole('UMUYOBOZI')")
     @Override
     public ApiResponse<Object> getMyLocalProblems() throws Exception {
         try {
             UserResponse user = getLoggedUser.getLoggedUser();
+            System.out.println(user.getRole());
             // get the leader
             if (user.getRole() != URole.UMUYOBOZI) {
                 throw new UnauthorisedException("You are not authorised to perform this action!");
@@ -285,9 +286,19 @@ public class ProblemServiceImpl implements ProblemService {
                         .build();
             }
 
+            /**
+             * here after getting the leader I have to get the problems whose category ==
+             * leader.category || leader.category == "HEAD"
+             * 
+             * also the problems' urwego = leader.organizationLevel
+             * 
+             * also the problems' target = leader.location
+             */
+
             // get all the problems and filter them
-            List<Problem> problems = problemRepository.findAllByUrwegoAndCategory(leader.get().getOrganizationLevel(),
-                    leader.get().getCategory());
+            List<Problem> problems = problemRepository.findAllByUrwegoAndCategoryAndTarget(
+                    leader.get().getOrganizationLevel(),
+                    leader.get().getCategory(), leader.get().getLocation());
             if (problems.isEmpty()) {
                 NotFoundResponse response = NotFoundResponse.builder()
                         .message(
@@ -300,65 +311,67 @@ public class ProblemServiceImpl implements ProblemService {
             }
 
             List<Problem> filteredProblems = new ArrayList<>();
-            EUrwego urwego = leader.get().getOrganizationLevel();
+            // EUrwego urwego = leader.get().getOrganizationLevel();
             for (Problem problem : problems) {
-                String owner = problem.getOwner();
-                // get the same user
-                Optional<User> userResponse = userRepository.findByNationalId(owner);
-                if (!userResponse.isPresent()) {
-                    NotFoundResponse response = NotFoundResponse.builder()
-                            .message(
-                                    "Owner " + owner
-                                            + " not found!")
-                            .build();
-                    return ApiResponse.builder()
-                            .data(response)
-                            .success(true)
-                            .build();
-                }
+                filteredProblems.add(problem);
+                // System.out.println(problem.getId());
+                // String owner = problem.getOwner();
+                // // get the same user
+                // Optional<User> userResponse = userRepository.findByNationalId(owner);
+                // if (!userResponse.isPresent()) {
+                //     NotFoundResponse response = NotFoundResponse.builder()
+                //             .message(
+                //                     "Owner " + owner
+                //                             + " not found!")
+                //             .build();
+                //     return ApiResponse.builder()
+                //             .data(response)
+                //             .success(true)
+                //             .build();
+                // }
 
                 // get the user's location same to that of the leader
-                switch (urwego) {
-                    case AKAGARI:
-                        // check the user with the same akagari
-                        if (userResponse.get().getCell() == leader.get().getLocation()) {
-                            filteredProblems.add(problem);
-                        }
-                        break;
-                    case INTARA:
-                        if (userResponse.get().getProvince() == leader.get().getLocation()) {
-                            filteredProblems.add(problem);
-                        }
-                        break;
+                // switch (urwego) {
+                // case AKAGARI:
+                // // check the user with the same akagari
+                // if (userResponse.get().getCell() == leader.get().getLocation()) {
+                // filteredProblems.add(problem);
+                // }
+                // break;
+                // case INTARA:
+                // if (userResponse.get().getProvince() == leader.get().getLocation()) {
+                // filteredProblems.add(problem);
+                // }
+                // break;
 
-                    case AKARERE:
-                        if (userResponse.get().getProvince() == leader.get().getLocation()) {
-                            filteredProblems.add(problem);
-                        }
-                        break;
+                // case AKARERE:
+                // if (userResponse.get().getProvince() == leader.get().getLocation()) {
+                // filteredProblems.add(problem);
+                // }
+                // break;
 
-                    case UMUDUGUDU:
-                        if (userResponse.get().getProvince() == leader.get().getLocation()) {
-                            filteredProblems.add(problem);
-                        }
-                        break;
+                // case UMUDUGUDU:
+                // if (userResponse.get().getProvince() == leader.get().getLocation()) {
+                // filteredProblems.add(problem);
+                // }
+                // break;
 
-                    case UMURENGE:
-                        if (userResponse.get().getProvince() == leader.get().getLocation()) {
-                            filteredProblems.add(problem);
-                        }
-                        break;
-                    default:
-                        NotFoundResponse response = NotFoundResponse.builder()
-                                .message(
-                                        "No problems found in your location!")
-                                .build();
-                        return ApiResponse.builder()
-                                .data(response)
-                                .success(true)
-                                .build();
+                // case UMURENGE:
+                // if (userResponse.get().getProvince() == leader.get().getLocation()) {
+                // filteredProblems.add(problem);
+                // }
+                // break;
+                // default:
+                // NotFoundResponse response = NotFoundResponse.builder()
+                // .message(
+                // "No problems found in your location!")
+                // .build();
+                // return ApiResponse.builder()
+                // .data(response)
+                // .success(true)
+                // .build();
 
-                }
+                // }
             }
 
             if (filteredProblems.isEmpty()) {
