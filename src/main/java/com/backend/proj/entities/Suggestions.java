@@ -25,16 +25,16 @@ public class Suggestions {
     @Column(nullable = false)
     private String nationalId;
 
-    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private EUrwego urwego;
 
     @Column(nullable = false)
     private String location;
 
-    @Column
-    private String upperLevel;
+    @Enumerated(EnumType.STRING)
+    private EUrwego upperLevel;
 
-    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private ECategory category;
 
     @Column(nullable = false)

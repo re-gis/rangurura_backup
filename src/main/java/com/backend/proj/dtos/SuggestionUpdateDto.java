@@ -12,7 +12,6 @@ public class SuggestionUpdateDto {
     private String nationalId;
     private EUrwego urwego;
     private String location;
-    private String upperLevel;
     private ECategory category;
     private String igitekerezo;
     private ESuggestion status;

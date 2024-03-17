@@ -267,7 +267,6 @@ public class ProblemServiceImpl implements ProblemService {
     public ApiResponse<Object> getMyLocalProblems() throws Exception {
         try {
             UserResponse user = getLoggedUser.getLoggedUser();
-            System.out.println(user.getRole());
             // get the leader
             if (user.getRole() != URole.UMUYOBOZI) {
                 throw new UnauthorisedException("You are not authorised to perform this action!");
@@ -319,15 +318,15 @@ public class ProblemServiceImpl implements ProblemService {
                 // // get the same user
                 // Optional<User> userResponse = userRepository.findByNationalId(owner);
                 // if (!userResponse.isPresent()) {
-                //     NotFoundResponse response = NotFoundResponse.builder()
-                //             .message(
-                //                     "Owner " + owner
-                //                             + " not found!")
-                //             .build();
-                //     return ApiResponse.builder()
-                //             .data(response)
-                //             .success(true)
-                //             .build();
+                // NotFoundResponse response = NotFoundResponse.builder()
+                // .message(
+                // "Owner " + owner
+                // + " not found!")
+                // .build();
+                // return ApiResponse.builder()
+                // .data(response)
+                // .success(true)
+                // .build();
                 // }
 
                 // get the user's location same to that of the leader

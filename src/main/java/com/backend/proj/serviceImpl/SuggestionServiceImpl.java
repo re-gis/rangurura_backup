@@ -105,34 +105,31 @@ public class SuggestionServiceImpl implements SuggestionService {
                 eSuggestion.setPhoneNumber(dto.getPhoneNumber());
             }
 
+            EUrwego missingUrwego = null;
             if (dto.getUrwego() != null) {
                 if (dto.getUrwego() == EUrwego.AKARERE || dto.getUrwego() == EUrwego.INTARA) {
                     // no prob about the upper level so
-                    eSuggestion.setUpperLevel("none");
+                    eSuggestion.setUpperLevel(EUrwego.INTARA);
                 }
 
-                if (dto.getUpperLevel() == null) {
-                    EUrwego missingUrwego = null;
-                    switch (dto.getUrwego()) {
-                        case AKAGARI:
-                            missingUrwego = EUrwego.UMURENGE;
-                            break;
-                        case UMURENGE:
-                            missingUrwego = EUrwego.AKAGARI;
-                            break;
-                        case UMUDUGUDU:
-                            missingUrwego = EUrwego.AKAGARI;
-                            break;
-                        default:
-                            throw new BadRequestException(String.format("%s level is not found!", dto.getUrwego()));
-                    }
-                    throw new BadRequestException("Which " + missingUrwego + " is " + dto.getLocation() + " located!");
+                switch (dto.getUrwego()) {
+                    case AKAGARI:
+                        missingUrwego = EUrwego.UMURENGE;
+                        break;
+                    case UMURENGE:
+                        missingUrwego = EUrwego.AKAGARI;
+                        break;
+                    case UMUDUGUDU:
+                        missingUrwego = EUrwego.AKAGARI;
+                        break;
+                    default:
+                        throw new BadRequestException(String.format("%s level is not found!", dto.getUrwego()));
                 }
-
-                // update the upper level
-                eSuggestion.setUrwego(dto.getUrwego());
-                eSuggestion.setUpperLevel(dto.getUpperLevel());
             }
+
+            // update the upper level
+            eSuggestion.setUrwego(dto.getUrwego());
+            eSuggestion.setUpperLevel(missingUrwego);
 
             Suggestions updatedSuggestion = suggestionRepository.save(eSuggestion);
             return ApiResponse.builder()
@@ -232,6 +229,7 @@ public class SuggestionServiceImpl implements SuggestionService {
     public ApiResponse<Object> getMyLocalSuggestions() throws Exception {
         try {
             UserResponse user = getLoggedUser.getLoggedUser();
+            System.out.println(user.getRole());
             if (user.getRole() != URole.UMUYOBOZI) {
                 throw new UnauthorisedException("You are not authorised to perform this action!");
             }
@@ -242,8 +240,16 @@ public class SuggestionServiceImpl implements SuggestionService {
             }
 
             // get the suggestions zaho ayoboye
+            System.out.println(leader.get().getOrganizationLevel());
+            System.out.println(leader.get().getLocation());
+            System.out.println(leader.get().getCategory());
+            System.out.println();
             List<Suggestions> suggestions = suggestionRepository.findAllByUrwegoAndLocationAndCategory(
                     leader.get().getOrganizationLevel(), leader.get().getLocation(), leader.get().getCategory());
+
+            for (Suggestions suggestion : suggestions) {
+                System.out.println(suggestion.getId());
+            }
 
             if (suggestions.isEmpty()) {
                 NotFoundResponse response = NotFoundResponse.builder()
@@ -265,6 +271,7 @@ public class SuggestionServiceImpl implements SuggestionService {
         } catch (NotFoundException e) {
             throw new NotFoundException(e.getMessage());
         } catch (Exception e) {
+            System.out.println();
             throw new Exception(e.getMessage());
         }
     }
@@ -286,26 +293,23 @@ public class SuggestionServiceImpl implements SuggestionService {
 
         EUrwego urwego = dto.getUrwego();
         if (urwego == EUrwego.AKARERE || urwego == EUrwego.INTARA) {
-            suggestions.setUpperLevel("none");
+            suggestions.setUpperLevel(EUrwego.INTARA);
         } else {
-            if (dto.getUpperLevel() == null) {
-                EUrwego missingUrwego = null;
-                switch (urwego) {
-                    case AKAGARI:
-                        missingUrwego = EUrwego.UMURENGE;
-                        break;
-                    case UMURENGE:
-                        missingUrwego = EUrwego.AKAGARI;
-                        break;
-                    case UMUDUGUDU:
-                        missingUrwego = EUrwego.AKAGARI;
-                        break;
-                    default:
-                        throw new BadRequestException(String.format("%s level is not found!", urwego));
-                }
-                throw new BadRequestException("Which " + missingUrwego + " is " + dto.getLocation() + " located!");
+            EUrwego missingUrwego = null;
+            switch (urwego) {
+                case AKAGARI:
+                    missingUrwego = EUrwego.UMURENGE;
+                    break;
+                case UMURENGE:
+                    missingUrwego = EUrwego.AKAGARI;
+                    break;
+                case UMUDUGUDU:
+                    missingUrwego = EUrwego.AKAGARI;
+                    break;
+                default:
+                    throw new BadRequestException(String.format("%s level is not found!", urwego));
             }
-            suggestions.setUpperLevel(dto.getUpperLevel());
+            suggestions.setUpperLevel(missingUrwego);
         }
 
         suggestions.setNationalId(dto.getNationalId());
