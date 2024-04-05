@@ -62,4 +62,9 @@ public class UserController {
         return ResponseHandler.success(ob, HttpStatus.OK);
 
     }
+
+    @GetMapping("/all")
+    public ResponseEntity<ApiResponse<Object>> getAllUsers()throws Exception{
+        return ResponseHandler.success(userServiceImpl.getAllUsers().getData(), HttpStatus.OK);
+    }
 }

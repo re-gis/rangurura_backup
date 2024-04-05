@@ -16,10 +16,6 @@ public interface UserService {
 
     //this is to update the user details
     ApiResponse<Object> updateUser(UserUpdateDto dto) throws Exception;
-
-
-
-
-
+    ApiResponse<Object> getAllUsers() throws Exception;
 
 }

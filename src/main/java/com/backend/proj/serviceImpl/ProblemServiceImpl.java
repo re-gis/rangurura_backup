@@ -100,7 +100,7 @@ public class ProblemServiceImpl implements ProblemService {
             throw new BadRequestException(e.getMessage());
         } catch (Exception e) {
             System.out.println(e);
-            throw new Exception("Internal server error...");
+            throw new Exception(e.getMessage());
         }
     }
 
@@ -128,7 +128,7 @@ public class ProblemServiceImpl implements ProblemService {
         } catch (NotFoundException e) {
             throw new NotFoundException(e.getMessage());
         } catch (Exception e) {
-            throw new Exception("Internal server error...");
+            throw new Exception(e.getMessage());
         }
     }
 
@@ -178,7 +178,7 @@ public class ProblemServiceImpl implements ProblemService {
             throw new NotFoundException("No problems found!");
         } catch (Exception e) {
             System.out.println(e);
-            throw new Exception("Internal server error...");
+            throw new Exception(e.getMessage());
         }
     }
 
@@ -259,7 +259,7 @@ public class ProblemServiceImpl implements ProblemService {
             throw new BadRequestException(e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
-            throw new Exception("Internal server error...");
+            throw new Exception(e.getMessage());
         }
     }
 
@@ -395,7 +395,7 @@ public class ProblemServiceImpl implements ProblemService {
         } catch (UnauthorisedException e) {
             throw new UnauthorisedException(e.getMessage());
         } catch (Exception e) {
-            throw new Exception("Internal server error...");
+            throw new Exception(e.getMessage());
         }
     }
 
@@ -423,7 +423,7 @@ public class ProblemServiceImpl implements ProblemService {
         } catch (NotFoundException e) {
             throw new NotFoundException(e.getMessage());
         } catch (Exception e) {
-            throw new Exception("Internal server error...");
+            throw new Exception(e.getMessage());
         }
     }
 
@@ -446,7 +446,7 @@ public class ProblemServiceImpl implements ProblemService {
                     .success(true)
                     .build();
         } catch (Exception e) {
-            throw new Exception("Internal server error...");
+            throw new Exception(e.getMessage());
         }
     }
 

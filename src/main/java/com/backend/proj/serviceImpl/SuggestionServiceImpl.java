@@ -64,7 +64,7 @@ public class SuggestionServiceImpl implements SuggestionService {
         } catch (BadRequestException e) {
             throw new BadRequestException(e.getMessage());
         } catch (Exception e) {
-            throw new Exception("Internal server error...");
+            throw new Exception(e.getMessage());
         }
     }
 
@@ -139,7 +139,7 @@ public class SuggestionServiceImpl implements SuggestionService {
                     .success(true)
                     .build();
         } catch (Exception e) {
-            throw new Exception("Internal server error...");
+            throw new Exception(e.getMessage());
         }
     }
 
@@ -170,7 +170,7 @@ public class SuggestionServiceImpl implements SuggestionService {
         } catch (NotFoundException e) {
             throw new NotFoundException(e.getMessage());
         } catch (Exception e) {
-            throw new Exception("Internal server error...");
+            throw new Exception(e.getMessage());
         }
     }
 
@@ -354,7 +354,7 @@ public class SuggestionServiceImpl implements SuggestionService {
         } catch (UnauthorisedException e) {
             throw new UnauthorisedException(e.getMessage());
         } catch (Exception e) {
-            throw new Exception("Internal server error...");
+            throw new Exception(e.getMessage());
         }
     }
 
@@ -374,7 +374,7 @@ public class SuggestionServiceImpl implements SuggestionService {
 
             return ApiResponse.builder().data(suggestion).success(true).build();
         } catch (Exception e) {
-            throw new Exception("Internal server error...");
+            throw new Exception(e.getMessage());
         }
     }
 
@@ -383,7 +383,7 @@ public class SuggestionServiceImpl implements SuggestionService {
         try {
             UserResponse user = getLoggedUser.getLoggedUser();
 
-            if (user.getRole() != URole.UMUYOBOZI) {
+            if (user.getRole() != URole.ADMIN) {
                 throw new UnauthorisedException("You are not allowed to perform this action!");
             }
 
@@ -408,7 +408,7 @@ public class SuggestionServiceImpl implements SuggestionService {
 
         } catch (Exception e) {
             System.out.println(e);
-            throw new Exception("Internal server error...");
+            throw new Exception(e.getMessage());
         }
     }
 }

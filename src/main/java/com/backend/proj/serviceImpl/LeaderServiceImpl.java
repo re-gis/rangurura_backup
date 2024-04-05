@@ -62,7 +62,7 @@ public class LeaderServiceImpl implements LeaderService {
                 savedLeader = leaderRepository.save(leaderEntity);
                 userRepository.save(euser.get());
                 if (savedLeader == null) {
-                    throw new Exception("Internal server error...");
+                    throw new Exception("Error while saving the user...");
                 }
             } else {
                 // there is no user so create the user and leader
@@ -73,7 +73,6 @@ public class LeaderServiceImpl implements LeaderService {
                             "Since the leader is new to system, your all credentials and location information...");
                 }
                 String o = otpServiceImpl.generateOtp(6);
-                System.out.println(o);
                 String message = "Your verification code to proj is: " + o
                         + "\n and you are now registered as a leader of " + dto.getLocation();
                 otpServiceImpl.sendMessage(dto.getPhoneNumber(), message);
@@ -102,7 +101,7 @@ public class LeaderServiceImpl implements LeaderService {
                 Leaders leaderEntity = convertDtoToEntity(dto);
                 savedLeader = leaderRepository.save(leaderEntity);
                 if (savedLeader == null) {
-                    throw new Exception("Internal server error...");
+                    throw new Exception("Error while saving the leader...");
                 }
 
             }
@@ -116,7 +115,7 @@ public class LeaderServiceImpl implements LeaderService {
         } catch (BadRequestException e) {
             throw new BadRequestException(e.getMessage());
         } catch (Exception e) {
-            throw new Exception("Internal server error...");
+            throw new Exception(e.getMessage());
         }
     }
 
@@ -163,7 +162,7 @@ public class LeaderServiceImpl implements LeaderService {
             throw e;
         } catch (Exception e) {
             e.printStackTrace();
-            throw new Exception("Internal server error...");
+            throw new Exception(e.getMessage());
         }
     }
 
@@ -225,7 +224,7 @@ public class LeaderServiceImpl implements LeaderService {
             throw e; // Re-throw the known exceptions
         } catch (Exception e) {
             e.printStackTrace();
-            throw new Exception("Internal server error...");
+            throw new Exception(e.getMessage());
         }
     }
 
@@ -292,7 +291,7 @@ public class LeaderServiceImpl implements LeaderService {
             throw e; // Re-throw the known exceptions
         } catch (Exception e) {
             e.printStackTrace();
-            throw new Exception("Internal server error...");
+            throw new Exception(e.getMessage());
         }
     }
 
@@ -333,7 +332,7 @@ public class LeaderServiceImpl implements LeaderService {
                     .status(HttpStatus.OK)
                     .build();
         } catch (Exception e) {
-            throw new Exception("Internal server error...");
+            throw new Exception(e.getMessage());
         }
     }
 

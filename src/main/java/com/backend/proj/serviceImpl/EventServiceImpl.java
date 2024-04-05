@@ -162,7 +162,7 @@ public class EventServiceImpl implements EventsService {
             throw new BadRequestException(e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
-            throw new Exception("Internal server error...");
+            throw new Exception(e.getMessage());
         }
     }
 
@@ -207,7 +207,7 @@ public class EventServiceImpl implements EventsService {
             throw e;
         } catch (Exception e) {
             e.printStackTrace();
-            throw new Exception("Internal server error...");
+            throw new Exception(e.getMessage());
         }
     }
 
@@ -240,7 +240,7 @@ public class EventServiceImpl implements EventsService {
             throw e;
         } catch (Exception e) {
             e.printStackTrace();
-            throw new Exception("Internal server error...");
+            throw new Exception(e.getMessage());
         }
     }
 
@@ -278,7 +278,7 @@ public class EventServiceImpl implements EventsService {
             throw e;
         } catch (Exception e) {
             e.printStackTrace();
-            throw new Exception("Internal server error...");
+            throw new Exception(e.getMessage());
         }
     }
 

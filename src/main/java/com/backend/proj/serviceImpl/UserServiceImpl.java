@@ -1,10 +1,13 @@
 package com.backend.proj.serviceImpl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import com.backend.proj.dtos.UserUpdateDto;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,6 +22,7 @@ import com.backend.proj.enums.URole;
 import com.backend.proj.exceptions.BadRequestException;
 import com.backend.proj.exceptions.MessageSendingException;
 import com.backend.proj.exceptions.NotFoundException;
+import com.backend.proj.exceptions.UnauthorisedException;
 import com.backend.proj.repositories.OtpRepository;
 import com.backend.proj.repositories.UserRepository;
 import com.backend.proj.response.ApiResponse;
@@ -279,7 +283,7 @@ public class UserServiceImpl implements UserService {
             throw new NotFoundException(e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
-            throw new Exception("Internal server error ...");
+            throw new Exception(e.getMessage());
         }
     }
 
@@ -292,6 +296,51 @@ public class UserServiceImpl implements UserService {
             throw new BadRequestException("All update details are required!");
         }
 
+    }
+
+    @Override
+    public ApiResponse<Object> getAllUsers() throws Exception {
+        try {
+            UserResponse response = getLoggedUser.getLoggedUser();
+            if (response.getRole() != URole.ADMIN) {
+                throw new UnauthorisedException("You are not authorised to perform this action!");
+            }
+
+            List<User> users = userRepository.findAll();
+            if (users.isEmpty()) {
+                NotFoundResponse response2 = NotFoundResponse.builder()
+                        .message("No users found!")
+                        .build();
+                return ApiResponse.builder().success(true).data(response2).status(HttpStatus.OK).build();
+            }
+
+            List<UserResponse> responses = new ArrayList<>();
+            for (User user : users) {
+                UserResponse u = UserResponse.builder()
+                        .name(user.getRealName())
+                        .nationalId(user.getNationalId())
+                        .province(user.getProvince())
+                        .district(user.getDistrict())
+                        .sector(user.getSector())
+                        .cell(user.getCell())
+                        .village(user.getVillage())
+                        .phoneNumber(user.getPhone())
+                        .role(user.getRole())
+                        .isVerified(user.isVerified())
+                        .build();
+
+                responses.add(u);
+            }
+
+            return ApiResponse.builder()
+                    .data(responses)
+                    .success(true)
+                    .status(HttpStatus.OK)
+                    .build();
+        } catch (Exception e) {
+            System.out.println(e);
+            throw new Exception(e.getMessage());
+        }
     }
 
 }
