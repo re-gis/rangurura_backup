@@ -47,10 +47,11 @@ public class ProblemServiceImpl implements ProblemService {
             // get logged in user
             // UserResponse user = getLoggedUser.getLoggedUser();
 
-            if (dto.getCategory() == null || dto.getUrwego() == null || dto.getPhoneNumber() == null
+            if (dto.getCategory() == null || dto.getTarget() == null || dto.getUrwego() == null
+                    || dto.getPhoneNumber() == null
                     || (dto.getIkibazo() == null && dto.getRecord() == null)) {
                 throw new BadRequestException(
-                        "Vuga ikibazo cyawe byibuze ushyireho urwego na kategori yacyo na \'proof\' ubundi wohereze!");
+                        "Vuga ikibazo cyawe byibuze ushyireho urwego, kategori yacyo, aho kigenewe na \'proof\' ubundi wohereze!");
             }
 
             String recordUrl = "null";
@@ -132,7 +133,7 @@ public class ProblemServiceImpl implements ProblemService {
     }
 
     @Override
-    public ApiResponse<Object> deleteQuestion(Long id) throws Exception {
+    public ApiResponse<Object> deleteQuestion(UUID id) throws Exception {
         try {
             UserResponse user = getLoggedUser.getLoggedUser();
             // find the problem of the logged user to be deleted
@@ -182,7 +183,7 @@ public class ProblemServiceImpl implements ProblemService {
     }
 
     @Override
-    public ApiResponse<Object> updateMyProblem(UpdateProblemDto dto, Long id) throws Exception {
+    public ApiResponse<Object> updateMyProblem(UpdateProblemDto dto, UUID id) throws Exception {
         try {
             UserResponse user = getLoggedUser.getLoggedUser();
             if (id == null) {
@@ -399,7 +400,7 @@ public class ProblemServiceImpl implements ProblemService {
     }
 
     @Override
-    public ApiResponse<Object> getProblemById(Long id) throws Exception {
+    public ApiResponse<Object> getProblemById(UUID id) throws Exception {
         try {
             Optional<Problem> problem = problemRepository.findById(id);
             if (!problem.isPresent()) {

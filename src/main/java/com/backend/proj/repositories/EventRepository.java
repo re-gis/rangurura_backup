@@ -5,8 +5,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
-public interface EventRepository extends JpaRepository<Events , Long> {
+public interface EventRepository extends JpaRepository<Events , UUID> {
     Events[] findAllByOwner(String owner_id);
 
     @Query(value = "SELECT * FROM events WHERE (location = :village AND organization_level='UMUDUGUDU') OR " +
@@ -16,5 +18,9 @@ public interface EventRepository extends JpaRepository<Events , Long> {
             "(location = :province AND organization_level='INTARA')", nativeQuery = true)
     List<Events> findAllByLocationAttributesAndOrganizationLevel(
             String village, String sector, String cell, String district, String province);
+
+    Optional<Events> findById(UUID id);
+
+    void deleteById(UUID id);
 
 }

@@ -22,9 +22,11 @@ import com.backend.proj.utils.GetLoggedUser;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -167,7 +169,7 @@ public class LeaderServiceImpl implements LeaderService {
 
     // this is to delete the leader
     @Override
-    public ApiResponse<Object> deleteLeader(Long id) throws Exception {
+    public ApiResponse<Object> deleteLeader(UUID id) throws Exception {
         try {
             UserResponse userResponse = getLoggedUser.getLoggedUser();
 
@@ -228,7 +230,7 @@ public class LeaderServiceImpl implements LeaderService {
     }
 
     @Override
-    public ApiResponse<Object> updateLeader(UpdateLeaderDto dto, Long id) throws Exception {
+    public ApiResponse<Object> updateLeader(UpdateLeaderDto dto, UUID id) throws Exception {
         try {
             UserResponse userResponse = getLoggedUser.getLoggedUser();
 
@@ -308,6 +310,31 @@ public class LeaderServiceImpl implements LeaderService {
         // leaders.setPhoneNumber(dto.getPhoneNumber());
 
         return leaders;
+    }
+
+    @Override
+    public ApiResponse<Object> getLeaderById(UUID id) throws Exception {
+        try {
+            Optional<Leaders> leader = leaderRepository.findById(id);
+            if (leader.isEmpty()) {
+                NotFoundResponse response = NotFoundResponse.builder()
+                        .message("Leader " + id + " not found!")
+                        .build();
+                return ApiResponse.builder()
+                        .data(response)
+                        .status(HttpStatus.OK)
+                        .success(true)
+                        .build();
+            }
+
+            return ApiResponse.builder()
+                    .success(true)
+                    .data(leader)
+                    .status(HttpStatus.OK)
+                    .build();
+        } catch (Exception e) {
+            throw new Exception("Internal server error...");
+        }
     }
 
 }

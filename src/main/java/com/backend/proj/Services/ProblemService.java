@@ -1,5 +1,7 @@
 package com.backend.proj.Services;
 
+import java.util.UUID;
+
 import com.backend.proj.dtos.CreateProblemDto;
 import com.backend.proj.dtos.UpdateProblemDto;
 import com.backend.proj.enums.EProblem_Status;
@@ -10,13 +12,13 @@ public interface ProblemService {
 
     public Object getMyAskedProblems() throws Exception;
 
-    public ApiResponse<Object> deleteQuestion(Long id) throws Exception;
+    public ApiResponse<Object> deleteQuestion(UUID id) throws Exception;
 
-    public ApiResponse<Object> updateMyProblem(UpdateProblemDto dto, Long id) throws Exception;
+    public ApiResponse<Object> updateMyProblem(UpdateProblemDto dto, UUID id) throws Exception;
 
     public ApiResponse<Object> getMyLocalProblems() throws Exception;
 
-    public ApiResponse<Object> getProblemById(Long id) throws Exception;
+    public ApiResponse<Object> getProblemById(UUID id) throws Exception;
 
     public ApiResponse<Object> getProblemsByStatus(EProblem_Status status)throws Exception;
 }

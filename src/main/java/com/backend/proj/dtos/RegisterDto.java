@@ -24,4 +24,5 @@ public class RegisterDto {
     private String password;
     private String cpassword;
     private String phoneNumber; 
+    private String role;
 }

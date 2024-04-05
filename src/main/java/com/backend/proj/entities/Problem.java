@@ -6,6 +6,9 @@ import com.backend.proj.enums.EUrwego;
 
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.GenericGenerator;
+
+import java.util.UUID;
 
 import javax.persistence.*;
 
@@ -19,9 +22,10 @@ import javax.persistence.*;
 @Entity
 @Table(name = "problems")
 public class Problem {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+   @Id
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
+    private UUID id;
 
     @Enumerated(EnumType.STRING)
     private ECategory category;

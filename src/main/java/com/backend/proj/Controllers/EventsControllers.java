@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 import javax.validation.Valid;
 
 @RestController
@@ -27,7 +29,7 @@ public class EventsControllers {
     }
 
     @PutMapping("/update_event/{id}")
-    public ResponseEntity<ApiResponse<Object>> updateMyEvent(@PathVariable("id") Long id,
+    public ResponseEntity<ApiResponse<Object>> updateMyEvent(@PathVariable("id") UUID id,
             @RequestBody UpdateEventDto dto) throws Exception {
 
         Object ob = eventServiceImpl.updateMyEvent(dto, id).getData();
@@ -36,7 +38,7 @@ public class EventsControllers {
     }
 
     @DeleteMapping("/delete_event/{id}")
-    public ResponseEntity<ApiResponse<Object>> deleteMyEvent(@PathVariable("id") Long id) throws Exception {
+    public ResponseEntity<ApiResponse<Object>> deleteMyEvent(@PathVariable("id") UUID id) throws Exception {
 
         Object ob = eventServiceImpl.deleteMyEvent(id).getData();
         return ResponseHandler.success(ob, HttpStatus.OK);

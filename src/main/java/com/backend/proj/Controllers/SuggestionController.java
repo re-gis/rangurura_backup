@@ -7,6 +7,8 @@ import com.backend.proj.response.ApiResponse;
 import com.backend.proj.serviceImpl.SuggestionServiceImpl;
 import com.backend.proj.utils.ResponseHandler;
 
+import java.util.UUID;
+
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -43,7 +45,7 @@ public class SuggestionController {
 
     @PutMapping("/update/{id}")
     public ResponseEntity<ApiResponse<Object>> updateSuggestion(@RequestBody SuggestionUpdateDto dto,
-            @PathVariable("id") Long id) throws Exception {
+            @PathVariable("id") UUID id) throws Exception {
 
         return ResponseHandler.success(suggestionServiceImpl.UpdateSuggestion(dto, id).getData(), HttpStatus.OK);
 
@@ -65,17 +67,22 @@ public class SuggestionController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<ApiResponse<Object>> deleteMySuggestion(@PathVariable("id") Long id) throws Exception {
+    public ResponseEntity<ApiResponse<Object>> deleteMySuggestion(@PathVariable("id") UUID id) throws Exception {
 
         return ResponseHandler.success(suggestionServiceImpl.deleteMySuggestion(id).getData(), HttpStatus.OK);
 
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Object>> getSuggestionById(@PathVariable("id") Long id) throws Exception {
+    public ResponseEntity<ApiResponse<Object>> getSuggestionById(@PathVariable("id") UUID id) throws Exception {
 
         return ResponseHandler.success(suggestionServiceImpl.getSuggestionById(id).getData(), HttpStatus.OK);
 
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<ApiResponse<Object>> getAllIdeas()throws Exception {
+        return ResponseHandler.success(suggestionServiceImpl.getAllSuggestions().getData(), HttpStatus.OK);
     }
 
 }

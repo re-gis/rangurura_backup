@@ -2,6 +2,7 @@ package com.backend.proj.serviceImpl;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.backend.proj.dtos.UserUpdateDto;
 import org.springframework.security.core.Authentication;
@@ -57,17 +58,17 @@ public class UserServiceImpl implements UserService {
             Optional<User> euser = userRepository.findOneByPhone(dto.getPhoneNumber());
             if (eUser.isPresent() || euser.isPresent()) {
                 return ApiResponse.builder()
-                        .data("Indangamuntu cyangwa numero yawe isanzwe muri proj yihindure wongere ugerageze cyangwa winjire...")
+                        .data("Indangamuntu cyangwa numero yawe isanzwe muri Rangurura yihindure wongere ugerageze cyangwa winjire...")
                         .success(false)
                         .build();
             }
-            
+
             // send the message
             String o = otpServiceImpl.generateOtp(6);
             System.out.println(o);
-            String message = "Your verification code to proj is: " + o;
+            String message = "Your verification code to RANGURURA is: " + o;
             otpServiceImpl.sendMessage(dto.getPhoneNumber(), message);
-            
+
             Otp otp = new Otp();
             otp.setNumber(dto.getPhoneNumber());
             otp.setOtp(passwordEncoder.encode(o));
@@ -84,21 +85,35 @@ public class UserServiceImpl implements UserService {
             user.setSector(dto.getSector());
             user.setImageUrl("https://icon-library.com/images/no-user-image-icon/no-user-image-icon-0.jpg");
             user.setVerified(false);
-            user.setRole(URole.ADMIN);
+            System.out.println(dto.getRole());
+            if (dto.getRole() != null) {
+                switch (dto.getRole().toLowerCase()) {
+                    case "umuyobozi":
+                        user.setRole(URole.UMUYOBOZI);
+                        break;
+                    case "admin":
+                        user.setRole(URole.ADMIN);
+                        break;
+                    default:
+                        throw new BadRequestException("Role" + dto.getRole() + " not allowed!");
+                }
+            } else {
+                user.setRole(URole.UMUTURAGE);
+            }
             // save the otp and user
             Optional<Otp> eOtp = otpRepository.findOneByNumber(dto.getPhoneNumber());
             if (eOtp.isPresent()) {
                 return ApiResponse.builder()
-                .data("User already signed up, verify to continue...")
-                .success(false)
-                .build();
+                        .data("User already signed up, verify to continue...")
+                        .success(false)
+                        .build();
             }
-            
+
             otpRepository.save(otp);
             userRepository.save(user);
             return ApiResponse.builder()
-            .success(true)
-                    .data("Urakoze kwiyandikisha muri proj! Ubu ushobora kwinjiramo ugatanga ikibazo cyawe!")
+                    .success(true)
+                    .data("Urakoze kwiyandikisha muri Rangurura! Ubu ushobora kwinjiramo ugatanga ikibazo cyawe!")
                     .build();
         } catch (BadRequestException e) {
             throw new BadRequestException("All credentials are required!");
@@ -162,7 +177,7 @@ public class UserServiceImpl implements UserService {
 
     // //this is the function to find the id of the logged user
 
-    private Long getCurrentUserId() {
+    private UUID getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication != null && authentication.isAuthenticated()) {
@@ -222,7 +237,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public ApiResponse<Object> updateUser(UserUpdateDto dto) throws Exception {
         try {
-            Long loggedInUserId = getCurrentUserId();
+            UUID loggedInUserId = getCurrentUserId();
             System.out.println("The logged Id is " + loggedInUserId);
 
             if (loggedInUserId == null) {

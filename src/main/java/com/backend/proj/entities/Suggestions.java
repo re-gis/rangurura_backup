@@ -2,7 +2,11 @@ package com.backend.proj.entities;
 
 import lombok.*;
 
+import java.util.UUID;
+
 import javax.persistence.*;
+
+import org.hibernate.annotations.GenericGenerator;
 
 import com.backend.proj.enums.ECategory;
 import com.backend.proj.enums.ESuggestion;
@@ -16,8 +20,9 @@ import com.backend.proj.enums.EUrwego;
 @Builder
 public class Suggestions {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
+    private UUID id;
 
     @Column
     private String phoneNumber;

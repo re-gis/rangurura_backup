@@ -6,6 +6,9 @@ import com.backend.proj.dtos.UpdateLeaderDto;
 import com.backend.proj.response.ApiResponse;
 import com.backend.proj.serviceImpl.LeaderServiceImpl;
 import com.backend.proj.utils.ResponseHandler;
+
+import java.util.UUID;
+
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -30,7 +33,7 @@ public class LeaderController {
     }
 
     // getting all leaders on the system
-    @GetMapping("/leaders")
+    @GetMapping("/all")
     public ResponseEntity<ApiResponse<Object>> getLeaders() throws Exception {
 
         Object ob = leaderServiceImpl.getLeaders().getData();
@@ -40,7 +43,7 @@ public class LeaderController {
 
     // updating leaders
     @PutMapping("/update/{id}")
-    public ResponseEntity<ApiResponse<Object>> updateLeader(@PathVariable("id") Long id,
+    public ResponseEntity<ApiResponse<Object>> updateLeader(@PathVariable("id") UUID id,
             @RequestBody UpdateLeaderDto dto) throws Exception {
 
         return ResponseHandler.success(leaderServiceImpl.updateLeader(dto, id).getData(), HttpStatus.CREATED);
@@ -49,9 +52,14 @@ public class LeaderController {
 
     // delete leader
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<ApiResponse<Object>> deleteLeader(@PathVariable("id") Long id) throws Exception {
+    public ResponseEntity<ApiResponse<Object>> deleteLeader(@PathVariable("id") UUID id) throws Exception {
 
         return ResponseHandler.success(leaderServiceImpl.deleteLeader(id).getData(), HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<Object>> getLeaderById(@PathVariable("id") UUID id)throws Exception{
+        return ResponseHandler.success(leaderServiceImpl.getLeaderById(id), HttpStatus.OK);
     }
 
 }

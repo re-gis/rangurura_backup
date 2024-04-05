@@ -1,5 +1,7 @@
 package com.backend.proj.Controllers;
 
+import java.util.UUID;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -43,7 +45,7 @@ public class ProblemController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<ApiResponse<Object>> deleteMyProblem(@PathVariable("id") Long id) throws Exception {
+    public ResponseEntity<ApiResponse<Object>> deleteMyProblem(@PathVariable("id") UUID id) throws Exception {
 
         Object response = problemServiceImpl.deleteQuestion(id).getData();
         return ResponseHandler.success(response, HttpStatus.OK);
@@ -51,7 +53,7 @@ public class ProblemController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<ApiResponse<Object>> updateMyAskedProblem(@PathVariable("id") Long id, UpdateProblemDto dto)
+    public ResponseEntity<ApiResponse<Object>> updateMyAskedProblem(@PathVariable("id") UUID id, UpdateProblemDto dto)
             throws Exception {
 
         return ResponseHandler.success(problemServiceImpl.updateMyProblem(dto, id).getData(), HttpStatus.CREATED);
@@ -65,7 +67,7 @@ public class ProblemController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Object>> getProblemById(@PathVariable("id") Long id) throws Exception {
+    public ResponseEntity<ApiResponse<Object>> getProblemById(@PathVariable("id") UUID id) throws Exception {
 
         return ResponseHandler.success(problemServiceImpl.getProblemById(id).getData(), HttpStatus.OK);
 

@@ -1,7 +1,11 @@
 package com.backend.proj.entities;
 
 
+import java.util.UUID;
+
 import javax.persistence.*;
+
+import org.hibernate.annotations.GenericGenerator;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,8 +24,9 @@ import lombok.Setter;
 @Table(name = "otps")
 public class Otp {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
+    private UUID id;
 
     @Column(nullable = false)
     private String otp;

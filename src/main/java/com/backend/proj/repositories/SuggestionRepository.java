@@ -8,8 +8,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
-public interface SuggestionRepository extends JpaRepository <Suggestions , Long> {
+public interface SuggestionRepository extends JpaRepository <Suggestions , UUID> {
 
     Optional<Suggestions> findOneByPhoneNumber(String phoneNumber);
 
@@ -17,4 +18,6 @@ public interface SuggestionRepository extends JpaRepository <Suggestions , Long>
 
     List<Suggestions> findAllByUrwegoAndLocationAndCategory(EUrwego origanizationLevel, String location,
             ECategory category);
+
+    Optional<Suggestions> findById(UUID id);
 }

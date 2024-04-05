@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Builder
@@ -90,7 +91,7 @@ public class EventServiceImpl implements EventsService {
 
     // the logic to update the event
     @Override
-    public ApiResponse<Object> updateMyEvent(UpdateEventDto dto, Long id) throws Exception {
+    public ApiResponse<Object> updateMyEvent(UpdateEventDto dto, UUID id) throws Exception {
         try {
             UserResponse user = getLoggedUser.getLoggedUser();
             if (id == null) {
@@ -167,7 +168,7 @@ public class EventServiceImpl implements EventsService {
 
     // this is to delete my events
     @Override
-    public ApiResponse<Object> deleteMyEvent(Long id) throws Exception {
+    public ApiResponse<Object> deleteMyEvent(UUID id) throws Exception {
         try {
             UserResponse user = getLoggedUser.getLoggedUser();
             if (id == null) {

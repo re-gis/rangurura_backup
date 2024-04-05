@@ -24,6 +24,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -67,7 +69,7 @@ public class SuggestionServiceImpl implements SuggestionService {
     }
 
     @Override
-    public ApiResponse<Object> UpdateSuggestion(SuggestionUpdateDto dto, Long id) throws Exception {
+    public ApiResponse<Object> UpdateSuggestion(SuggestionUpdateDto dto, UUID id) throws Exception {
         try {
             UserResponse user = getLoggedUser.getLoggedUser();
             Optional<Suggestions> existingSuggestionOptional = suggestionRepository.findById(id);
@@ -240,10 +242,6 @@ public class SuggestionServiceImpl implements SuggestionService {
             }
 
             // get the suggestions zaho ayoboye
-            System.out.println(leader.get().getOrganizationLevel());
-            System.out.println(leader.get().getLocation());
-            System.out.println(leader.get().getCategory());
-            System.out.println();
             List<Suggestions> suggestions = suggestionRepository.findAllByUrwegoAndLocationAndCategory(
                     leader.get().getOrganizationLevel(), leader.get().getLocation(), leader.get().getCategory());
 
@@ -324,7 +322,7 @@ public class SuggestionServiceImpl implements SuggestionService {
     }
 
     @Override
-    public ApiResponse<Object> deleteMySuggestion(Long id) throws Exception {
+    public ApiResponse<Object> deleteMySuggestion(UUID id) throws Exception {
         try {
             // get the logged user
             UserResponse user = getLoggedUser.getLoggedUser();
@@ -361,7 +359,7 @@ public class SuggestionServiceImpl implements SuggestionService {
     }
 
     @Override
-    public ApiResponse<Object> getSuggestionById(Long id) throws Exception {
+    public ApiResponse<Object> getSuggestionById(UUID id) throws Exception {
         try {
             // get the suggestion
             Optional<Suggestions> suggestion = suggestionRepository.findById(id);
@@ -376,6 +374,40 @@ public class SuggestionServiceImpl implements SuggestionService {
 
             return ApiResponse.builder().data(suggestion).success(true).build();
         } catch (Exception e) {
+            throw new Exception("Internal server error...");
+        }
+    }
+
+    @Override
+    public ApiResponse<Object> getAllSuggestions() throws Exception {
+        try {
+            UserResponse user = getLoggedUser.getLoggedUser();
+
+            if (user.getRole() != URole.UMUYOBOZI) {
+                throw new UnauthorisedException("You are not allowed to perform this action!");
+            }
+
+            // fetch the suggestions
+            List<Suggestions> suggestions = suggestionRepository.findAll();
+            if (suggestions.isEmpty()) {
+                NotFoundResponse response = NotFoundResponse.builder()
+                        .message("No suggestions found!")
+                        .build();
+                return ApiResponse.builder()
+                        .data(response)
+                        .success(true)
+                        .status(HttpStatus.OK)
+                        .build();
+            }
+
+            return ApiResponse.builder()
+                    .data(suggestions)
+                    .success(true)
+                    .status(HttpStatus.OK)
+                    .build();
+
+        } catch (Exception e) {
+            System.out.println(e);
             throw new Exception("Internal server error...");
         }
     }

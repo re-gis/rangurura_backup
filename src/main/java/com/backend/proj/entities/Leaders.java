@@ -6,7 +6,11 @@ import com.backend.proj.enums.URole;
 
 import lombok.*;
 
+import java.util.UUID;
+
 import javax.persistence.*;
+
+import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name = "leaders")
@@ -15,9 +19,10 @@ import javax.persistence.*;
 @Data
 @Builder
 public class Leaders {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+   @Id
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
+    private UUID id;
 
     @Column(nullable = false)
     private String nationalId;
