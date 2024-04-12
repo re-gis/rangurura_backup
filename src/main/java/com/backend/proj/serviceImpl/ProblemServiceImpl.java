@@ -450,4 +450,22 @@ public class ProblemServiceImpl implements ProblemService {
         }
     }
 
+
+//this is to get the number of all probs by admin
+    @PreAuthorize("hasRole('ADMIN')")
+    @Override
+    public ApiResponse<Object> getNumberOfAllProb() throws Exception {
+        try{
+            long numberOfProblems = problemRepository.count();
+            return  ApiResponse.builder()
+                    .data(numberOfProblems)
+                    .success(true)
+                    .build();
+
+        }catch (Exception e){
+            throw new Exception(e.getMessage());
+        }
+
+    }
+
 }

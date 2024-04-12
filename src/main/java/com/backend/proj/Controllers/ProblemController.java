@@ -80,4 +80,10 @@ public class ProblemController {
         return ResponseHandler.success(problemServiceImpl.getProblemsByStatus(status).getData(), HttpStatus.OK);
 
     }
+
+
+    @GetMapping("/number_of_all_prob")
+    public ResponseEntity<ApiResponse<Object>>getNumberOfAllProb() throws Exception{
+        return  ResponseHandler.success(problemServiceImpl.getNumberOfAllProb(),HttpStatus.OK);
+    }
 }
