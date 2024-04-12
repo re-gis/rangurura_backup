@@ -5,9 +5,12 @@ import com.backend.proj.enums.EProblem_Status;
 import com.backend.proj.enums.EUrwego;
 
 import lombok.*;
+
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.GenericGenerator;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import javax.persistence.*;
@@ -53,4 +56,10 @@ public class Problem {
 
     @Enumerated(EnumType.STRING)
     private EProblem_Status status;
+
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+
 }

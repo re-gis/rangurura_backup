@@ -1,13 +1,11 @@
 package com.backend.proj.serviceImpl;
 
-//import org.apache.coyote.BadRequestException;
 import com.backend.proj.exceptions.BadRequestException;
 import com.backend.proj.exceptions.NotFoundException;
 import com.backend.proj.exceptions.UnauthorisedException;
 
 import java.util.*;
 
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import com.backend.proj.response.ApiResponse;
@@ -21,14 +19,12 @@ import com.backend.proj.dtos.CreateProblemDto;
 import com.backend.proj.dtos.UpdateProblemDto;
 import com.backend.proj.entities.Leaders;
 import com.backend.proj.entities.Problem;
-import com.backend.proj.entities.User;
 import com.backend.proj.enums.ECategory;
 import com.backend.proj.enums.EProblem_Status;
 import com.backend.proj.enums.EUrwego;
 import com.backend.proj.enums.URole;
 import com.backend.proj.repositories.LeaderRepository;
 import com.backend.proj.repositories.ProblemRepository;
-import com.backend.proj.repositories.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -39,7 +35,6 @@ public class ProblemServiceImpl implements ProblemService {
     private final UploadDoc uploadDoc;
     private final ProblemRepository problemRepository;
     private final LeaderRepository leaderRepository;
-    private final UserRepository userRepository;
 
     @Override
     public ApiResponse<Object> createAProblem(CreateProblemDto dto) throws Exception {
@@ -427,10 +422,11 @@ public class ProblemServiceImpl implements ProblemService {
         }
     }
 
-    @PreAuthorize("hasRole('UMUYOBOZI')")
+    // @PreAuthorize("hasRole('UMUYOBOZI')")
     @Override
     public ApiResponse<Object> getProblemsByStatus(EProblem_Status status) throws Exception {
         try {
+            @SuppressWarnings("unchecked")
             List<Problem> problems = (List<Problem>) getMyLocalProblems().getData();
 
             // filter according to the status provided

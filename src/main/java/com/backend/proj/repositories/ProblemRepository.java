@@ -1,5 +1,6 @@
 package com.backend.proj.repositories;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -8,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.backend.proj.entities.Problem;
 import com.backend.proj.enums.ECategory;
+import com.backend.proj.enums.EProblem_Status;
 import com.backend.proj.enums.EUrwego;
 
 public interface ProblemRepository extends JpaRepository<Problem, UUID> {
@@ -19,5 +21,7 @@ public interface ProblemRepository extends JpaRepository<Problem, UUID> {
     List<Problem> findAllByUrwegoAndCategoryAndTarget(EUrwego organizationLevel, ECategory category, String location);
 
     Optional<Problem> findById(UUID id);
+
+    List<Problem> findByStatusAndCreatedAtBefore(EProblem_Status pending, LocalDate oneWeekAgo);
     
 }
