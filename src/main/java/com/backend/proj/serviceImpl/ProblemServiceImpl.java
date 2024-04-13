@@ -6,6 +6,7 @@ import com.backend.proj.exceptions.UnauthorisedException;
 
 import java.util.*;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import com.backend.proj.response.ApiResponse;
@@ -445,5 +446,69 @@ public class ProblemServiceImpl implements ProblemService {
             throw new Exception(e.getMessage());
         }
     }
+
+
+//this is to get the number of all probs by admin
+    @PreAuthorize("hasRole('ADMIN')")
+    @Override
+    public ApiResponse<Object> getNumberOfAllProb() throws Exception {
+        try{
+            long numberOfProblems = problemRepository.count();
+            return  ApiResponse.builder()
+                    .data(numberOfProblems)
+                    .success(true)
+                    .build();
+
+        }catch (Exception e){
+            throw new Exception(e.getMessage());
+        }
+
+    }
+//get number of all pending probs
+@PreAuthorize("hasRole('ADMIN')")
+@Override
+    public ApiResponse<Object> getNumberOfPendingProblems() throws Exception {
+        try {
+            // Assuming 'checked' is the status value indicating the problem is checked
+            long numberOfCheckedProblems = problemRepository.countByStatus(EProblem_Status.PENDING);
+            return ApiResponse.builder()
+                    .data(numberOfCheckedProblems)
+                    .success(true)
+                    .build();
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+    //get number of all approved probs
+    @PreAuthorize("hasRole('ADMIN')")
+    @Override
+    public ApiResponse<Object> getNumberOfApprovedProblems() throws Exception {
+        try {
+            // Assuming 'checked' is the status value indicating the problem is checked
+            long numberOfApprovedProblems = problemRepository.countByStatus(EProblem_Status.APPROVED);
+            return ApiResponse.builder()
+                    .data(numberOfApprovedProblems)
+                    .success(true)
+                    .build();
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    //get rejected probs
+        @PreAuthorize("hasRole('ADMIN')")
+    @Override
+    public ApiResponse<Object> getNumberOfRejectedProblems() throws Exception {
+        try {
+            long numberOfRejectedProblems = problemRepository.countByStatus(EProblem_Status.REJECTED);
+            return ApiResponse.builder()
+                    .data(numberOfRejectedProblems)
+                    .success(true)
+                    .build();
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
 
 }

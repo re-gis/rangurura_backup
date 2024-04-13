@@ -50,6 +50,7 @@ public class SecurityConfig {
                         "/api/v1/users/account/verify",
                         "/api/v1/suggestions/send_idea",
                         "/api/v1/problems/create",
+                        "/api/v1/problems/number_of_all_prob",
                         "/ap/v1/leaders/**",
                         "/ap/v1/leaders/**",
                         "/v2/api-docs",
