@@ -1,15 +1,14 @@
 package com.backend.proj.repositories;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.backend.proj.enums.EProblem_Status;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.backend.proj.entities.Problem;
 import com.backend.proj.enums.ECategory;
-import com.backend.proj.enums.EProblem_Status;
 import com.backend.proj.enums.EUrwego;
 
 public interface ProblemRepository extends JpaRepository<Problem, UUID> {
@@ -22,6 +21,5 @@ public interface ProblemRepository extends JpaRepository<Problem, UUID> {
 
     Optional<Problem> findById(UUID id);
 
-    List<Problem> findByStatusAndCreatedAtBefore(EProblem_Status pending, LocalDate oneWeekAgo);
-    
+    long countByStatus(EProblem_Status eProblemStatus);
 }

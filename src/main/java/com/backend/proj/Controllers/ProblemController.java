@@ -1,13 +1,9 @@
 package com.backend.proj.Controllers;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,14 +11,8 @@ import com.backend.proj.dtos.CreateProblemDto;
 import com.backend.proj.dtos.UpdateProblemDto;
 import com.backend.proj.entities.Problem;
 import com.backend.proj.enums.EProblem_Status;
-import com.backend.proj.enums.EUrwego;
-import com.backend.proj.enums.URole;
-import com.backend.proj.exceptions.UnauthorisedException;
-import com.backend.proj.repositories.ProblemRepository;
 import com.backend.proj.response.ApiResponse;
-import com.backend.proj.response.UserResponse;
 import com.backend.proj.serviceImpl.ProblemServiceImpl;
-import com.backend.proj.utils.GetLoggedUser;
 import com.backend.proj.utils.Mapper;
 import com.backend.proj.utils.ResponseHandler;
 
@@ -33,9 +23,6 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping(path = "/api/v1/problems")
 public class ProblemController {
     private final ProblemServiceImpl problemServiceImpl;
-    private final ProblemRepository problemRepository;
-    private LocalDateTime lastExecutionTime;
-    private final GetLoggedUser getLoggedUser;
 
     @PostMapping("/create")
     public ResponseEntity<ApiResponse<Object>> createProblem(
@@ -94,75 +81,24 @@ public class ProblemController {
 
     }
 
-    @Scheduled(cron = "0 0 0 * * *")
-    public ApiResponse<Object> checkAndEscalateProblems() {
-        LocalDate oneWeekAgo = LocalDate.now().minusWeeks(1);
-        List<Problem> unansweredProblems = problemRepository.findByStatusAndCreatedAtBefore(EProblem_Status.PENDING,
-                oneWeekAgo);
-        if (unansweredProblems.isEmpty()) {
-            return ApiResponse.builder()
-                    .data("No problems to escalate found!")
-                    .status(HttpStatus.OK)
-                    .success(true)
-                    .build();
-        }
-        for (Problem problem : unansweredProblems) {
-            problem.setStatus(EProblem_Status.ESCALATED);
-            // change the problem's urwego
-            EUrwego urwego = problem.getUrwego();
-            EUrwego nUrwego;
-            switch (urwego) {
-                case UMUDUGUDU:
-                    nUrwego = EUrwego.AKAGARI;
-                    break;
-                case AKAGARI:
-                    nUrwego = EUrwego.UMURENGE;
-                    break;
-                case UMURENGE:
-                    nUrwego = EUrwego.AKARERE;
-                    break;
-                case AKARERE:
-                    nUrwego = EUrwego.INTARA;
-                    break;
-                default:
-                    nUrwego = problem.getUrwego();
-                    break;
-            }
-            problem.setUrwego(nUrwego);
-        }
-        lastExecutionTime = LocalDateTime.now();
-        problemRepository.saveAll(unansweredProblems);
-        return ApiResponse.builder()
-                .data("Problems escalated successfully...")
-                .status(HttpStatus.OK)
-                .success(true)
-                .build();
+
+    @GetMapping("/number_of_all_prob")
+    public ResponseEntity<ApiResponse<Object>>getNumberOfAllProb() throws Exception{
+        return  ResponseHandler.success(problemServiceImpl.getNumberOfAllProb(),HttpStatus.OK);
+    }
+    @GetMapping("/number_of_pending_problems")
+    public ResponseEntity<ApiResponse<Object>>getNumberOfPendingProblems() throws Exception {
+        return ResponseHandler.success(problemServiceImpl.getNumberOfPendingProblems(),HttpStatus.OK);
     }
 
-    @PostMapping("/escalate")
-    public ResponseEntity<ApiResponse<Object>> manualEscalation() throws Exception {
-        // this must be an admin
-        try {
-            UserResponse user = getLoggedUser.getLoggedUser();
-            if (user.getRole() != URole.ADMIN) {
-                throw new UnauthorisedException("You are not authorised to perform this action!");
-            } else {
-
-                return ResponseHandler.success(checkAndEscalateProblems().getData(),
-                        checkAndEscalateProblems().getStatus());
-            }
-        } catch (UnauthorisedException e) {
-            throw new UnauthorisedException(e.getMessage());
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new Exception(e.getMessage());
-        }
-
+    @GetMapping("/number_of_approved_probs")
+    public ResponseEntity<ApiResponse<Object>>getNumberOfApprovedProblems() throws  Exception{
+    return ResponseHandler.success(problemServiceImpl.getNumberOfApprovedProblems(),HttpStatus.OK);
     }
 
-    @GetMapping("/last-execution")
-    public ResponseEntity<ApiResponse<Object>> getLastExecutionTime() {
-        return ResponseHandler.success(ApiResponse.builder().data("Last execution time: " + lastExecutionTime)
-                .success(true).status(HttpStatus.OK).build().getData(), HttpStatus.OK);
+    @GetMapping("/number_of_rejected_probs")
+    public ResponseEntity<ApiResponse<Object>>getNumberOfRejectedProblems() throws  Exception{
+        return ResponseHandler.success(problemServiceImpl.getNumberOfApprovedProblems(),HttpStatus.OK);
     }
 }
+

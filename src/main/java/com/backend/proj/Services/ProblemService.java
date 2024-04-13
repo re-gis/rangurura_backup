@@ -21,4 +21,9 @@ public interface ProblemService {
     public ApiResponse<Object> getProblemById(UUID id) throws Exception;
 
     public ApiResponse<Object> getProblemsByStatus(EProblem_Status status)throws Exception;
+    public ApiResponse<Object> getNumberOfAllProb()throws Exception;
+    public ApiResponse<Object>getNumberOfPendingProblems() throws Exception;
+    public ApiResponse<Object>getNumberOfApprovedProblems() throws Exception;
+    public ApiResponse<Object>getNumberOfRejectedProblems() throws Exception;
+
 }
