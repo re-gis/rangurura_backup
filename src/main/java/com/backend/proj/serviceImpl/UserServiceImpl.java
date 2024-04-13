@@ -61,7 +61,8 @@ public class UserServiceImpl implements UserService {
                             .success(false)
                             .build();
                 } else {
-
+                    URole rl = URole.valueOf(dto.getRole().toUpperCase());
+                    validateEnum.isValidEnumConstant(rl, URole.class);
                     // check if the user doesn't exists
                     Optional<User> eUser = userRepository.findOneByNationalId(dto.getNationalId());
                     Optional<User> euser = userRepository.findOneByPhone(dto.getPhoneNumber());
@@ -96,8 +97,6 @@ public class UserServiceImpl implements UserService {
                     user.setVerified(false);
                     System.out.println(dto.getRole());
                     if (dto.getRole() != null) {
-                        URole rl = URole.valueOf(dto.getRole().toUpperCase());
-                        validateEnum.isValidEnumConstant(rl, URole.class);
                         switch (dto.getRole().toLowerCase()) {
                             case "umuyobozi":
                                 user.setRole(URole.UMUYOBOZI);
