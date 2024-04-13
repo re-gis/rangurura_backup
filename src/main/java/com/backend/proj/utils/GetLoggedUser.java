@@ -13,7 +13,6 @@ import com.backend.proj.exceptions.NotFoundException;
 import com.backend.proj.exceptions.UnauthorisedException;
 import com.backend.proj.repositories.LeaderRepository;
 import com.backend.proj.repositories.UserRepository;
-import com.backend.proj.response.NotFoundResponse;
 import com.backend.proj.response.UserResponse;
 
 import lombok.RequiredArgsConstructor;
