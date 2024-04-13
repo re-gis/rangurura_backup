@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.backend.proj.enums.EProblem_Status;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.backend.proj.entities.Problem;
@@ -19,5 +20,6 @@ public interface ProblemRepository extends JpaRepository<Problem, UUID> {
     List<Problem> findAllByUrwegoAndCategoryAndTarget(EUrwego organizationLevel, ECategory category, String location);
 
     Optional<Problem> findById(UUID id);
-    
+
+    long countByStatus(EProblem_Status eProblemStatus);
 }

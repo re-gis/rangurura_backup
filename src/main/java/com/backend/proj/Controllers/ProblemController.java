@@ -86,4 +86,19 @@ public class ProblemController {
     public ResponseEntity<ApiResponse<Object>>getNumberOfAllProb() throws Exception{
         return  ResponseHandler.success(problemServiceImpl.getNumberOfAllProb(),HttpStatus.OK);
     }
+    @GetMapping("/number_of_pending_problems")
+    public ResponseEntity<ApiResponse<Object>>getNumberOfPendingProblems() throws Exception {
+        return ResponseHandler.success(problemServiceImpl.getNumberOfPendingProblems(),HttpStatus.OK);
+    }
+
+    @GetMapping("/number_of_approved_probs")
+    public ResponseEntity<ApiResponse<Object>>getNumberOfApprovedProblems() throws  Exception{
+    return ResponseHandler.success(problemServiceImpl.getNumberOfApprovedProblems(),HttpStatus.OK);
+    }
+
+    @GetMapping("/number_of_rejected_probs")
+    public ResponseEntity<ApiResponse<Object>>getNumberOfRejectedProblems() throws  Exception{
+        return ResponseHandler.success(problemServiceImpl.getNumberOfApprovedProblems(),HttpStatus.OK);
+    }
 }
+
