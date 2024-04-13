@@ -135,7 +135,8 @@ public class UserServiceImpl implements UserService {
         } catch (MessageSendingException e) {
             throw new MessageSendingException(e.getMessage());
         } catch (Exception e) {
-            throw new Exception("Internal server error...");
+            System.out.println(e);
+            throw new Exception(e.getMessage());
         }
     }
 
