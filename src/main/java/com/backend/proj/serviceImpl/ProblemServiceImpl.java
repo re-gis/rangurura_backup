@@ -1,6 +1,7 @@
 package com.backend.proj.serviceImpl;
 
 import com.backend.proj.exceptions.BadRequestException;
+import com.backend.proj.exceptions.InvalidEnumConstantException;
 import com.backend.proj.exceptions.NotFoundException;
 import com.backend.proj.exceptions.UnauthorisedException;
 
@@ -14,6 +15,8 @@ import com.backend.proj.response.ProblemResponse;
 import com.backend.proj.response.UserResponse;
 import com.backend.proj.utils.GetLoggedUser;
 import com.backend.proj.utils.UploadDoc;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.backend.proj.Services.ProblemService;
 import com.backend.proj.dtos.CreateProblemDto;
 import com.backend.proj.dtos.UpdateProblemDto;
@@ -91,6 +94,9 @@ public class ProblemServiceImpl implements ProblemService {
                     .success(true)
                     .data(response)
                     .build();
+        } catch (JsonMappingException | JsonParseException e) {
+            System.out.println(e);
+            throw new InvalidEnumConstantException("Invalid enum constant provided in the request.");
         } catch (BadRequestException e) {
             throw new BadRequestException(e.getMessage());
         } catch (Exception e) {

@@ -5,10 +5,12 @@ import com.backend.proj.dtos.SuggestionDto;
 import com.backend.proj.dtos.SuggestionUpdateDto;
 import com.backend.proj.entities.Leaders;
 import com.backend.proj.entities.Suggestions;
+import com.backend.proj.enums.ECategory;
 import com.backend.proj.enums.ESuggestion;
 import com.backend.proj.enums.EUrwego;
 import com.backend.proj.enums.URole;
 import com.backend.proj.exceptions.BadRequestException;
+import com.backend.proj.exceptions.InvalidEnumConstantException;
 import com.backend.proj.exceptions.NotFoundException;
 import com.backend.proj.exceptions.ServiceException;
 import com.backend.proj.exceptions.UnauthorisedException;
@@ -19,6 +21,8 @@ import com.backend.proj.response.NotFoundResponse;
 import com.backend.proj.response.SuggestionResponse;
 import com.backend.proj.response.UserResponse;
 import com.backend.proj.utils.GetLoggedUser;
+import com.backend.proj.utils.ValidateEnum;
+
 import java.util.*;
 
 import java.util.stream.Collectors;
@@ -34,6 +38,7 @@ public class SuggestionServiceImpl implements SuggestionService {
     private final SuggestionRepository suggestionRepository;
     private final GetLoggedUser getLoggedUser;
     private final LeaderRepository leaderRepository;
+    private final ValidateEnum validateEnum;
 
     @Override
     public ApiResponse<Object> PostSuggestion(SuggestionDto dto) throws Exception {
@@ -42,6 +47,8 @@ public class SuggestionServiceImpl implements SuggestionService {
                     || dto.getUrwego() == null || dto.getLocation() == null) {
                 throw new BadRequestException("All suggestion details are required!");
             }
+
+            validateEnum.isValidEnumConstant(dto.getCategory(), ECategory.class);
 
             // Convert DTO to entity
             Suggestions suggestionEntity = convertDtoToEntity(dto);
@@ -59,6 +66,8 @@ public class SuggestionServiceImpl implements SuggestionService {
             } else {
                 throw new ServiceException("Failed to save the Suggestion!");
             }
+        } catch (InvalidEnumConstantException e) {
+            throw new BadRequestException(e.getMessage());
         } catch (ServiceException e) {
             throw new ServiceException(e.getMessage());
         } catch (BadRequestException e) {

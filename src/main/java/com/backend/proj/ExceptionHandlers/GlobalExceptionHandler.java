@@ -1,12 +1,16 @@
 package com.backend.proj.ExceptionHandlers;
 
 import com.backend.proj.exceptions.BadRequestException;
+import com.backend.proj.exceptions.InvalidEnumConstantException;
 import com.backend.proj.exceptions.MessageSendingException;
 import com.backend.proj.exceptions.NotFoundException;
 import com.backend.proj.exceptions.UnauthorisedException;
 import com.backend.proj.response.ApiResponse;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -35,5 +39,21 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UnauthorisedException.class)
     public ResponseEntity<ApiResponse<String>> handleMessageUnauthorisedException(UnauthorisedException e) {
         return new ResponseEntity<>(new ApiResponse<>(e.getMessage()), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(InvalidEnumConstantException.class)
+    public ResponseEntity<ApiResponse<String>> handleInvalidEnumConstantException(InvalidEnumConstantException e) {
+        return new ResponseEntity<>(new ApiResponse<>(e.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({HttpMessageNotReadableException.class})
+    public ResponseEntity<ApiResponse<String>> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+        if (e.getCause() instanceof InvalidFormatException) {
+            InvalidFormatException ex = (InvalidFormatException) e.getCause();
+            if (ex.getTargetType().isEnum()) {
+                return new ResponseEntity<>(new ApiResponse<>("Invalid value for enum: " + ex.getValue()), HttpStatus.BAD_REQUEST);
+            }
+        }
+        return new ResponseEntity<>(new ApiResponse<>("Invalid request payload"), HttpStatus.BAD_REQUEST);
     }
 }
