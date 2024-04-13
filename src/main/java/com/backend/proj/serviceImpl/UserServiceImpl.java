@@ -18,8 +18,10 @@ import com.backend.proj.dtos.RegisterDto;
 import com.backend.proj.dtos.VerifyOtpDto;
 import com.backend.proj.entities.Otp;
 import com.backend.proj.entities.User;
+import com.backend.proj.enums.ECategory;
 import com.backend.proj.enums.URole;
 import com.backend.proj.exceptions.BadRequestException;
+import com.backend.proj.exceptions.InvalidEnumConstantException;
 import com.backend.proj.exceptions.MessageSendingException;
 import com.backend.proj.exceptions.NotFoundException;
 import com.backend.proj.exceptions.UnauthorisedException;
@@ -30,6 +32,8 @@ import com.backend.proj.response.NotFoundResponse;
 import com.backend.proj.response.UserResponse;
 import com.backend.proj.Services.UserService;
 import com.backend.proj.utils.GetLoggedUser;
+import com.backend.proj.utils.ValidateEnum;
+
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -40,6 +44,7 @@ public class UserServiceImpl implements UserService {
     private final OtpRepository otpRepository;
     private final PasswordEncoder passwordEncoder;
     private final GetLoggedUser getLoggedUser;
+    private final ValidateEnum validateEnum;
 
     @Override
     public ApiResponse<Object> registerUser(RegisterDto dto) throws Exception {
@@ -91,6 +96,8 @@ public class UserServiceImpl implements UserService {
                     user.setVerified(false);
                     System.out.println(dto.getRole());
                     if (dto.getRole() != null) {
+                        URole rl = URole.valueOf(dto.getRole().toUpperCase());
+                        validateEnum.isValidEnumConstant(rl, URole.class);
                         switch (dto.getRole().toLowerCase()) {
                             case "umuyobozi":
                                 user.setRole(URole.UMUYOBOZI);
@@ -121,10 +128,12 @@ public class UserServiceImpl implements UserService {
                             .build();
                 }
             }
+        } catch (InvalidEnumConstantException e) {
+            throw new BadRequestException(e.getMessage());
         } catch (BadRequestException e) {
-            throw new BadRequestException("All credentials are required!");
+            throw new BadRequestException(e.getMessage());
         } catch (MessageSendingException e) {
-            throw new MessageSendingException("Error while sending the message...");
+            throw new MessageSendingException(e.getMessage());
         } catch (Exception e) {
             throw new Exception("Internal server error...");
         }
