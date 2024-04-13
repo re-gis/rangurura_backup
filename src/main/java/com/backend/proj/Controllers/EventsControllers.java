@@ -57,4 +57,8 @@ public class EventsControllers {
         Object ob = eventServiceImpl.receivedEvent().getData();
         return ResponseHandler.success(ob, HttpStatus.OK);
     }
+    @GetMapping("/number_of_events")
+    public ResponseEntity<ApiResponse<Object>>getNumberOfAllSuggestions() throws  Exception{
+        return ResponseHandler.success(eventServiceImpl.getNumberOfAllEvents(),HttpStatus.OK);
+    }
 }
