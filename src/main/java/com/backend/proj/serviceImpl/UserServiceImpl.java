@@ -18,8 +18,10 @@ import com.backend.proj.dtos.RegisterDto;
 import com.backend.proj.dtos.VerifyOtpDto;
 import com.backend.proj.entities.Otp;
 import com.backend.proj.entities.User;
+import com.backend.proj.enums.ECategory;
 import com.backend.proj.enums.URole;
 import com.backend.proj.exceptions.BadRequestException;
+import com.backend.proj.exceptions.InvalidEnumConstantException;
 import com.backend.proj.exceptions.MessageSendingException;
 import com.backend.proj.exceptions.NotFoundException;
 import com.backend.proj.exceptions.UnauthorisedException;
@@ -30,6 +32,8 @@ import com.backend.proj.response.NotFoundResponse;
 import com.backend.proj.response.UserResponse;
 import com.backend.proj.Services.UserService;
 import com.backend.proj.utils.GetLoggedUser;
+import com.backend.proj.utils.ValidateEnum;
+
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -40,6 +44,7 @@ public class UserServiceImpl implements UserService {
     private final OtpRepository otpRepository;
     private final PasswordEncoder passwordEncoder;
     private final GetLoggedUser getLoggedUser;
+    private final ValidateEnum validateEnum;
 
     @Override
     public ApiResponse<Object> registerUser(RegisterDto dto) throws Exception {
@@ -48,83 +53,89 @@ public class UserServiceImpl implements UserService {
                     || dto.getSector() == null || dto.getCell() == null || dto.getVillage() == null
                     || dto.getPassword() == null || dto.getCpassword() == null || dto.getNationalId() == null) {
                 throw new BadRequestException("All credentials are required!");
-            }
-
-            if (!dto.getPassword().equals(dto.getCpassword())) {
-                return ApiResponse.builder()
-                        .data("Confirm password to continue...")
-                        .success(false)
-                        .build();
-            }
-
-            // check if the user doesn't exists
-            Optional<User> eUser = userRepository.findOneByNationalId(dto.getNationalId());
-            Optional<User> euser = userRepository.findOneByPhone(dto.getPhoneNumber());
-            if (eUser.isPresent() || euser.isPresent()) {
-                return ApiResponse.builder()
-                        .data("Indangamuntu cyangwa numero yawe isanzwe muri Rangurura yihindure wongere ugerageze cyangwa winjire...")
-                        .success(false)
-                        .build();
-            }
-
-            // send the message
-            String o = otpServiceImpl.generateOtp(6);
-            System.out.println(o);
-            String message = "Your verification code to RANGURURA is: " + o;
-            otpServiceImpl.sendMessage(dto.getPhoneNumber(), message);
-
-            Otp otp = new Otp();
-            otp.setNumber(dto.getPhoneNumber());
-            otp.setOtp(passwordEncoder.encode(o));
-
-            User user = new User();
-            user.setNationalId(dto.getNationalId());
-            user.setUsername(dto.getName());
-            user.setPhone(dto.getPhoneNumber());
-            user.setCell(dto.getCell());
-            user.setVillage(dto.getVillage());
-            user.setPassword(passwordEncoder.encode(dto.getPassword()));
-            user.setProvince(dto.getProvince());
-            user.setDistrict(dto.getDistrict());
-            user.setSector(dto.getSector());
-            user.setImageUrl("https://icon-library.com/images/no-user-image-icon/no-user-image-icon-0.jpg");
-            user.setVerified(false);
-            System.out.println(dto.getRole());
-            if (dto.getRole() != null) {
-                switch (dto.getRole().toLowerCase()) {
-                    case "umuyobozi":
-                        user.setRole(URole.UMUYOBOZI);
-                        break;
-                    case "admin":
-                        user.setRole(URole.ADMIN);
-                        break;
-                    default:
-                        throw new BadRequestException("Role" + dto.getRole() + " not allowed!");
-                }
             } else {
-                user.setRole(URole.UMUTURAGE);
-            }
-            // save the otp and user
-            Optional<Otp> eOtp = otpRepository.findOneByNumber(dto.getPhoneNumber());
-            if (eOtp.isPresent()) {
-                return ApiResponse.builder()
-                        .data("User already signed up, verify to continue...")
-                        .success(false)
-                        .build();
-            }
 
-            otpRepository.save(otp);
-            userRepository.save(user);
-            return ApiResponse.builder()
-                    .success(true)
-                    .data("Urakoze kwiyandikisha muri Rangurura! Ubu ushobora kwinjiramo ugatanga ikibazo cyawe!")
-                    .build();
+                if (!dto.getPassword().equals(dto.getCpassword())) {
+                    return ApiResponse.builder()
+                            .data("Confirm password to continue...")
+                            .success(false)
+                            .build();
+                } else {
+                    URole rl = URole.valueOf(dto.getRole().toUpperCase());
+                    validateEnum.isValidEnumConstant(rl, URole.class);
+                    // check if the user doesn't exists
+                    Optional<User> eUser = userRepository.findOneByNationalId(dto.getNationalId());
+                    Optional<User> euser = userRepository.findOneByPhone(dto.getPhoneNumber());
+                    if (eUser.isPresent() || euser.isPresent()) {
+                        return ApiResponse.builder()
+                                .data("Indangamuntu cyangwa numero yawe isanzwe muri Rangurura yihindure wongere ugerageze cyangwa winjire...")
+                                .success(false)
+                                .build();
+                    }
+
+                    // send the message
+                    String o = otpServiceImpl.generateOtp(6);
+                    System.out.println(o);
+                    String message = "Your verification code to RANGURURA is: " + o;
+                    otpServiceImpl.sendMessage(dto.getPhoneNumber(), message);
+
+                    Otp otp = new Otp();
+                    otp.setNumber(dto.getPhoneNumber());
+                    otp.setOtp(passwordEncoder.encode(o));
+
+                    User user = new User();
+                    user.setNationalId(dto.getNationalId());
+                    user.setUsername(dto.getName());
+                    user.setPhone(dto.getPhoneNumber());
+                    user.setCell(dto.getCell());
+                    user.setVillage(dto.getVillage());
+                    user.setPassword(passwordEncoder.encode(dto.getPassword()));
+                    user.setProvince(dto.getProvince());
+                    user.setDistrict(dto.getDistrict());
+                    user.setSector(dto.getSector());
+                    user.setImageUrl("https://icon-library.com/images/no-user-image-icon/no-user-image-icon-0.jpg");
+                    user.setVerified(false);
+                    System.out.println(dto.getRole());
+                    if (dto.getRole() != null) {
+                        switch (dto.getRole().toLowerCase()) {
+                            case "umuyobozi":
+                                user.setRole(URole.UMUYOBOZI);
+                                break;
+                            case "admin":
+                                user.setRole(URole.ADMIN);
+                                break;
+                            default:
+                                throw new BadRequestException("Role" + dto.getRole() + " not allowed!");
+                        }
+                    } else {
+                        user.setRole(URole.UMUTURAGE);
+                    }
+                    // save the otp and user
+                    Optional<Otp> eOtp = otpRepository.findOneByNumber(dto.getPhoneNumber());
+                    if (eOtp.isPresent()) {
+                        return ApiResponse.builder()
+                                .data("User already signed up, verify to continue...")
+                                .success(false)
+                                .build();
+                    }
+
+                    otpRepository.save(otp);
+                    userRepository.save(user);
+                    return ApiResponse.builder()
+                            .success(true)
+                            .data("Urakoze kwiyandikisha muri Rangurura! Ubu ushobora kwinjiramo ugatanga ikibazo cyawe!")
+                            .build();
+                }
+            }
+        } catch (InvalidEnumConstantException e) {
+            throw new BadRequestException(e.getMessage());
         } catch (BadRequestException e) {
-            throw new BadRequestException("All credentials are required!");
+            throw new BadRequestException(e.getMessage());
         } catch (MessageSendingException e) {
-            throw new MessageSendingException("Error while sending the message...");
+            throw new MessageSendingException(e.getMessage());
         } catch (Exception e) {
-            throw new Exception("Internal server error...");
+            System.out.println(e);
+            throw new Exception(e.getMessage());
         }
     }
 
