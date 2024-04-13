@@ -6,6 +6,7 @@ import com.backend.proj.exceptions.UnauthorisedException;
 
 import java.util.*;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import com.backend.proj.response.ApiResponse;
