@@ -455,7 +455,7 @@ public class ProblemServiceImpl implements ProblemService {
 
 
 //this is to get the number of all probs by admin
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     @Override
     public ApiResponse<Object> getNumberOfAllProb() throws Exception {
         try{
@@ -471,7 +471,7 @@ public class ProblemServiceImpl implements ProblemService {
 
     }
 //get number of all pending probs
-@PreAuthorize("hasRole('ADMIN')")
+//@PreAuthorize("hasRole('ADMIN')")
 @Override
     public ApiResponse<Object> getNumberOfPendingProblems() throws Exception {
         try {
@@ -486,7 +486,7 @@ public class ProblemServiceImpl implements ProblemService {
         }
     }
     //get number of all approved probs
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     @Override
     public ApiResponse<Object> getNumberOfApprovedProblems() throws Exception {
         try {
@@ -502,7 +502,7 @@ public class ProblemServiceImpl implements ProblemService {
     }
 
     //get rejected probs
-        @PreAuthorize("hasRole('ADMIN')")
+//        @PreAuthorize("hasRole('ADMIN')")
     @Override
     public ApiResponse<Object> getNumberOfRejectedProblems() throws Exception {
         try {

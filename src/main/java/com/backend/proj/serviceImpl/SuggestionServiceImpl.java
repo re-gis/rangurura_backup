@@ -422,7 +422,7 @@ public class SuggestionServiceImpl implements SuggestionService {
         }
     }
 //to get number of all suggestions By admin
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     @Override
     public ApiResponse<Object> getNumberOfAllSuggestions() throws Exception {
         try {
