@@ -284,7 +284,7 @@ public class EventServiceImpl implements EventsService {
     }
 
     //get numbers of all events by admin
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     @Override
     public ApiResponse<Object> getNumberOfAllEvents() throws Exception {
         try {
