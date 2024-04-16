@@ -421,20 +421,27 @@ public class SuggestionServiceImpl implements SuggestionService {
             throw new Exception(e.getMessage());
         }
     }
+
     // To get the number of all suggestions by admin
     @Override
     public ApiResponse<Object> getNumberOfAllSuggestions() throws Exception {
         try {
             UserResponse user = getLoggedUser.getLoggedUser();
-            if(user != null && user.getRole() == URole.ADMIN) {
+            if (user != null && user.getRole() == URole.ADMIN) {
                 long numberOfSuggestions = suggestionRepository.count();
+                logger.info("Number of suggestions retrieved successfully: {}", numberOfSuggestions);
                 return ApiResponse.builder()
                         .data(numberOfSuggestions)
                         .success(true)
                         .build();
             } else {
+                if (user == null) {
+                    logger.warn("User is not logged in");
+                } else {
+                    logger.warn("User {} does not have ADMIN role", user.getName());
+                }
                 return ApiResponse.builder()
-                        .data("Login to continue")
+                        .data("You are not authorized to perform this action")
                         .success(false)
                         .build();
             }
@@ -446,6 +453,7 @@ public class SuggestionServiceImpl implements SuggestionService {
                     .build();
         }
     }
+
 
 
     //get the number of my suggestion

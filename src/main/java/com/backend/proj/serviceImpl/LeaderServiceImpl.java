@@ -392,6 +392,7 @@ public class LeaderServiceImpl implements LeaderService {
         userEntity.setImageUrl(user.getImageUrl());
         userEntity.setId(user.getId());
 
+
         UserLeaderDto dto = new UserLeaderDto();
         dto.setUser(userEntity);
         dto.setLeader(leader);
