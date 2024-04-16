@@ -15,7 +15,6 @@ import com.backend.proj.response.UserResponse;
 import com.backend.proj.utils.GetLoggedUser;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;

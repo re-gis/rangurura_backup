@@ -7,7 +7,6 @@ import com.backend.proj.exceptions.UnauthorisedException;
 
 import java.util.*;
 
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import org.slf4j.Logger;
