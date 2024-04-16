@@ -63,8 +63,12 @@ public class UserServiceImpl implements UserService {
                             .success(false)
                             .build();
                 } else {
-                    URole rl = URole.valueOf(dto.getRole().toUpperCase());
-                    validateEnum.isValidEnumConstant(rl, URole.class);
+                    if(dto.getRole() != null){
+                        URole rl = URole.valueOf(dto.getRole().toUpperCase());
+                        validateEnum.isValidEnumConstant(rl, URole.class);
+                    }
+
+
                     // check if the user doesn't exists
                     Optional<User> eUser = userRepository.findOneByNationalId(dto.getNationalId());
                     Optional<User> euser = userRepository.findOneByPhone(dto.getPhoneNumber());
@@ -98,16 +102,20 @@ public class UserServiceImpl implements UserService {
                     user.setImageUrl("https://icon-library.com/images/no-user-image-icon/no-user-image-icon-0.jpg");
                     user.setVerified(false);
                     System.out.println(dto.getRole());
+                    user.setRole(URole.UMUTURAGE);
                     if (dto.getRole() != null) {
-                        switch (dto.getRole().toLowerCase()) {
-                            case "umuyobozi":
+                        switch (dto.getRole()) {
+                            case "umuyobozi", "UMUYOBOZI":
                                 user.setRole(URole.UMUYOBOZI);
                                 break;
-                            case "admin":
+                            case "admin", "ADMIN":
                                 user.setRole(URole.ADMIN);
                                 break;
+                            case "umuturage", "UMUTURAGE":
+                                user.setRole(URole.UMUTURAGE);
+                                break;
                             default:
-                                throw new BadRequestException("Role" + dto.getRole() + " not allowed!");
+                                throw new BadRequestException("Role " + dto.getRole() + " not allowed!");
                         }
                     } else {
                         user.setRole(URole.UMUTURAGE);
@@ -129,14 +137,11 @@ public class UserServiceImpl implements UserService {
                             .build();
                 }
             }
-        } catch (InvalidEnumConstantException e) {
-            throw new BadRequestException(e.getMessage());
-        } catch (BadRequestException e) {
+        } catch (InvalidEnumConstantException | BadRequestException e) {
             throw new BadRequestException(e.getMessage());
         } catch (MessageSendingException e) {
             throw new MessageSendingException(e.getMessage());
         } catch (Exception e) {
-            System.out.println(e);
             throw new Exception(e.getMessage());
         }
     }

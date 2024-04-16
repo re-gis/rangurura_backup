@@ -21,6 +21,7 @@ public interface UserService {
     ApiResponse<Object> updateUser(UserUpdateDto dto) throws Exception;
 
     ApiResponse<Object> getAllUsers() throws Exception;
+//    ApiResponse<Object>get
 
     ApiResponse<Object> resetPassword(ResetPasswordDto dto) throws Exception;
 
