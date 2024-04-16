@@ -2,6 +2,7 @@ package com.backend.proj.Services;
 
 import com.backend.proj.dtos.RegisterDto;
 import com.backend.proj.dtos.ResetPasswordDto;
+import com.backend.proj.dtos.SendOtpDto;
 import com.backend.proj.dtos.UserUpdateDto;
 import com.backend.proj.dtos.VerifyOtpDto;
 import com.backend.proj.response.ApiResponse;
@@ -23,7 +24,7 @@ public interface UserService {
 
     ApiResponse<Object> resetPassword(ResetPasswordDto dto) throws Exception;
 
-    ApiResponse<Object> sendOtp(String phoneNumber) throws Exception;
+    ApiResponse<Object> sendOtp(SendOtpDto dto) throws Exception;
 
     boolean verifyOtp(String otp, String phone) throws Exception;
 

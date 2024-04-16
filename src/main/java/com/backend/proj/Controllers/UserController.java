@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.proj.dtos.RegisterDto;
 import com.backend.proj.dtos.ResetPasswordDto;
+import com.backend.proj.dtos.SendOtpDto;
 import com.backend.proj.dtos.VerifyOtpDto;
 import com.backend.proj.response.ApiResponse;
 import com.backend.proj.serviceImpl.UserServiceImpl;
@@ -70,8 +71,8 @@ public class UserController {
     }
 
     @PostMapping("/otp/send")
-    public ResponseEntity<ApiResponse<Object>> sendOtp(@RequestBody String phoneNumber) throws Exception {
-        Object ob = userServiceImpl.sendOtp(phoneNumber).getData();
+    public ResponseEntity<ApiResponse<Object>> sendOtp(@RequestBody SendOtpDto dto) throws Exception {
+        Object ob = userServiceImpl.sendOtp(dto).getData();
         return ResponseHandler.success(ob, HttpStatus.OK);
     }
 

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import com.backend.proj.dtos.RegisterDto;
 import com.backend.proj.dtos.ResetPasswordDto;
+import com.backend.proj.dtos.SendOtpDto;
 import com.backend.proj.dtos.VerifyOtpDto;
 import com.backend.proj.entities.Otp;
 import com.backend.proj.entities.User;
@@ -355,25 +356,25 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    public ApiResponse<Object> sendOtp(String phone) throws Exception {
+    public ApiResponse<Object> sendOtp(SendOtpDto dto) throws Exception {
         try {
-            if (phone == null) {
+            if (dto.getPhoneNumber() == null) {
                 throw new BadRequestException("Please give the phone number used in registration!");
             }
 
-            Optional<User> user = userRepository.findOneByPhone(phone);
-            if (user == null) {
-                throw new NotFoundException("User with phone: " + phone + " not found!");
+            Optional<User> user = userRepository.findOneByPhone(dto.getPhoneNumber());
+            if (!user.isPresent()) {
+                throw new NotFoundException("User with phone: " + dto.getPhoneNumber() + " not found!");
             }
 
             // if number given send the otp
             String o = otpServiceImpl.generateOtp(6);
             System.out.println(o);
             String message = "Your password reset code is: " + o + " , please keep it a secret!";
-            otpServiceImpl.sendMessage(phone, message);
+            otpServiceImpl.sendMessage(dto.getPhoneNumber(), message);
 
             Otp otp = new Otp();
-            otp.setNumber(phone);
+            otp.setNumber(dto.getPhoneNumber());
             otp.setOtp(passwordEncoder.encode(o));
             otpRepository.save(otp);
             return ApiResponse.builder()
@@ -389,6 +390,10 @@ public class UserServiceImpl implements UserService {
         try {
             if (otp == null) {
                 throw new BadRequestException("Please provide the otp sent to your number!");
+            }
+
+            if(phone == null){
+                throw new BadRequestException("Please provide the phone number!");
             }
 
             Optional<Otp> eOtp = otpRepository.findOneByNumber(phone);
