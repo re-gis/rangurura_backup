@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+
 import com.backend.proj.dtos.UserUpdateDto;
 
 import org.springframework.http.HttpStatus;
@@ -15,10 +16,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.backend.proj.dtos.RegisterDto;
+import com.backend.proj.dtos.ResetPasswordDto;
 import com.backend.proj.dtos.VerifyOtpDto;
 import com.backend.proj.entities.Otp;
 import com.backend.proj.entities.User;
-import com.backend.proj.enums.ECategory;
 import com.backend.proj.enums.URole;
 import com.backend.proj.exceptions.BadRequestException;
 import com.backend.proj.exceptions.InvalidEnumConstantException;
@@ -354,11 +355,87 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    public ApiResponse<Object> sendOtp(String phone) throws Exception {
+        try {
+            if (phone == null) {
+                throw new BadRequestException("Please give the phone number used in registration!");
+            }
 
-    public ApiResponse<Object> resetPassword() throws Exception{
-        try{
-            
-        }catch(Exception e){
+            Optional<User> user = userRepository.findOneByPhone(phone);
+            if (user == null) {
+                throw new NotFoundException("User with phone: " + phone + " not found!");
+            }
+
+            // if number given send the otp
+            String o = otpServiceImpl.generateOtp(6);
+            System.out.println(o);
+            String message = "Your password reset code is: " + o + " , please keep it a secret!";
+            otpServiceImpl.sendMessage(phone, message);
+
+            Otp otp = new Otp();
+            otp.setNumber(phone);
+            otp.setOtp(passwordEncoder.encode(o));
+            otpRepository.save(otp);
+            return ApiResponse.builder()
+                    .data("OTP sent successfully!")
+                    .success(true)
+                    .build();
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    public boolean verifyOtp(String otp, String phone) throws Exception {
+        try {
+            if (otp == null) {
+                throw new BadRequestException("Please provide the otp sent to your number!");
+            }
+
+            Optional<Otp> eOtp = otpRepository.findOneByNumber(phone);
+            if (eOtp == null || !passwordEncoder.matches(otp, eOtp.get().getOtp())) {
+                return false;
+            }
+            return true;
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    public ApiResponse<Object> resetPassword(ResetPasswordDto dto) throws Exception {
+        try {
+            if (!verifyOtp(dto.getOtp(), dto.getPhone())) {
+                return ApiResponse.builder()
+                        .data("Invalid OTP provided, check your phone and if not sent ask for another one!")
+                        .success(false)
+                        .status(HttpStatus.BAD_REQUEST)
+                        .build();
+            } else {
+                if (dto.getNewPassword() == null) {
+                    throw new BadRequestException("Please provide the new password...");
+                } else {
+                    Optional<User> user = userRepository.findOneByPhone(dto.getPhone());
+                    if (user == null) {
+                        throw new NotFoundException("User with phone: " + dto.getPhone() + " not found!");
+                    }
+
+                    user.get().setPassword(passwordEncoder.encode(dto.getNewPassword()));
+                    // delete the otp
+                    Optional<Otp> otp = otpRepository.findOneByNumber(dto.getPhone());
+                    if (otp == null) {
+                        throw new BadRequestException(
+                                "Invalid OTP provided, check your phone and if not sent ask for another one!");
+                    }
+                    otpRepository.delete(otp.get());
+                    userRepository.save(user.get());
+                    return ApiResponse.builder()
+                            .data("Password reset successfully...")
+                            .success(true)
+                            .status(HttpStatus.OK)
+                            .build();
+                }
+            }
+
+        } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
     }
