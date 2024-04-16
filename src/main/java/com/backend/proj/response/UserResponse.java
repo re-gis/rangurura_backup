@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -27,4 +29,6 @@ public class UserResponse {
     private EUrwego urwego;
     private String office;
     private boolean isVerified;
+    private String imageUrl;
+    private UUID id;
 }

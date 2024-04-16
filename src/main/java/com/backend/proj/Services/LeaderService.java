@@ -24,4 +24,5 @@ public interface LeaderService {
     public ApiResponse<Object> updateLeader(UpdateLeaderDto dto, UUID id) throws Exception;
 
     public ApiResponse<Object> getLeaderById(UUID id) throws Exception;
+    public  ApiResponse<Object> getLoggedLeader() throws Exception;
 }

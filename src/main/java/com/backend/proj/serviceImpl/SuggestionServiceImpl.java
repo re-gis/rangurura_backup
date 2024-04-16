@@ -421,20 +421,57 @@ public class SuggestionServiceImpl implements SuggestionService {
             throw new Exception(e.getMessage());
         }
     }
-//to get number of all suggestions By admin
-//    @PreAuthorize("hasRole('ADMIN')")
+    // To get the number of all suggestions by admin
     @Override
     public ApiResponse<Object> getNumberOfAllSuggestions() throws Exception {
         try {
-            long numberOf_suggestions=suggestionRepository.count();
+            UserResponse user = getLoggedUser.getLoggedUser();
+            if(user != null && user.getRole() == URole.ADMIN) {
+                long numberOfSuggestions = suggestionRepository.count();
+                return ApiResponse.builder()
+                        .data(numberOfSuggestions)
+                        .success(true)
+                        .build();
+            } else {
+                return ApiResponse.builder()
+                        .data("Login to continue")
+                        .success(false)
+                        .build();
+            }
+        } catch (Exception e) {
+            logger.error("Error in fetching suggestions", e); // Include the exception in the log
             return ApiResponse.builder()
-                    .data(numberOf_suggestions)
-                    .success(true)
+                    .data("Error in fetching suggestions")
+                    .success(false)
                     .build();
+        }
+    }
 
-        }catch (Exception e){
-            throw new Exception(e.getMessage());
 
+    //get the number of my suggestion
+    @Override
+    public ApiResponse<Object> getNumberOfAcceptedSuggestionForMe() throws Exception {
+        try {
+            UserResponse user = getLoggedUser.getLoggedUser();
+            if (user != null) {
+                long numberOfAcceptedSuggestions = suggestionRepository.countByStatusAndNationalId(ESuggestion.ACCEPTED, user.getNationalId());
+                return ApiResponse.builder()
+                        .data(numberOfAcceptedSuggestions)
+                        .success(true)
+                        .build();
+            } else {
+                return ApiResponse.builder()
+                        .data("Login to continue")
+                        .success(false)
+                        .build();
+            }
+
+        } catch (Exception e) {
+            logger.error("Error occurred while getting the number of my accepted suggestions", e);
+            return ApiResponse.builder()
+                    .data("An error occurred while fetching the number of accepted suggestions.")
+                    .success(false)
+                    .build();
         }
     }
 
