@@ -354,4 +354,13 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+
+    public ApiResponse<Object> resetPassword() throws Exception{
+        try{
+            
+        }catch(Exception e){
+            throw new Exception(e.getMessage());
+        }
+    }
+
 }

@@ -18,4 +18,6 @@ public interface UserService {
     ApiResponse<Object> updateUser(UserUpdateDto dto) throws Exception;
     ApiResponse<Object> getAllUsers() throws Exception;
 
+    ApiResponse<Object> resetPassword() throws Exception;
+
 }
