@@ -9,7 +9,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.backend.proj.dtos.CreateProblemDto;
 import com.backend.proj.dtos.UpdateProblemDto;
-import com.backend.proj.entities.Problem;
 import com.backend.proj.enums.EProblem_Status;
 import com.backend.proj.response.ApiResponse;
 import com.backend.proj.serviceImpl.ProblemServiceImpl;
