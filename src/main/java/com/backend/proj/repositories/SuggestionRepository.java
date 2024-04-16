@@ -2,6 +2,7 @@ package com.backend.proj.repositories;
 
 import com.backend.proj.entities.Suggestions;
 import com.backend.proj.enums.ECategory;
+import com.backend.proj.enums.ESuggestion;
 import com.backend.proj.enums.EUrwego;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,4 +21,6 @@ public interface SuggestionRepository extends JpaRepository <Suggestions , UUID>
             ECategory category);
 
     Optional<Suggestions> findById(UUID id);
+
+    long countByStatusAndNationalId(ESuggestion eSuggestion, String nationalId);
 }

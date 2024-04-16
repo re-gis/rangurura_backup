@@ -53,8 +53,7 @@ public class Problem {
 
     @Column(nullable = false)
     private String owner;
-
-    @Enumerated(EnumType.STRING)
+ @Enumerated(EnumType.STRING)
     private EProblem_Status status;
 
     @CreationTimestamp

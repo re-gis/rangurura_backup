@@ -9,6 +9,8 @@ import java.util.*;
 
 import org.springframework.stereotype.Service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.backend.proj.response.ApiResponse;
 import com.backend.proj.response.NotFoundResponse;
 import com.backend.proj.response.ProblemResponse;
@@ -38,6 +40,7 @@ public class ProblemServiceImpl implements ProblemService {
     private final UploadDoc uploadDoc;
     private final ProblemRepository problemRepository;
     private final LeaderRepository leaderRepository;
+    private static final Logger logger = LoggerFactory.getLogger(ProblemService.class);
 
     @Override
     public ApiResponse<Object> createAProblem(CreateProblemDto dto) throws Exception {
@@ -458,6 +461,7 @@ public class ProblemServiceImpl implements ProblemService {
     @Override
     public ApiResponse<Object> getNumberOfAllProb() throws Exception {
         try{
+//            UserResponse user = getLoggedUser.getLoggedUser();
             long numberOfProblems = problemRepository.count();
             return  ApiResponse.builder()
                     .data(numberOfProblems)
@@ -515,9 +519,61 @@ public class ProblemServiceImpl implements ProblemService {
         }
     }
 
+
+
+
+    //get number of solved probs for user
     @Override
-    public ApiResponse<Object> getNumberOfSolvedProbsByCitizen() throws Exception {
-        return null;
+    public ApiResponse<Object> getNumberOfSolvedProblemsForUser() throws Exception {
+        try {
+            UserResponse user = getLoggedUser.getLoggedUser();
+            if (user != null) {
+                long numberOfSolvedProblems = problemRepository.countByStatusAndOwner(EProblem_Status.APPROVED, user.getNationalId());
+                return ApiResponse.builder()
+                        .data(numberOfSolvedProblems)
+                        .success(true)
+                        .build();
+            } else {
+                return ApiResponse.builder()
+                        .data("Login to continue")
+                        .success(false)
+                        .build();
+            }
+
+        } catch (Exception e) {
+            logger.error("Error occurred while getting the number of solved problems for the user", e);
+            return ApiResponse.builder()
+                    .data("An error occurred while fetching the number of solved problems.")
+                    .success(false)
+                    .build();
+        }
+    }
+
+    //get number of pending prob for user
+    @Override
+    public ApiResponse<Object> getNumberOfPendingProblemsForUser() throws Exception {
+        try {
+            UserResponse user = getLoggedUser.getLoggedUser();
+            if (user != null) {
+                long numberOfUnSolvedProblems = problemRepository.countByStatusAndOwner(EProblem_Status.PENDING, user.getNationalId());
+                return ApiResponse.builder()
+                        .data(numberOfUnSolvedProblems)
+                        .success(true)
+                        .build();
+            } else {
+                return ApiResponse.builder()
+                        .data("Login to continue")
+                        .success(false)
+                        .build();
+            }
+
+        } catch (Exception e) {
+            logger.error("Error occurred while getting the number of solved problems for the user", e);
+            return ApiResponse.builder()
+                    .data("An error occurred while fetching the number of solved problems.")
+                    .success(false)
+                    .build();
+        }
     }
 
 
