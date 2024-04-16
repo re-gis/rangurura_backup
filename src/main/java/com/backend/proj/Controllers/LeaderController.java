@@ -61,5 +61,10 @@ public class LeaderController {
     public ResponseEntity<ApiResponse<Object>> getLeaderById(@PathVariable("id") UUID id)throws Exception{
         return ResponseHandler.success(leaderServiceImpl.getLeaderById(id), HttpStatus.OK);
     }
+    @GetMapping("/my_profile")
+    public ResponseEntity<ApiResponse<Object>> getLoggedLeader()throws Exception{
+        return ResponseHandler.success(leaderServiceImpl.getLoggedLeader().getData(), HttpStatus.OK);
+    }
+
 
 }
