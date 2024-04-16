@@ -4,5 +4,6 @@ public enum ECategory {
     UBUZIMA,
     IMYIDAGADURO,
     UBUREZI,
-    IMIYOBORERE
+    IMIYOBORERE,
+    IMIBEREHOMYIZA,
 }

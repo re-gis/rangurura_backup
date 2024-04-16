@@ -516,5 +516,10 @@ public class ProblemServiceImpl implements ProblemService {
         }
     }
 
+    @Override
+    public ApiResponse<Object> getNumberOfSolvedProbsByCitizen() throws Exception {
+        return null;
+    }
+
 
 }
