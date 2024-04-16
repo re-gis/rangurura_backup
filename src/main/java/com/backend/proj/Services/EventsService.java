@@ -13,6 +13,7 @@ public interface EventsService {
     ApiResponse<Object> deleteMyEvent(UUID id) throws Exception;
     ApiResponse<Object> myRecentEvent() throws Exception;
     ApiResponse<Object> receivedEvent() throws Exception;
+    ApiResponse<Object> getNumberOfAllEvents() throws Exception;
 
 
 

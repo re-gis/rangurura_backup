@@ -23,5 +23,6 @@ public interface SuggestionService {
     ApiResponse<Object> getSuggestionById(UUID id) throws Exception;
 
     ApiResponse<Object> getAllSuggestions()throws Exception;
+    ApiResponse<Object>getNumberOfAllSuggestions() throws Exception;
 
 }

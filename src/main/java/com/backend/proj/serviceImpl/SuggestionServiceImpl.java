@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -418,6 +419,22 @@ public class SuggestionServiceImpl implements SuggestionService {
         } catch (Exception e) {
             System.out.println(e);
             throw new Exception(e.getMessage());
+        }
+    }
+//to get number of all suggestions By admin
+//    @PreAuthorize("hasRole('ADMIN')")
+    @Override
+    public ApiResponse<Object> getNumberOfAllSuggestions() throws Exception {
+        try {
+            long numberOf_suggestions=suggestionRepository.count();
+            return ApiResponse.builder()
+                    .data(numberOf_suggestions)
+                    .success(true)
+                    .build();
+
+        }catch (Exception e){
+            throw new Exception(e.getMessage());
+
         }
     }
 }
