@@ -2,6 +2,9 @@ package com.backend.proj.utils;
 
 import java.util.Optional;
 
+import com.backend.proj.exceptions.JwtExpiredException;
+import com.backend.proj.response.ApiResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -83,10 +86,12 @@ public class GetLoggedUser {
                         .build();
             }
             return u;
-        } catch (NotFoundException e) {
+        } catch (JwtExpiredException e) {
+            throw new JwtExpiredException("Jwt expired: " + e.getMessage());
+        }catch (NotFoundException e) {
             throw new NotFoundException("User not found!");
         } catch (Exception e) {
-            throw new Exception("Internal server error...");
+            throw new Exception(e.getMessage());
         }
     }
 }

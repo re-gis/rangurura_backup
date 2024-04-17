@@ -2,11 +2,14 @@ package com.backend.proj.ExceptionHandlers;
 
 import com.backend.proj.exceptions.BadRequestException;
 import com.backend.proj.exceptions.InvalidEnumConstantException;
+import com.backend.proj.exceptions.JwtExpiredException;
 import com.backend.proj.exceptions.MessageSendingException;
 import com.backend.proj.exceptions.NotFoundException;
 import com.backend.proj.exceptions.UnauthorisedException;
 import com.backend.proj.response.ApiResponse;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+
+import io.jsonwebtoken.ExpiredJwtException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,6 +47,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidEnumConstantException.class)
     public ResponseEntity<ApiResponse<String>> handleInvalidEnumConstantException(InvalidEnumConstantException e) {
         return new ResponseEntity<>(new ApiResponse<>(e.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(JwtExpiredException.class)
+    public ResponseEntity<ApiResponse<String>> handleJwtException(JwtExpiredException e) {
+        return new ResponseEntity<>(new ApiResponse<>(e.getMessage()), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<ApiResponse<String>> handleJwtExpiredException(ExpiredJwtException e) {
+        return new ResponseEntity<>(new ApiResponse<>(e.getMessage()), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler({HttpMessageNotReadableException.class})
