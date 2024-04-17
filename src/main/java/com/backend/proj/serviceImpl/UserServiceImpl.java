@@ -249,7 +249,7 @@ public class UserServiceImpl implements UserService {
         } catch (NotFoundException e) {
             throw e;
         } catch (Exception e) {
-            e.printStackTrace();
+            // e.printStackTrace();
             throw new Exception("Internal server error...");
         }
     }
@@ -299,7 +299,7 @@ public class UserServiceImpl implements UserService {
         } catch (NotFoundException e) {
             throw new NotFoundException(e.getMessage());
         } catch (Exception e) {
-            e.printStackTrace();
+            // e.printStackTrace();
             throw new Exception(e.getMessage());
         }
     }
@@ -380,7 +380,7 @@ public class UserServiceImpl implements UserService {
             // if number given send the otp
             String o = otpServiceImpl.generateOtp(6);
             System.out.println(o);
-            String message = "Your password reset code is: " + o + " , please keep it a secret!";
+            String message = " yo guhindura  ni: " + o;
             otpServiceImpl.sendMessage(dto.getPhoneNumber(), message);
 
             Otp otp = new Otp();

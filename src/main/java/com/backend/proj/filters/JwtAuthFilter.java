@@ -32,7 +32,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
-            @NonNull FilterChain filterChain) throws ServletException, IOException {
+            @NonNull FilterChain filterChain) throws ServletException, IOException, JwtExpiredException, ExpiredJwtException {
         try {
             final String authHeader = request.getHeader("Authorization");
             final String jwt;
