@@ -28,9 +28,9 @@ public interface ProblemService {
     public ApiResponse<Object>getNumberOfRejectedProblems() throws Exception;
     public ApiResponse<Object>getNumberOfSolvedProblemsForUser() throws  Exception;
     public ApiResponse<Object>getNumberOfPendingProblemsForUser() throws Exception;
-//    public ApiResponse<Object>getNumberOfProOnMyLevel() throws Exception;
-//    public ApiResponse<Object>getNumberOfPendingProbsOnMyLevel() throws Exception;
-//    public ApiResponse<Object>getNumberOfApprovedProbsOnMyLevel() throws Exception;
+    public ApiResponse<Object>getNumberOfProOnMyLevel() throws Exception;
+    public ApiResponse<Object>getNumberOfPendingProbsOnMyLevel() throws Exception;
+    public ApiResponse<Object>getNumberOfApprovedProbsOnMyLevel() throws Exception;
 
 
 }
