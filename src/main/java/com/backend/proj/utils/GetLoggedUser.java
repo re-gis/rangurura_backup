@@ -20,6 +20,7 @@ import com.backend.proj.response.UserResponse;
 
 import lombok.RequiredArgsConstructor;
 
+
 @RequiredArgsConstructor
 @Service
 public class GetLoggedUser {
