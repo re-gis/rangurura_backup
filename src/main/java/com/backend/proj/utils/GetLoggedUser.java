@@ -92,6 +92,7 @@ public class GetLoggedUser {
         }catch (NotFoundException e) {
             throw new NotFoundException("User not found!");
         } catch (Exception e) {
+            e.printStackTrace();
             throw new Exception(e.getMessage());
         }
     }
