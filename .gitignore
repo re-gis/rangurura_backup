@@ -5,7 +5,7 @@ target/
 !**/src/test/**/target/
 
 # Ignore Dockerfile
-Dockerfile
+# Dockerfile
 
 ### STS ###
 .apt_generated
