@@ -23,4 +23,6 @@ public interface SuggestionRepository extends JpaRepository <Suggestions , UUID>
     Optional<Suggestions> findById(UUID id);
 
     long countByStatusAndNationalId(ESuggestion eSuggestion, String nationalId);
+    long countAllByUrwegoAndLocationAndCategory(EUrwego origanizationLevel, String location,
+                                                            ECategory category);
 }

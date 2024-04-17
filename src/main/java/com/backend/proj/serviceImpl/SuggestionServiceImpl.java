@@ -486,5 +486,94 @@ public class SuggestionServiceImpl implements SuggestionService {
                     .build();
         }
     }
+//
+//    @Override
+//    public ApiResponse<Object> getNumberOfAllOnMyLocal() throws Exception {
+//        try {
+//            UserResponse user = getLoggedUser.getLoggedUser();
+//            if (user.getRole() != URole.UMUYOBOZI) {
+//                throw new UnauthorisedException("You are not authorised to perform this action!");
+//            }
+//
+//            Optional<Leaders> leader = leaderRepository.findByNationalId(user.getNationalId());
+//            if (!leader.isPresent()) {
+//                throw new NotFoundException("Leader " + user.getNationalId() + " not found!");
+//            }
+//
+//            // Count the suggestions
+//            long numberOfSuggestions = suggestionRepository.countAllByUrwegoAndLocationAndCategory(
+//                    leader.get().getOrganizationLevel(), leader.get().getLocation(), leader.get().getCategory());
+//
+//            // Check if there are any suggestions
+//            if (numberOfSuggestions == 0) {
+//                NotFoundResponse response = NotFoundResponse.builder()
+//                        .message(String.format("No suggestions found in %s and category: %s",
+//                                leader.get().getLocation(), leader.get().getCategory()))
+//                        .build();
+//                return ApiResponse.builder()
+//                        .data(response)
+//                        .success(true)
+//                        .build();
+//            }
+//
+//            return ApiResponse.builder()
+//                    .data(numberOfSuggestions)
+//                    .success(true)
+//                    .build();
+//        } catch (UnauthorisedException e) {
+//            throw new UnauthorisedException(e.getMessage());
+//        } catch (NotFoundException e) {
+//            throw new NotFoundException(e.getMessage());
+//        } catch (Exception e) {
+//            throw new Exception(e.getMessage());
+//        }
+//    }
+
+    @Override
+    public ApiResponse<Object> getNumberOfAllOnMyLocal() throws Exception {
+        try {
+            UserResponse user = getLoggedUser.getLoggedUser();
+            System.out.println(user.getRole());
+            if (user.getRole() != URole.UMUYOBOZI) {
+                throw new UnauthorisedException("You are not authorised to perform this action!");
+            }
+
+            Optional<Leaders> leader = leaderRepository.findByNationalId(user.getNationalId());
+            if (!leader.isPresent()) {
+                throw new NotFoundException("Leader " + user.getNationalId() + " not found!");
+            }
+
+            // Count the suggestions
+            long numberOfSuggestions = suggestionRepository.countAllByUrwegoAndLocationAndCategory(
+                    leader.get().getOrganizationLevel(), leader.get().getLocation(), leader.get().getCategory());
+
+            // Check if there are any suggestions
+            if (numberOfSuggestions == 0) {
+                NotFoundResponse response = NotFoundResponse.builder()
+                        .message(String.format("No suggestions found in %s and category: %s",
+                                leader.get().getLocation(), leader.get().getCategory()))
+                        .build();
+                return ApiResponse.builder()
+                        .data(response)
+                        .success(true)
+                        .build();
+            }
+
+            return ApiResponse.builder()
+                    .data(numberOfSuggestions)
+                    .success(true)
+                    .build();
+        } catch (UnauthorisedException e) {
+            throw new UnauthorisedException(e.getMessage());
+        } catch (NotFoundException e) {
+            throw new NotFoundException(e.getMessage());
+        } catch (Exception e) {
+            // Log the exception for debugging purposes
+            e.printStackTrace();
+            throw new Exception("Internal server error: " + e.getMessage());
+        }
+    }
+
+
 
 }
