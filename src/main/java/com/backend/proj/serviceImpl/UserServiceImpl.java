@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-
 import com.backend.proj.dtos.UserUpdateDto;
 
 import org.springframework.http.HttpStatus;
@@ -24,6 +23,7 @@ import com.backend.proj.entities.User;
 import com.backend.proj.enums.URole;
 import com.backend.proj.exceptions.BadRequestException;
 import com.backend.proj.exceptions.InvalidEnumConstantException;
+import com.backend.proj.exceptions.JwtExpiredException;
 import com.backend.proj.exceptions.MessageSendingException;
 import com.backend.proj.exceptions.NotFoundException;
 import com.backend.proj.exceptions.UnauthorisedException;
@@ -63,11 +63,10 @@ public class UserServiceImpl implements UserService {
                             .success(false)
                             .build();
                 } else {
-                    if(dto.getRole() != null){
+                    if (dto.getRole() != null) {
                         URole rl = URole.valueOf(dto.getRole().toUpperCase());
                         validateEnum.isValidEnumConstant(rl, URole.class);
                     }
-
 
                     // check if the user doesn't exists
                     Optional<User> eUser = userRepository.findOneByNationalId(dto.getNationalId());
@@ -178,7 +177,7 @@ public class UserServiceImpl implements UserService {
         } catch (BadRequestException e) {
             throw new BadRequestException("Invalid OTP!");
         } catch (Exception e) {
-            throw new Exception("Internal server error...");
+            throw new Exception(e.getMessage());
         }
     }
 
@@ -193,7 +192,7 @@ public class UserServiceImpl implements UserService {
         } catch (NotFoundException e) {
             throw new NotFoundException("User not found!");
         } catch (Exception e) {
-            throw new Exception("Internal server error...");
+            throw new Exception(e.getMessage());
         }
     }
 
@@ -355,8 +354,14 @@ public class UserServiceImpl implements UserService {
                     .success(true)
                     .status(HttpStatus.OK)
                     .build();
+        } catch (JwtExpiredException e) {
+            return ApiResponse.builder()
+                    .error("JWT Expired")
+                    .data("JWT token has expired. Please log in again.")
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .build();
         } catch (Exception e) {
-            System.out.println(e);
+            // System.out.println(e);
             throw new Exception(e.getMessage());
         }
     }
@@ -397,7 +402,7 @@ public class UserServiceImpl implements UserService {
                 throw new BadRequestException("Please provide the otp sent to your number!");
             }
 
-            if(phone == null){
+            if (phone == null) {
                 throw new BadRequestException("Please provide the phone number!");
             }
 
