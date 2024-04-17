@@ -350,7 +350,7 @@ public class SuggestionServiceImpl implements SuggestionService {
             // check the owner
             String ownerId = suggestion.get().getNationalId();
 
-            if (user.getNationalId() == ownerId || user.getRole() == URole.ADMIN) {
+            if (user.getNationalId().equals(ownerId) || user.getRole() == URole.ADMIN) {
                 // delete the suggestion
                 suggestionRepository.delete(suggestion.get());
                 return ApiResponse.builder()
@@ -358,6 +358,9 @@ public class SuggestionServiceImpl implements SuggestionService {
                         .success(true)
                         .build();
             }
+
+//            System.out.println("the nationalId of suggestions is " + ownerId);
+//            System.out.println("The nationalId of user is "+ user.getNationalId());
             throw new UnauthorisedException("You are not authorised to perform this action!");
         } catch (NotFoundException e) {
             throw new NotFoundException(e.getMessage());
@@ -367,6 +370,7 @@ public class SuggestionServiceImpl implements SuggestionService {
             throw new Exception(e.getMessage());
         }
     }
+
 
     @Override
     public ApiResponse<Object> getSuggestionById(UUID id) throws Exception {
@@ -482,6 +486,5 @@ public class SuggestionServiceImpl implements SuggestionService {
                     .build();
         }
     }
-
 
 }
