@@ -119,6 +119,7 @@ public class LeaderServiceImpl implements LeaderService {
         }
     }
 
+
     // this is to get all leaders
 
     @Override
@@ -335,5 +336,69 @@ public class LeaderServiceImpl implements LeaderService {
             throw new Exception(e.getMessage());
         }
     }
+
+    //get leader profile
+    @Override
+    public ApiResponse<Object> getLoggedLeader() throws Exception {
+        try {
+            UserResponse user = getLoggedUser.getLoggedUser();
+            if (user != null) {
+                String nationalId = user.getNationalId();
+                Optional<Leaders> leader = leaderRepository.findByNationalId(nationalId);
+                if (leader.isPresent()) {
+                    // Combine user and leader details
+                    UserLeaderDto dto = combineUserAndLeaderDetails(user, leader.get());
+
+                    return ApiResponse.builder()
+                            .success(true)
+                            .data(dto)
+//                            .status(HttpStatus.OK)
+                            .build();
+                } else {
+                    return ApiResponse.builder()
+                            .success(false)
+                            .data("You are not a registered leader!")
+                            .status(HttpStatus.NO_CONTENT)
+                            .build();
+                }
+            } else {
+                return ApiResponse.builder()
+                        .success(false)
+                        .data("Login to continue")
+                        .status(HttpStatus.UNAUTHORIZED)
+                        .build();
+            }
+        } catch (Exception e) {
+            return ApiResponse.builder()
+                    .success(false)
+                    .data(null)
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .build();
+        }
+    }
+
+    // Method to combine user and leader details
+    private UserLeaderDto combineUserAndLeaderDetails(UserResponse user, Leaders leader) {
+        User userEntity = new User();
+
+        userEntity.setRole(user.getRole());
+        userEntity.setCell(user.getCell());
+        userEntity.setSector(user.getSector());
+        userEntity.setDistrict(user.getDistrict());
+        userEntity.setProvince(user.getProvince());
+        userEntity.setNationalId(user.getNationalId());
+        userEntity.setPhone(user.getPhoneNumber());
+        userEntity.setUsername(user.getName());
+        userEntity.setImageUrl(user.getImageUrl());
+        userEntity.setId(user.getId());
+
+
+        UserLeaderDto dto = new UserLeaderDto();
+        dto.setUser(userEntity);
+        dto.setLeader(leader);
+
+        return dto;
+    }
+
 
 }

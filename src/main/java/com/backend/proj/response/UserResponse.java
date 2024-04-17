@@ -3,16 +3,16 @@ package com.backend.proj.response;
 import com.backend.proj.enums.ECategory;
 import com.backend.proj.enums.EUrwego;
 import com.backend.proj.enums.URole;
+import lombok.*;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.util.UUID;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+//@Setter
+//@Getter
 public class UserResponse {
     private String name;
     private String province;
@@ -27,4 +27,10 @@ public class UserResponse {
     private EUrwego urwego;
     private String office;
     private boolean isVerified;
+    private String imageUrl;
+    public UUID id;
+
+//    public UUID getId() {
+//        return id;
+//    }
 }
