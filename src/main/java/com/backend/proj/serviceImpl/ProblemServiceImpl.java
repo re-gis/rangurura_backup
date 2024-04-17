@@ -647,5 +647,162 @@ public class ProblemServiceImpl implements ProblemService {
         }
     }
 
+    //get number of probs on his level
+
+    @Override
+    public ApiResponse<Object> getNumberOfProOnMyLevel() throws Exception {
+        try {
+            UserResponse user = getLoggedUser.getLoggedUser();
+
+            // Check if the user is authorized
+            if (user.getRole() != URole.UMUYOBOZI) {
+                throw new UnauthorisedException("You are not authorized to perform this action!");
+            }
+
+            // Find the leader
+            Optional<Leaders> leader = leaderRepository.findByNationalId(user.getNationalId());
+            if (!leader.isPresent()) {
+                NotFoundResponse response = NotFoundResponse.builder()
+                        .message("Leader not found!")
+                        .build();
+                return ApiResponse.builder()
+                        .data(response)
+                        .success(true)
+                        .build();
+            }
+
+            // Count the number of problems to be solved
+            long numberOfProblems = problemRepository.countAllByUrwegoAndCategoryAndTarget(
+                    leader.get().getOrganizationLevel(),
+                    leader.get().getCategory(), leader.get().getLocation());
+
+            // Check if there are any problems
+            if (numberOfProblems == 0) {
+                NotFoundResponse response = NotFoundResponse.builder()
+                        .message("No problems found!")
+                        .build();
+                return ApiResponse.builder()
+                        .data(response)
+                        .success(true)
+                        .build();
+            }
+
+            return ApiResponse.builder()
+                    .data(numberOfProblems)
+                    .success(true)
+                    .build();
+
+        } catch (NotFoundException e) {
+            throw new NotFoundException(e.getMessage());
+        } catch (UnauthorisedException e) {
+            throw new UnauthorisedException(e.getMessage());
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @Override
+    public ApiResponse<Object> getNumberOfPendingProbsOnMyLevel() throws Exception {
+        try {
+            UserResponse user = getLoggedUser.getLoggedUser();
+
+            // Check if the user is authorized
+            if (user.getRole() != URole.UMUYOBOZI) {
+                throw new UnauthorisedException("You are not authorized to perform this action!");
+            }
+
+            // Find the leader
+            Optional<Leaders> leader = leaderRepository.findByNationalId(user.getNationalId());
+            if (!leader.isPresent()) {
+                NotFoundResponse response = NotFoundResponse.builder()
+                        .message("Leader not found!")
+                        .build();
+                return ApiResponse.builder()
+                        .data(response)
+                        .success(true)
+                        .build();
+            }
+
+            // Count the number of problems to be solved
+            long numberOfProblems = problemRepository.countAllByUrwegoAndCategoryAndTargetAndStatus(
+                    leader.get().getOrganizationLevel(),
+                    leader.get().getCategory(), leader.get().getLocation(),EProblem_Status.PENDING);
+
+            // Check if there are any problems
+            if (numberOfProblems == 0) {
+                NotFoundResponse response = NotFoundResponse.builder()
+                        .message("No problems found!")
+                        .build();
+                return ApiResponse.builder()
+                        .data(response)
+                        .success(true)
+                        .build();
+            }
+
+            return ApiResponse.builder()
+                    .data(numberOfProblems)
+                    .success(true)
+                    .build();
+
+        } catch (NotFoundException e) {
+            throw new NotFoundException(e.getMessage());
+        } catch (UnauthorisedException e) {
+            throw new UnauthorisedException(e.getMessage());
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @Override
+    public ApiResponse<Object> getNumberOfApprovedProbsOnMyLevel() throws Exception {
+        try {
+            UserResponse user = getLoggedUser.getLoggedUser();
+
+            // Check if the user is authorized
+            if (user.getRole() != URole.UMUYOBOZI) {
+                throw new UnauthorisedException("You are not authorized to perform this action!");
+            }
+
+            // Find the leader
+            Optional<Leaders> leader = leaderRepository.findByNationalId(user.getNationalId());
+            if (!leader.isPresent()) {
+                NotFoundResponse response = NotFoundResponse.builder()
+                        .message("Leader not found!")
+                        .build();
+                return ApiResponse.builder()
+                        .data(response)
+                        .success(true)
+                        .build();
+            }
+
+            // Count the number of problems to be solved
+            long numberOfProblems = problemRepository.countAllByUrwegoAndCategoryAndTargetAndStatus(
+                    leader.get().getOrganizationLevel(),
+                    leader.get().getCategory(), leader.get().getLocation(),EProblem_Status.APPROVED);
+
+            // Check if there are any problems
+            if (numberOfProblems == 0) {
+                NotFoundResponse response = NotFoundResponse.builder()
+                        .message("No problems found!")
+                        .build();
+                return ApiResponse.builder()
+                        .data(response)
+                        .success(true)
+                        .build();
+            }
+
+            return ApiResponse.builder()
+                    .data(numberOfProblems)
+                    .success(true)
+                    .build();
+
+        } catch (NotFoundException e) {
+            throw new NotFoundException(e.getMessage());
+        } catch (UnauthorisedException e) {
+            throw new UnauthorisedException(e.getMessage());
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
 
 }
