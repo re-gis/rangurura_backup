@@ -24,4 +24,6 @@ public interface ProblemRepository extends JpaRepository<Problem, UUID> {
     long countByStatus(EProblem_Status eProblemStatus);
 
     long countByStatusAndOwner(EProblem_Status status, String owner);
+    long countAllByUrwegoAndCategoryAndTarget(EUrwego organizationLevel, ECategory category, String location);
+    long countAllByUrwegoAndCategoryAndTargetAndStatus(EUrwego organizationLevel, ECategory category, String location,EProblem_Status status);
 }

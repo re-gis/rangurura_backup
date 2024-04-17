@@ -6,6 +6,7 @@ import com.backend.proj.dtos.CreateProblemDto;
 import com.backend.proj.dtos.UpdateProblemDto;
 import com.backend.proj.enums.EProblem_Status;
 import com.backend.proj.response.ApiResponse;
+import com.cloudinary.Api;
 
 public interface ProblemService {
     public ApiResponse<Object> createAProblem(CreateProblemDto dto) throws Exception;
@@ -27,5 +28,9 @@ public interface ProblemService {
     public ApiResponse<Object>getNumberOfRejectedProblems() throws Exception;
     public ApiResponse<Object>getNumberOfSolvedProblemsForUser() throws  Exception;
     public ApiResponse<Object>getNumberOfPendingProblemsForUser() throws Exception;
+    public ApiResponse<Object>getNumberOfProOnMyLevel() throws Exception;
+    public ApiResponse<Object>getNumberOfPendingProbsOnMyLevel() throws Exception;
+    public ApiResponse<Object>getNumberOfApprovedProbsOnMyLevel() throws Exception;
+
 
 }
