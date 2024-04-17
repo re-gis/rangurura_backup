@@ -282,4 +282,20 @@ public class EventServiceImpl implements EventsService {
         }
     }
 
+    //get numbers of all events by admin
+//    @PreAuthorize("hasRole('ADMIN')")
+    @Override
+    public ApiResponse<Object> getNumberOfAllEvents() throws Exception {
+        try {
+            Long numberOfAllEvents = eventRepository.count();
+            return ApiResponse.builder()
+                    .data(numberOfAllEvents)
+                    .success(true)
+                    .build();
+
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+
+    }
 }

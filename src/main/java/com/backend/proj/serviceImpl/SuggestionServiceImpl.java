@@ -1,14 +1,12 @@
 package com.backend.proj.serviceImpl;
 
+import com.backend.proj.Services.ProblemService;
 import com.backend.proj.Services.SuggestionService;
 import com.backend.proj.dtos.SuggestionDto;
 import com.backend.proj.dtos.SuggestionUpdateDto;
 import com.backend.proj.entities.Leaders;
 import com.backend.proj.entities.Suggestions;
-import com.backend.proj.enums.ECategory;
-import com.backend.proj.enums.ESuggestion;
-import com.backend.proj.enums.EUrwego;
-import com.backend.proj.enums.URole;
+import com.backend.proj.enums.*;
 import com.backend.proj.exceptions.BadRequestException;
 import com.backend.proj.exceptions.InvalidEnumConstantException;
 import com.backend.proj.exceptions.NotFoundException;
@@ -29,6 +27,8 @@ import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +39,7 @@ public class SuggestionServiceImpl implements SuggestionService {
     private final GetLoggedUser getLoggedUser;
     private final LeaderRepository leaderRepository;
     private final ValidateEnum validateEnum;
+    private static final Logger logger = LoggerFactory.getLogger(ProblemService.class);
 
     @Override
     public ApiResponse<Object> PostSuggestion(SuggestionDto dto) throws Exception {
@@ -349,7 +350,7 @@ public class SuggestionServiceImpl implements SuggestionService {
             // check the owner
             String ownerId = suggestion.get().getNationalId();
 
-            if (user.getNationalId() == ownerId || user.getRole() == URole.ADMIN) {
+            if (user.getNationalId().equals(ownerId) || user.getRole() == URole.ADMIN) {
                 // delete the suggestion
                 suggestionRepository.delete(suggestion.get());
                 return ApiResponse.builder()
@@ -357,6 +358,9 @@ public class SuggestionServiceImpl implements SuggestionService {
                         .success(true)
                         .build();
             }
+
+//            System.out.println("the nationalId of suggestions is " + ownerId);
+//            System.out.println("The nationalId of user is "+ user.getNationalId());
             throw new UnauthorisedException("You are not authorised to perform this action!");
         } catch (NotFoundException e) {
             throw new NotFoundException(e.getMessage());
@@ -366,6 +370,7 @@ public class SuggestionServiceImpl implements SuggestionService {
             throw new Exception(e.getMessage());
         }
     }
+
 
     @Override
     public ApiResponse<Object> getSuggestionById(UUID id) throws Exception {
@@ -420,4 +425,66 @@ public class SuggestionServiceImpl implements SuggestionService {
             throw new Exception(e.getMessage());
         }
     }
+
+    // To get the number of all suggestions by admin
+    @Override
+    public ApiResponse<Object> getNumberOfAllSuggestions() throws Exception {
+        try {
+            UserResponse user = getLoggedUser.getLoggedUser();
+            if (user != null && user.getRole() == URole.ADMIN) {
+                long numberOfSuggestions = suggestionRepository.count();
+                logger.info("Number of suggestions retrieved successfully: {}", numberOfSuggestions);
+                return ApiResponse.builder()
+                        .data(numberOfSuggestions)
+                        .success(true)
+                        .build();
+            } else {
+                if (user == null) {
+                    logger.warn("User is not logged in");
+                } else {
+                    logger.warn("User {} does not have ADMIN role", user.getName());
+                }
+                return ApiResponse.builder()
+                        .data("You are not authorized to perform this action")
+                        .success(false)
+                        .build();
+            }
+        } catch (Exception e) {
+            logger.error("Error in fetching suggestions", e); // Include the exception in the log
+            return ApiResponse.builder()
+                    .data("Error in fetching suggestions")
+                    .success(false)
+                    .build();
+        }
+    }
+
+
+
+    //get the number of my suggestion
+    @Override
+    public ApiResponse<Object> getNumberOfAcceptedSuggestionForMe() throws Exception {
+        try {
+            UserResponse user = getLoggedUser.getLoggedUser();
+            if (user != null) {
+                long numberOfAcceptedSuggestions = suggestionRepository.countByStatusAndNationalId(ESuggestion.ACCEPTED, user.getNationalId());
+                return ApiResponse.builder()
+                        .data(numberOfAcceptedSuggestions)
+                        .success(true)
+                        .build();
+            } else {
+                return ApiResponse.builder()
+                        .data("Login to continue")
+                        .success(false)
+                        .build();
+            }
+
+        } catch (Exception e) {
+            logger.error("Error occurred while getting the number of my accepted suggestions", e);
+            return ApiResponse.builder()
+                    .data("An error occurred while fetching the number of accepted suggestions.")
+                    .success(false)
+                    .build();
+        }
+    }
+
 }

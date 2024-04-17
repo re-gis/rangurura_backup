@@ -7,9 +7,10 @@ import com.backend.proj.exceptions.UnauthorisedException;
 
 import java.util.*;
 
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.backend.proj.response.ApiResponse;
 import com.backend.proj.response.NotFoundResponse;
 import com.backend.proj.response.ProblemResponse;
@@ -39,6 +40,7 @@ public class ProblemServiceImpl implements ProblemService {
     private final UploadDoc uploadDoc;
     private final ProblemRepository problemRepository;
     private final LeaderRepository leaderRepository;
+    private static final Logger logger = LoggerFactory.getLogger(ProblemService.class);
 
     @Override
     public ApiResponse<Object> createAProblem(CreateProblemDto dto) throws Exception {
@@ -455,64 +457,193 @@ public class ProblemServiceImpl implements ProblemService {
 
 
 //this is to get the number of all probs by admin
-    @PreAuthorize("hasRole('ADMIN')")
     @Override
     public ApiResponse<Object> getNumberOfAllProb() throws Exception {
         try{
-            long numberOfProblems = problemRepository.count();
-            return  ApiResponse.builder()
-                    .data(numberOfProblems)
-                    .success(true)
+            UserResponse user = getLoggedUser.getLoggedUser();
+            if (user != null && user.getRole() == URole.ADMIN) {
+                long numberOfProblems = problemRepository.count();
+                return  ApiResponse.builder()
+                        .data(numberOfProblems)
+                        .success(true)
+                        .build();
+
+            }else{
+                if (user == null) {
+                    logger.warn("User is not logged in");
+                } else {
+                    logger.warn("User {} does not have ADMIN role", user.getName());
+                }
+                return ApiResponse.builder()
+                        .data("You are not authorized to perform this action")
+                        .success(false)
+                        .build();
+            }
+
+        }catch (Exception e) {
+            logger.error("Error in fetching problems", e); // Include the exception in the log
+            return ApiResponse.builder()
+                    .data("Error in fetching problems")
+                    .success(false)
                     .build();
-
-        }catch (Exception e){
-            throw new Exception(e.getMessage());
         }
-
     }
+
 //get number of all pending probs
-@PreAuthorize("hasRole('ADMIN')")
 @Override
     public ApiResponse<Object> getNumberOfPendingProblems() throws Exception {
-        try {
-            // Assuming 'checked' is the status value indicating the problem is checked
+
+    try{
+        UserResponse user = getLoggedUser.getLoggedUser();
+        if (user != null && user.getRole() == URole.ADMIN) {
             long numberOfCheckedProblems = problemRepository.countByStatus(EProblem_Status.PENDING);
-            return ApiResponse.builder()
+            return  ApiResponse.builder()
                     .data(numberOfCheckedProblems)
                     .success(true)
                     .build();
-        } catch (Exception e) {
-            throw new Exception(e.getMessage());
+
+        }else{
+            if (user == null) {
+                logger.warn("User is not logged in");
+            } else {
+                logger.warn("User {} does not have ADMIN role", user.getName());
+            }
+            return ApiResponse.builder()
+                    .data("You are not authorized to perform this action")
+                    .success(false)
+                    .build();
         }
+
+    }catch (Exception e) {
+        logger.error("Error in fetching problems", e); // Include the exception in the log
+        return ApiResponse.builder()
+                .data("Error in fetching problems")
+                .success(false)
+                .build();
     }
+    }
+
     //get number of all approved probs
-    @PreAuthorize("hasRole('ADMIN')")
     @Override
     public ApiResponse<Object> getNumberOfApprovedProblems() throws Exception {
-        try {
-            // Assuming 'checked' is the status value indicating the problem is checked
-            long numberOfApprovedProblems = problemRepository.countByStatus(EProblem_Status.APPROVED);
+        try{
+            UserResponse user = getLoggedUser.getLoggedUser();
+            if (user != null && user.getRole() == URole.ADMIN) {
+                long numberOfApprovedProblems = problemRepository.countByStatus(EProblem_Status.APPROVED);
+                return  ApiResponse.builder()
+                        .data(numberOfApprovedProblems)
+                        .success(true)
+                        .build();
+
+            }else{
+                if (user == null) {
+                    logger.warn("User is not logged in");
+                } else {
+                    logger.warn("User {} does not have ADMIN role", user.getName());
+                }
+                return ApiResponse.builder()
+                        .data("You are not authorized to perform this action")
+                        .success(false)
+                        .build();
+            }
+
+        }catch (Exception e) {
+            logger.error("Error in fetching problems", e); // Include the exception in the log
             return ApiResponse.builder()
-                    .data(numberOfApprovedProblems)
-                    .success(true)
+                    .data("Error in fetching problems")
+                    .success(false)
                     .build();
-        } catch (Exception e) {
-            throw new Exception(e.getMessage());
         }
     }
 
     //get rejected probs
-        @PreAuthorize("hasRole('ADMIN')")
+//        @PreAuthorize("hasRole('ADMIN')")
     @Override
     public ApiResponse<Object> getNumberOfRejectedProblems() throws Exception {
-        try {
-            long numberOfRejectedProblems = problemRepository.countByStatus(EProblem_Status.REJECTED);
+        try{
+            UserResponse user = getLoggedUser.getLoggedUser();
+            if (user != null && user.getRole() == URole.ADMIN) {
+                long numberOfRejectedProblems = problemRepository.countByStatus(EProblem_Status.REJECTED);
+                return  ApiResponse.builder()
+                        .data(numberOfRejectedProblems)
+                        .success(true)
+                        .build();
+
+            }else{
+                if (user == null) {
+                    logger.warn("User is not logged in");
+                } else {
+                    logger.warn("User {} does not have ADMIN role", user.getName());
+                }
+                return ApiResponse.builder()
+                        .data("You are not authorized to perform this action")
+                        .success(false)
+                        .build();
+            }
+
+        }catch (Exception e) {
+            logger.error("Error in fetching problems", e); // Include the exception in the log
             return ApiResponse.builder()
-                    .data(numberOfRejectedProblems)
-                    .success(true)
+                    .data("Error in fetching problems")
+                    .success(false)
                     .build();
+        }
+    }
+
+
+
+
+    //get number of solved probs for user
+    @Override
+    public ApiResponse<Object> getNumberOfSolvedProblemsForUser() throws Exception {
+        try {
+            UserResponse user = getLoggedUser.getLoggedUser();
+            if (user != null) {
+                long numberOfSolvedProblems = problemRepository.countByStatusAndOwner(EProblem_Status.APPROVED, user.getNationalId());
+                return ApiResponse.builder()
+                        .data(numberOfSolvedProblems)
+                        .success(true)
+                        .build();
+            } else {
+                return ApiResponse.builder()
+                        .data("Login to continue")
+                        .success(false)
+                        .build();
+            }
+
         } catch (Exception e) {
-            throw new Exception(e.getMessage());
+            logger.error("Error occurred while getting the number of solved problems for the user", e);
+            return ApiResponse.builder()
+                    .data("An error occurred while fetching the number of solved problems.")
+                    .success(false)
+                    .build();
+        }
+    }
+
+    //get number of pending prob for user
+    @Override
+    public ApiResponse<Object> getNumberOfPendingProblemsForUser() throws Exception {
+        try {
+            UserResponse user = getLoggedUser.getLoggedUser();
+            if (user != null) {
+                long numberOfUnSolvedProblems = problemRepository.countByStatusAndOwner(EProblem_Status.PENDING, user.getNationalId());
+                return ApiResponse.builder()
+                        .data(numberOfUnSolvedProblems)
+                        .success(true)
+                        .build();
+            } else {
+                return ApiResponse.builder()
+                        .data("Login to continue")
+                        .success(false)
+                        .build();
+            }
+
+        } catch (Exception e) {
+            logger.error("Error occurred while getting the number of solved problems for the user", e);
+            return ApiResponse.builder()
+                    .data("An error occurred while fetching the number of solved problems.")
+                    .success(false)
+                    .build();
         }
     }
 

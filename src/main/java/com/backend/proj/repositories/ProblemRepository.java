@@ -22,4 +22,6 @@ public interface ProblemRepository extends JpaRepository<Problem, UUID> {
     Optional<Problem> findById(UUID id);
 
     long countByStatus(EProblem_Status eProblemStatus);
+
+    long countByStatusAndOwner(EProblem_Status status, String owner);
 }

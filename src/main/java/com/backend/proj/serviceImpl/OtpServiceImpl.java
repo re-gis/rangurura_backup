@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.backend.proj.Services.OtpService;
+import com.backend.proj.exceptions.MessageSendingException;
 import com.nexmo.client.NexmoClient;
 import com.nexmo.client.sms.MessageStatus;
 import com.nexmo.client.sms.SmsSubmissionResponse;
@@ -16,41 +17,43 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class OtpServiceImpl implements OtpService {
     @Value("${nexmo.api.key}")
-    private String accountSid;
+    private String apiKey;
 
     @Value("${nexmo.secret.key}")
-    private String authToken;
+    private String apiSecret;
 
     @Value("${nexmo.phone.number}")
-    private String twilioPhoneNumber;
+    private String fromNumber;
 
     @Override
     public void sendMessage(String toPhoneNumber, String messageBody) {
-       String apiKey = "0c822d84";
-        String apiSecret = "KfMnOEvRWn5CAwpD";
-        String fromNumber = "+250790539434"; // Nexmo virtual number
 
         NexmoClient client = new NexmoClient.Builder()
-            .apiKey(apiKey)
-            .apiSecret(apiSecret)
-            .build();
+                .apiKey(apiKey)
+                .apiSecret(apiSecret)
+                .build();
 
         TextMessage message = new TextMessage(
-            fromNumber,
-            toPhoneNumber,
-            messageBody
-        );
+                fromNumber,
+                toPhoneNumber,
+                messageBody);
 
         try {
             SmsSubmissionResponse response = client.getSmsClient().submitMessage(message);
             if (response.getMessages().get(0).getStatus() == MessageStatus.OK) {
-                System.out.println(response);
                 System.out.println("SMS sent successfully!");
             } else {
                 System.err.println("Error sending SMS: " + response.getMessages().get(0).getErrorText());
+                // Handle the case where message is rejected or failed to send
+                // For example, you can throw a custom exception or log the error
+                throw new MessageSendingException("Error sending SMS: " + response.getMessages().get(0).getErrorText());
             }
+        } catch (MessageSendingException e) {
+            // Handle the custom exception thrown when message sending fails
+            e.printStackTrace(); // Log or handle the exception accordingly
         } catch (Exception e) {
-            e.printStackTrace();
+            // Handle other exceptions
+            e.printStackTrace(); // Log or handle the exception accordingly
         }
     }
 

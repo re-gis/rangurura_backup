@@ -85,4 +85,9 @@ public class SuggestionController {
         return ResponseHandler.success(suggestionServiceImpl.getAllSuggestions().getData(), HttpStatus.OK);
     }
 
+    @GetMapping("/number_of_all_ideas")
+    public ResponseEntity<ApiResponse<Object>> getNumberOfAllSuggestions()throws Exception {
+    return ResponseHandler.success(suggestionServiceImpl.getNumberOfAllSuggestions(), HttpStatus.OK);
+}
+
 }
