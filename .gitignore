@@ -1,4 +1,4 @@
-# Ignore Maven target directory
+HELP.md
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
@@ -7,7 +7,6 @@ target/
 # Ignore Dockerfile
 Dockerfile
 
-# Ignore IDE-specific files for STS, IntelliJ IDEA, NetBeans, and VS Code
 ### STS ###
 .apt_generated
 .classpath
@@ -31,11 +30,11 @@ Dockerfile
 /.nb-gradle/
 build/
 !**/src/main/**/build/
+!**/src/main/resources/application.properties
+!**/src/test/**/build/
 
 ### VS Code ###
 .vscode/
 
-# Ignore specific properties files
-/src/main/resources/application-dev.properties
-/src/main/resources/application.properties
-/src/main/resources/application-regis.properties
+
+## application.properties
