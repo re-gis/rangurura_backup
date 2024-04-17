@@ -23,6 +23,7 @@ public class LeaderDashboardController {
 
     @GetMapping("/number_of_probs")
     public ResponseEntity<ApiResponse<Object>>getNumberOfProOnMyLevel() throws  Exception{
+        System.out.println("hello");
         return ResponseHandler.success(problemServiceImpl.getNumberOfProOnMyLevel().getData(),HttpStatus.OK);
     }
 
@@ -36,7 +37,7 @@ public class LeaderDashboardController {
         return ResponseHandler.success(problemServiceImpl.getNumberOfApprovedProbsOnMyLevel().getData(),HttpStatus.OK);
     }
 
-    @GetMapping("/number_of_suggestions")
+    @GetMapping("/number_of_suggestions")   
     public ResponseEntity<ApiResponse<Object>>  getNumberOfAllOnMyLocal() throws  Exception{
         return ResponseHandler.success(suggestionServiceImpl.getNumberOfAllOnMyLocal().getData(),HttpStatus.OK);
     }

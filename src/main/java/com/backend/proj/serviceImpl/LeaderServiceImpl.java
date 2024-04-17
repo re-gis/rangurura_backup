@@ -55,6 +55,34 @@ public class LeaderServiceImpl implements LeaderService {
             Leaders savedLeader = null;
             Optional<User> euser = userRepository.findByNationalId(dto.getNationalId());
             if (euser.isPresent()) {
+                // check if there is an existing leader
+                Optional<Leaders> ld = leaderRepository.findByNationalId(euser.get().getNationalId());
+                if(ld.isPresent()){
+                    // Get the existing leader entity
+                    Leaders existingLeader = ld.get();
+
+                    // Update attributes from DTO while keeping the existing values for attributes
+                    // not provided in the DTO
+                    if (dto.getOrganizationLevel() != null) {
+                        existingLeader.setOrganizationLevel(dto.getOrganizationLevel());
+                    }
+                    if (dto.getLocation() != null) {
+                        existingLeader.setLocation(dto.getLocation());
+                    }
+                    if (dto.getCategory() != null) {
+                        existingLeader.setCategory(dto.getCategory());
+                    }
+
+                    savedLeader = leaderRepository.save(existingLeader);
+
+                    // Update the role of the user
+                    euser.get().setRole(URole.UMUYOBOZI);
+                    userRepository.save(euser.get());
+
+                    if (savedLeader == null) {
+                        throw new Exception("Error while saving the user...");
+                    }
+                }
                 // we create a leader and update the user.ROLE
                 Leaders leaderEntity = convertDtoToEntity(dto);
                 // save the leader and update the role of the user
