@@ -660,7 +660,6 @@ public class ProblemServiceImpl implements ProblemService {
             }
 
             // Find the leader
-            System.out.println("nice");
             Optional<Leaders> leader = leaderRepository.findByNationalId(user.getNationalId());
             if (!leader.isPresent()) {
                 NotFoundResponse response = NotFoundResponse.builder()

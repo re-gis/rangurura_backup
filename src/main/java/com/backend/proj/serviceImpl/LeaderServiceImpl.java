@@ -57,7 +57,7 @@ public class LeaderServiceImpl implements LeaderService {
             if (euser.isPresent()) {
                 // check if there is an existing leader
                 Optional<Leaders> ld = leaderRepository.findByNationalId(euser.get().getNationalId());
-                if(ld.isPresent()){
+                if (ld.isPresent()) {
                     // Get the existing leader entity
                     Leaders existingLeader = ld.get();
 
@@ -82,15 +82,17 @@ public class LeaderServiceImpl implements LeaderService {
                     if (savedLeader == null) {
                         throw new Exception("Error while saving the user...");
                     }
-                }
-                // we create a leader and update the user.ROLE
-                Leaders leaderEntity = convertDtoToEntity(dto);
-                // save the leader and update the role of the user
-                euser.get().setRole(URole.UMUYOBOZI);
-                savedLeader = leaderRepository.save(leaderEntity);
-                userRepository.save(euser.get());
-                if (savedLeader == null) {
-                    throw new Exception("Error while saving the user...");
+                } else {
+
+                    // we create a leader and update the user.ROLE
+                    Leaders leaderEntity = convertDtoToEntity(dto);
+                    // save the leader and update the role of the user
+                    euser.get().setRole(URole.UMUYOBOZI);
+                    savedLeader = leaderRepository.save(leaderEntity);
+                    userRepository.save(euser.get());
+                    if (savedLeader == null) {
+                        throw new Exception("Error while saving the user...");
+                    }
                 }
             } else {
                 // there is no user so create the user and leader
@@ -147,7 +149,6 @@ public class LeaderServiceImpl implements LeaderService {
             throw new Exception(e.getMessage());
         }
     }
-
 
     // this is to get all leaders
 
@@ -366,7 +367,7 @@ public class LeaderServiceImpl implements LeaderService {
         }
     }
 
-    //get leader profile
+    // get leader profile
     @Override
     public ApiResponse<Object> getLoggedLeader() throws Exception {
         try {
@@ -381,7 +382,7 @@ public class LeaderServiceImpl implements LeaderService {
                     return ApiResponse.builder()
                             .success(true)
                             .data(dto)
-//                            .status(HttpStatus.OK)
+                            // .status(HttpStatus.OK)
                             .build();
                 } else {
                     return ApiResponse.builder()
@@ -421,13 +422,11 @@ public class LeaderServiceImpl implements LeaderService {
         userEntity.setImageUrl(user.getImageUrl());
         userEntity.setId(user.getId());
 
-
         UserLeaderDto dto = new UserLeaderDto();
         dto.setUser(userEntity);
         dto.setLeader(leader);
 
         return dto;
     }
-
 
 }
