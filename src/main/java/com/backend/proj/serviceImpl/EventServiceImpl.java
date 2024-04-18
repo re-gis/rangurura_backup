@@ -255,7 +255,7 @@ public class EventServiceImpl implements EventsService {
             String userDistrict = user.getDistrict();
             String userProvince = user.getProvince();
 
-            List<Events> receivedEvents = eventRepository.findAllByLocationAttributesAndOrganizationLevel(
+            List<Events> receivedEvents = eventRepository.findAllByOrganizationLevel(
                     userVillage, userSector, userCell, userDistrict, userProvince);
 
             // Check if the list is empty
