@@ -20,6 +20,7 @@ import com.backend.proj.response.UserResponse;
 
 import lombok.RequiredArgsConstructor;
 
+
 @RequiredArgsConstructor
 @Service
 public class GetLoggedUser {
@@ -91,6 +92,7 @@ public class GetLoggedUser {
         }catch (NotFoundException e) {
             throw new NotFoundException("User not found!");
         } catch (Exception e) {
+            e.printStackTrace();
             throw new Exception(e.getMessage());
         }
     }

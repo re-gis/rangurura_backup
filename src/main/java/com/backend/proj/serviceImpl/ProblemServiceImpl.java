@@ -671,11 +671,14 @@ public class ProblemServiceImpl implements ProblemService {
                         .build();
             }
 
+            System.out.println(leader.get().getNationalId());
+
             // Count the number of problems to be solved
             long numberOfProblems = problemRepository.countAllByUrwegoAndCategoryAndTarget(
-                    leader.get().getOrganizationLevel(),
-                    leader.get().getCategory(), leader.get().getLocation());
-
+                leader.get().getOrganizationLevel(),
+                leader.get().getCategory(), leader.get().getLocation());
+                
+            System.out.println(numberOfProblems);
             // Check if there are any problems
             if (numberOfProblems == 0) {
                 NotFoundResponse response = NotFoundResponse.builder()
