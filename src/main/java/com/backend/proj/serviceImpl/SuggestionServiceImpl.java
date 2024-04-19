@@ -504,17 +504,6 @@ public class SuggestionServiceImpl implements SuggestionService {
             long numberOfSuggestions = suggestionRepository.countAllByUrwegoAndLocationAndCategory(
                     leader.get().getOrganizationLevel(), leader.get().getLocation(), leader.get().getCategory());
 
-            // Check if there are any suggestions
-            if (numberOfSuggestions == 0) {
-                NotFoundResponse response = NotFoundResponse.builder()
-                        .message(String.format("No suggestions found in %s and category: %s",
-                                leader.get().getLocation(), leader.get().getCategory()))
-                        .build();
-                return ApiResponse.builder()
-                        .data(response)
-                        .success(true)
-                        .build();
-            }
 
             return ApiResponse.builder()
                     .data(numberOfSuggestions)

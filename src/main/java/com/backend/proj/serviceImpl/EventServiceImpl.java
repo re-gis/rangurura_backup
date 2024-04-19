@@ -4,10 +4,14 @@ import com.backend.proj.Services.EventsService;
 import com.backend.proj.dtos.CreateEventsDto;
 import com.backend.proj.dtos.UpdateEventDto;
 import com.backend.proj.entities.Events;
+import com.backend.proj.entities.Leaders;
+import com.backend.proj.enums.URole;
 import com.backend.proj.exceptions.BadRequestException;
 import com.backend.proj.exceptions.NotFoundException;
 import com.backend.proj.exceptions.ServiceException;
+import com.backend.proj.exceptions.UnauthorisedException;
 import com.backend.proj.repositories.EventRepository;
+import com.backend.proj.repositories.LeaderRepository;
 import com.backend.proj.response.ApiResponse;
 import com.backend.proj.response.EventsResponse;
 import com.backend.proj.response.NotFoundResponse;
@@ -29,6 +33,7 @@ public class EventServiceImpl implements EventsService {
 
     private final GetLoggedUser getLoggedUser;
     private final EventRepository eventRepository;
+    private final LeaderRepository leaderRepository;
 
     @Override
     public ApiResponse<Object> createAEvent(CreateEventsDto dto) throws Exception {
@@ -287,15 +292,53 @@ public class EventServiceImpl implements EventsService {
     @Override
     public ApiResponse<Object> getNumberOfAllEvents() throws Exception {
         try {
-            Long numberOfAllEvents = eventRepository.count();
-            return ApiResponse.builder()
-                    .data(numberOfAllEvents)
-                    .success(true)
-                    .build();
-
+            UserResponse user = getLoggedUser.getLoggedUser();
+            if (user.getRole() != URole.ADMIN) {
+                throw new UnauthorisedException("You are not authorised to perform this action!");
+            }else {
+                Long numberOfAllEvents = eventRepository.count();
+                return ApiResponse.builder()
+                        .data(numberOfAllEvents)
+                        .success(true)
+                        .build();
+            }
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
 
+    }
+
+    //get the number of all events I gave
+    @Override
+    public ApiResponse<Object> getNumberOfAllEventsByMe() throws Exception {
+        try {
+            UserResponse user = getLoggedUser.getLoggedUser();
+            if (user.getRole() != URole.UMUYOBOZI) {
+                System.out.println(" The role is " + user.getRole());
+                throw new UnauthorisedException("You are not authorised to perform this action!");
+
+            }
+
+            Optional<Leaders> leader = leaderRepository.findByNationalId(user.getNationalId());
+            if (!leader.isPresent()) {
+                throw new NotFoundException("Leader " + user.getNationalId() + " not found!");
+            }
+
+            // Count the events
+            long numberOfEvents = eventRepository.countByOwner(
+                    leader.get().getNationalId());
+
+
+            return ApiResponse.builder()
+                    .data(numberOfEvents)
+                    .success(true)
+                    .build();
+        } catch (UnauthorisedException e) {
+            throw new UnauthorisedException(e.getMessage());
+        } catch (NotFoundException e) {
+            throw new NotFoundException(e.getMessage());
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
     }
 }
