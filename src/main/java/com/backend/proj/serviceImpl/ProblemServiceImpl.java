@@ -679,16 +679,6 @@ public class ProblemServiceImpl implements ProblemService {
                 leader.get().getCategory(), leader.get().getLocation());
                 
             System.out.println(numberOfProblems);
-            // Check if there are any problems
-            if (numberOfProblems == 0) {
-                NotFoundResponse response = NotFoundResponse.builder()
-                        .message("No problems found!")
-                        .build();
-                return ApiResponse.builder()
-                        .data(response)
-                        .success(true)
-                        .build();
-            }
 
             return ApiResponse.builder()
                     .data(numberOfProblems)
@@ -731,16 +721,6 @@ public class ProblemServiceImpl implements ProblemService {
                     leader.get().getOrganizationLevel(),
                     leader.get().getCategory(), leader.get().getLocation(),EProblem_Status.PENDING);
 
-            // Check if there are any problems
-            if (numberOfProblems == 0) {
-                NotFoundResponse response = NotFoundResponse.builder()
-                        .message("No problems found!")
-                        .build();
-                return ApiResponse.builder()
-                        .data(response)
-                        .success(true)
-                        .build();
-            }
 
             return ApiResponse.builder()
                     .data(numberOfProblems)
@@ -783,16 +763,6 @@ public class ProblemServiceImpl implements ProblemService {
                     leader.get().getOrganizationLevel(),
                     leader.get().getCategory(), leader.get().getLocation(),EProblem_Status.APPROVED);
 
-            // Check if there are any problems
-            if (numberOfProblems == 0) {
-                NotFoundResponse response = NotFoundResponse.builder()
-                        .message("No problems found!")
-                        .build();
-                return ApiResponse.builder()
-                        .data(response)
-                        .success(true)
-                        .build();
-            }
 
             return ApiResponse.builder()
                     .data(numberOfProblems)
