@@ -5,8 +5,10 @@ import com.backend.proj.exceptions.InvalidEnumConstantException;
 import com.backend.proj.exceptions.NotFoundException;
 import com.backend.proj.exceptions.UnauthorisedException;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import org.slf4j.Logger;
@@ -21,6 +23,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.backend.proj.Services.ProblemService;
 import com.backend.proj.dtos.CreateProblemDto;
+import com.backend.proj.dtos.EscalateProblemDto;
 import com.backend.proj.dtos.UpdateProblemDto;
 import com.backend.proj.entities.Leaders;
 import com.backend.proj.entities.Problem;
@@ -455,20 +458,19 @@ public class ProblemServiceImpl implements ProblemService {
         }
     }
 
-
-//this is to get the number of all probs by admin
+    // this is to get the number of all probs by admin
     @Override
     public ApiResponse<Object> getNumberOfAllProb() throws Exception {
-        try{
+        try {
             UserResponse user = getLoggedUser.getLoggedUser();
             if (user != null && user.getRole() == URole.ADMIN) {
                 long numberOfProblems = problemRepository.count();
-                return  ApiResponse.builder()
+                return ApiResponse.builder()
                         .data(numberOfProblems)
                         .success(true)
                         .build();
 
-            }else{
+            } else {
                 if (user == null) {
                     logger.warn("User is not logged in");
                 } else {
@@ -480,7 +482,7 @@ public class ProblemServiceImpl implements ProblemService {
                         .build();
             }
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             logger.error("Error in fetching problems", e); // Include the exception in the log
             return ApiResponse.builder()
                     .data("Error in fetching problems")
@@ -489,53 +491,53 @@ public class ProblemServiceImpl implements ProblemService {
         }
     }
 
-//get number of all pending probs
-@Override
+    // get number of all pending probs
+    @Override
     public ApiResponse<Object> getNumberOfPendingProblems() throws Exception {
 
-    try{
-        UserResponse user = getLoggedUser.getLoggedUser();
-        if (user != null && user.getRole() == URole.ADMIN) {
-            long numberOfCheckedProblems = problemRepository.countByStatus(EProblem_Status.PENDING);
-            return  ApiResponse.builder()
-                    .data(numberOfCheckedProblems)
-                    .success(true)
-                    .build();
+        try {
+            UserResponse user = getLoggedUser.getLoggedUser();
+            if (user != null && user.getRole() == URole.ADMIN) {
+                long numberOfCheckedProblems = problemRepository.countByStatus(EProblem_Status.PENDING);
+                return ApiResponse.builder()
+                        .data(numberOfCheckedProblems)
+                        .success(true)
+                        .build();
 
-        }else{
-            if (user == null) {
-                logger.warn("User is not logged in");
             } else {
-                logger.warn("User {} does not have ADMIN role", user.getName());
+                if (user == null) {
+                    logger.warn("User is not logged in");
+                } else {
+                    logger.warn("User {} does not have ADMIN role", user.getName());
+                }
+                return ApiResponse.builder()
+                        .data("You are not authorized to perform this action")
+                        .success(false)
+                        .build();
             }
+
+        } catch (Exception e) {
+            logger.error("Error in fetching problems", e); // Include the exception in the log
             return ApiResponse.builder()
-                    .data("You are not authorized to perform this action")
+                    .data("Error in fetching problems")
                     .success(false)
                     .build();
         }
-
-    }catch (Exception e) {
-        logger.error("Error in fetching problems", e); // Include the exception in the log
-        return ApiResponse.builder()
-                .data("Error in fetching problems")
-                .success(false)
-                .build();
-    }
     }
 
-    //get number of all approved probs
+    // get number of all approved probs
     @Override
     public ApiResponse<Object> getNumberOfApprovedProblems() throws Exception {
-        try{
+        try {
             UserResponse user = getLoggedUser.getLoggedUser();
             if (user != null && user.getRole() == URole.ADMIN) {
                 long numberOfApprovedProblems = problemRepository.countByStatus(EProblem_Status.APPROVED);
-                return  ApiResponse.builder()
+                return ApiResponse.builder()
                         .data(numberOfApprovedProblems)
                         .success(true)
                         .build();
 
-            }else{
+            } else {
                 if (user == null) {
                     logger.warn("User is not logged in");
                 } else {
@@ -547,7 +549,7 @@ public class ProblemServiceImpl implements ProblemService {
                         .build();
             }
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             logger.error("Error in fetching problems", e); // Include the exception in the log
             return ApiResponse.builder()
                     .data("Error in fetching problems")
@@ -556,20 +558,20 @@ public class ProblemServiceImpl implements ProblemService {
         }
     }
 
-    //get rejected probs
-//        @PreAuthorize("hasRole('ADMIN')")
+    // get rejected probs
+    // @PreAuthorize("hasRole('ADMIN')")
     @Override
     public ApiResponse<Object> getNumberOfRejectedProblems() throws Exception {
-        try{
+        try {
             UserResponse user = getLoggedUser.getLoggedUser();
             if (user != null && user.getRole() == URole.ADMIN) {
                 long numberOfRejectedProblems = problemRepository.countByStatus(EProblem_Status.REJECTED);
-                return  ApiResponse.builder()
+                return ApiResponse.builder()
                         .data(numberOfRejectedProblems)
                         .success(true)
                         .build();
 
-            }else{
+            } else {
                 if (user == null) {
                     logger.warn("User is not logged in");
                 } else {
@@ -581,7 +583,7 @@ public class ProblemServiceImpl implements ProblemService {
                         .build();
             }
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             logger.error("Error in fetching problems", e); // Include the exception in the log
             return ApiResponse.builder()
                     .data("Error in fetching problems")
@@ -590,16 +592,14 @@ public class ProblemServiceImpl implements ProblemService {
         }
     }
 
-
-
-
-    //get number of solved probs for user
+    // get number of solved probs for user
     @Override
     public ApiResponse<Object> getNumberOfSolvedProblemsForUser() throws Exception {
         try {
             UserResponse user = getLoggedUser.getLoggedUser();
             if (user != null) {
-                long numberOfSolvedProblems = problemRepository.countByStatusAndOwner(EProblem_Status.APPROVED, user.getNationalId());
+                long numberOfSolvedProblems = problemRepository.countByStatusAndOwner(EProblem_Status.APPROVED,
+                        user.getNationalId());
                 return ApiResponse.builder()
                         .data(numberOfSolvedProblems)
                         .success(true)
@@ -620,13 +620,14 @@ public class ProblemServiceImpl implements ProblemService {
         }
     }
 
-    //get number of pending prob for user
+    // get number of pending prob for user
     @Override
     public ApiResponse<Object> getNumberOfPendingProblemsForUser() throws Exception {
         try {
             UserResponse user = getLoggedUser.getLoggedUser();
             if (user != null) {
-                long numberOfUnSolvedProblems = problemRepository.countByStatusAndOwner(EProblem_Status.PENDING, user.getNationalId());
+                long numberOfUnSolvedProblems = problemRepository.countByStatusAndOwner(EProblem_Status.PENDING,
+                        user.getNationalId());
                 return ApiResponse.builder()
                         .data(numberOfUnSolvedProblems)
                         .success(true)
@@ -647,7 +648,7 @@ public class ProblemServiceImpl implements ProblemService {
         }
     }
 
-    //get number of probs on his level
+    // get number of probs on his level
 
     @Override
     public ApiResponse<Object> getNumberOfProOnMyLevel() throws Exception {
@@ -675,9 +676,9 @@ public class ProblemServiceImpl implements ProblemService {
 
             // Count the number of problems to be solved
             long numberOfProblems = problemRepository.countAllByUrwegoAndCategoryAndTarget(
-                leader.get().getOrganizationLevel(),
-                leader.get().getCategory(), leader.get().getLocation());
-                
+                    leader.get().getOrganizationLevel(),
+                    leader.get().getCategory(), leader.get().getLocation());
+
             System.out.println(numberOfProblems);
             // Check if there are any problems
             if (numberOfProblems == 0) {
@@ -729,7 +730,7 @@ public class ProblemServiceImpl implements ProblemService {
             // Count the number of problems to be solved
             long numberOfProblems = problemRepository.countAllByUrwegoAndCategoryAndTargetAndStatus(
                     leader.get().getOrganizationLevel(),
-                    leader.get().getCategory(), leader.get().getLocation(),EProblem_Status.PENDING);
+                    leader.get().getCategory(), leader.get().getLocation(), EProblem_Status.PENDING);
 
             // Check if there are any problems
             if (numberOfProblems == 0) {
@@ -781,7 +782,7 @@ public class ProblemServiceImpl implements ProblemService {
             // Count the number of problems to be solved
             long numberOfProblems = problemRepository.countAllByUrwegoAndCategoryAndTargetAndStatus(
                     leader.get().getOrganizationLevel(),
-                    leader.get().getCategory(), leader.get().getLocation(),EProblem_Status.APPROVED);
+                    leader.get().getCategory(), leader.get().getLocation(), EProblem_Status.APPROVED);
 
             // Check if there are any problems
             if (numberOfProblems == 0) {
@@ -803,6 +804,37 @@ public class ProblemServiceImpl implements ProblemService {
             throw new NotFoundException(e.getMessage());
         } catch (UnauthorisedException e) {
             throw new UnauthorisedException(e.getMessage());
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @Override
+    public ApiResponse<Object> escalateManually(EscalateProblemDto dto) throws Exception {
+        try {
+            UUID problemId = dto.getProblemId();
+            Optional<Problem> problem = problemRepository.findById(problemId);
+            if (!problem.isPresent()) {
+                // return
+                // ApiResponse.builder().data(problem).success(true).status(HttpStatus.OK).build();
+                throw new NotFoundException("Problem " + problemId + " does not exist!");
+            } else {
+                EUrwego nextLevel = dto.getNextUrwego();
+                String target = dto.getTarget();
+                if (nextLevel == null || target == null) {
+                    throw new BadRequestException("Please provide the next level and the name of that " + nextLevel);
+                } else {
+                    // problem.get().setCreatedAt(LocalDateTime.now());
+                    problem.get().setUrwego(nextLevel);
+                    problem.get().setTarget(target);
+                    problemRepository.save(problem.get());
+
+                    return ApiResponse.builder()
+                            .data("Problem " + problem.get().getId() + " has been escalated successfully").success(true)
+                            .status(HttpStatus.OK).build();
+                }
+
+            }
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
