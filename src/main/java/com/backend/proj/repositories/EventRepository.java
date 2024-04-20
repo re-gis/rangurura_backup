@@ -16,11 +16,12 @@ public interface EventRepository extends JpaRepository<Events , UUID> {
             "(location = :cell AND organization_level='AKAGARI') OR " +
             "(location = :district AND organization_level='AKARERE') OR " +
             "(location = :province AND organization_level='INTARA')", nativeQuery = true)
-    List<Events> findAllByLocationAttributesAndOrganizationLevel(
+    List<Events> findAllByOrganizationLevel(
             String village, String sector, String cell, String district, String province);
 
     Optional<Events> findById(UUID id);
 
     void deleteById(UUID id);
+    long countByOwner(String owner);
 
 }

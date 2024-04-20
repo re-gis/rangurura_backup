@@ -2,6 +2,7 @@ package com.backend.proj.Controllers;
 
 
 import com.backend.proj.response.ApiResponse;
+import com.backend.proj.serviceImpl.EventServiceImpl;
 import com.backend.proj.serviceImpl.ProblemServiceImpl;
 
 import com.backend.proj.serviceImpl.SuggestionServiceImpl;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class LeaderDashboardController {
     private  final ProblemServiceImpl problemServiceImpl;
     private  final SuggestionServiceImpl suggestionServiceImpl;
+    private final EventServiceImpl eventServiceImpl;
 
 
     @GetMapping("/number_of_probs")
@@ -40,6 +42,11 @@ public class LeaderDashboardController {
     @GetMapping("/number_of_suggestions")   
     public ResponseEntity<ApiResponse<Object>>  getNumberOfAllOnMyLocal() throws  Exception{
         return ResponseHandler.success(suggestionServiceImpl.getNumberOfAllOnMyLocal().getData(),HttpStatus.OK);
+    }
+
+    @GetMapping("/number_of_events")
+    public ResponseEntity<ApiResponse<Object>>getNumberOfAllEventsByMe() throws  Exception{
+        return ResponseHandler.success(eventServiceImpl.getNumberOfAllEventsByMe().getData(),HttpStatus.OK);
     }
 
 
