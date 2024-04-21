@@ -2,6 +2,7 @@ package com.backend.proj.response;
 
 import com.backend.proj.enums.ECategory;
 import com.backend.proj.enums.EUrwego;
+import com.backend.proj.enums.LRole;
 import com.backend.proj.enums.URole;
 import lombok.*;
 
@@ -23,6 +24,7 @@ public class UserResponse {
     private String nationalId;
     private String phoneNumber;
     private URole role;
+    private LRole leaderRole;
     private ECategory category;
     private EUrwego urwego;
     private String office;

@@ -20,7 +20,6 @@ import com.backend.proj.response.UserResponse;
 
 import lombok.RequiredArgsConstructor;
 
-
 @RequiredArgsConstructor
 @Service
 public class GetLoggedUser {
@@ -45,51 +44,56 @@ public class GetLoggedUser {
             Optional<User> user = userRepository.findByNationalId(nationalId);
             if (!user.isPresent()) {
                 throw new NotFoundException("User not found!");
-            }
-
-            UserResponse u;
-
-            if (user.get().getRole() == URole.UMUYOBOZI) {
-                // get the leader also and his details
-                Optional<Leaders> leader = leaderRepository.findByNationalId(nationalId);
-                if (leader == null) {
-                    throw new NotFoundException(String.format("Leader %s not found!", nationalId));
-                }
-                u = UserResponse.builder()
-                        .name(user.get().getRealName())
-                        .nationalId(user.get().getNationalId())
-                        .province(user.get().getProvince())
-                        .district(user.get().getDistrict())
-                        .sector(user.get().getSector())
-                        .cell(user.get().getCell())
-                        .village(user.get().getVillage())
-                        .phoneNumber(user.get().getPhone())
-                        .role(user.get().getRole())
-                        .category(leader.get().getCategory())
-                        .urwego(leader.get().getOrganizationLevel())
-                        .office(leader.get().getLocation())
-                        .isVerified(user.get().isVerified())
-                        .build();
-
             } else {
 
-                u = UserResponse.builder()
-                        .name(user.get().getRealName())
-                        .nationalId(user.get().getNationalId())
-                        .province(user.get().getProvince())
-                        .district(user.get().getDistrict())
-                        .sector(user.get().getSector())
-                        .cell(user.get().getCell())
-                        .village(user.get().getVillage())
-                        .phoneNumber(user.get().getPhone())
-                        .role(user.get().getRole())
-                        .isVerified(user.get().isVerified())
-                        .build();
+                UserResponse u;
+
+                if (user.get().getRole() == URole.UMUYOBOZI) {
+                    // get the leader also and his details
+                    Optional<Leaders> leader = leaderRepository.findByNationalId(nationalId);
+                    if (leader == null) {
+                        throw new NotFoundException(String.format("Leader %s not found!", nationalId));
+                    }
+                    System.out.println(user.get().getRealName());
+                    System.out.println(user.get().getRole());
+                    System.out.println(leader.get().getNationalId());
+                    u = UserResponse.builder()
+                            .name(user.get().getRealName())
+                            .nationalId(user.get().getNationalId())
+                            .province(user.get().getProvince())
+                            .district(user.get().getDistrict())
+                            .sector(user.get().getSector())
+                            .cell(user.get().getCell())
+                            .village(user.get().getVillage())
+                            .phoneNumber(user.get().getPhone())
+                            .role(user.get().getRole())
+                            .leaderRole(leader.get().getRole())
+                            .category(leader.get().getCategory())
+                            .urwego(leader.get().getOrganizationLevel())
+                            .office(leader.get().getLocation())
+                            .isVerified(user.get().isVerified())
+                            .build();
+
+                } else {
+
+                    u = UserResponse.builder()
+                            .name(user.get().getRealName())
+                            .nationalId(user.get().getNationalId())
+                            .province(user.get().getProvince())
+                            .district(user.get().getDistrict())
+                            .sector(user.get().getSector())
+                            .cell(user.get().getCell())
+                            .village(user.get().getVillage())
+                            .phoneNumber(user.get().getPhone())
+                            .role(user.get().getRole())
+                            .isVerified(user.get().isVerified())
+                            .build();
+                }
+                return u;
             }
-            return u;
         } catch (JwtExpiredException e) {
             throw new JwtExpiredException("Jwt expired: " + e.getMessage());
-        }catch (NotFoundException e) {
+        } catch (NotFoundException e) {
             throw new NotFoundException("User not found!");
         } catch (Exception e) {
             e.printStackTrace();
