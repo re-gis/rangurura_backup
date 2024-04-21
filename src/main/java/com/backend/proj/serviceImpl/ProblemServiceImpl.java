@@ -5,10 +5,19 @@ import com.backend.proj.exceptions.InvalidEnumConstantException;
 import com.backend.proj.exceptions.NotFoundException;
 import com.backend.proj.exceptions.UnauthorisedException;
 
+
+import java.io.IOException;
+import java.util.*;
+
+import org.cloudinary.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+
 import java.time.LocalDateTime;
 import java.util.*;
 
 import org.springframework.http.HttpStatus;
+
 import org.springframework.stereotype.Service;
 
 import org.slf4j.Logger;
@@ -35,6 +44,8 @@ import com.backend.proj.repositories.LeaderRepository;
 import com.backend.proj.repositories.ProblemRepository;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 @RequiredArgsConstructor
@@ -44,71 +55,155 @@ public class ProblemServiceImpl implements ProblemService {
     private final ProblemRepository problemRepository;
     private final LeaderRepository leaderRepository;
     private static final Logger logger = LoggerFactory.getLogger(ProblemService.class);
+    private static final String PYTHON_API_URL = "http://localhost:8080/check_similar_problem";
+    private RestTemplate restTemplate;
+
+//    private RestTemplate restTemplate; // Inject RestTemplate bean here
+
+    // Setter for restTemplate
+    @Autowired
+    public void setRestTemplate(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
+
+//    @Override
+//    public ApiResponse<Object> createAProblem(CreateProblemDto dto) throws Exception {
+//        try {
+//            // get logged in user
+//            // UserResponse user = getLoggedUser.getLoggedUser();
+//
+//            if (dto.getCategory() == null || dto.getTarget() == null || dto.getUrwego() == null
+//                    || dto.getPhoneNumber() == null
+//                    || (dto.getIkibazo() == null && dto.getRecord() == null)) {
+//                throw new BadRequestException(
+//                        "Vuga ikibazo cyawe byibuze ushyireho urwego, kategori yacyo, aho kigenewe na \'proof\' ubundi wohereze!");
+//            }
+//
+//            String recordUrl = "null";
+//            String ikibazo = "null";
+//
+//            if (dto.getIkibazo() != null && dto.getRecord() != null) {
+//                ikibazo = dto.getIkibazo();
+//                recordUrl = uploadDoc.uploadRecord(dto.getRecord());
+//            } else if (dto.getIkibazo() != null) {
+//                ikibazo = dto.getIkibazo();
+//            } else if (dto.getRecord() != null) {
+//                recordUrl = uploadDoc.uploadRecord(dto.getRecord());
+//            } else {
+//                throw new BadRequestException("At least a record or text is required!");
+//            }
+//
+//            String docUrl = null;
+//            if (dto.getProof() != null) {
+//                docUrl = uploadDoc.uploadDoc(dto.getProof());
+//            }
+//
+//            // create the object
+//            Problem problem = Problem.builder()
+//                    .category(dto.getCategory())
+//                    .ikibazo(ikibazo)
+//                    .phoneNumber(dto.getPhoneNumber())
+//                    .proofUrl(docUrl)
+//                    .recordUrl(recordUrl)
+//                    .status(EProblem_Status.PENDING)
+//                    .owner(dto.getNationalId())
+//                    .urwego(dto.getUrwego())
+//                    .target(dto.getTarget())
+//                    .build();
+//
+//            problemRepository.save(problem);
+//
+//            ProblemResponse response = new ProblemResponse();
+//            response.setMessage(
+//                    "Ikibazo cyawe cyoherejwe kubashinzwe kugikurikirana Tegereza igihe gito uraza gusubizwa!");
+//            response.setProblem(problem);
+//            return ApiResponse.builder()
+//                    .success(true)
+//                    .data(response)
+//                    .build();
+//        } catch (JsonMappingException | JsonParseException e) {
+//            System.out.println(e);
+//            throw new InvalidEnumConstantException("Invalid enum constant provided in the request.");
+//        } catch (BadRequestException e) {
+//            throw new BadRequestException(e.getMessage());
+//        } catch (Exception e) {
+//            System.out.println(e);
+//            throw new Exception(e.getMessage());
+//        }
+//    }
+
 
     @Override
     public ApiResponse<Object> createAProblem(CreateProblemDto dto) throws Exception {
         try {
-            // get logged in user
-            // UserResponse user = getLoggedUser.getLoggedUser();
+            // Send problem data to Python API
+            ResponseEntity<String> responseEntity = restTemplate.postForEntity(PYTHON_API_URL, dto, String.class);
+            String response = responseEntity.getBody();
 
-            if (dto.getCategory() == null || dto.getTarget() == null || dto.getUrwego() == null
-                    || dto.getPhoneNumber() == null
-                    || (dto.getIkibazo() == null && dto.getRecord() == null)) {
-                throw new BadRequestException(
-                        "Vuga ikibazo cyawe byibuze ushyireho urwego, kategori yacyo, aho kigenewe na \'proof\' ubundi wohereze!");
+            // Check if response is null or empty
+            if (response == null || response.isEmpty()) {
+                throw new RuntimeException("Empty response received from Python API");
             }
 
-            String recordUrl = "null";
-            String ikibazo = "null";
+            // Parse response from Python API
+            JSONObject jsonResponse = new JSONObject(response);
 
-            if (dto.getIkibazo() != null && dto.getRecord() != null) {
-                ikibazo = dto.getIkibazo();
-                recordUrl = uploadDoc.uploadRecord(dto.getRecord());
-            } else if (dto.getIkibazo() != null) {
-                ikibazo = dto.getIkibazo();
-            } else if (dto.getRecord() != null) {
-                recordUrl = uploadDoc.uploadRecord(dto.getRecord());
+            // Check if the response contains error
+            if (jsonResponse.has("error")) {
+                String errorMessage = jsonResponse.getString("error");
+                throw new RuntimeException("Error from Python API: " + errorMessage);
+            }
+
+            // Check if similar problem exists
+            boolean similarProblemExists = jsonResponse.optBoolean("similar_problem_exists", false);
+            if (similarProblemExists) {
+                String similarProblem = jsonResponse.optString("similar_problem", "");
+                return ApiResponse.builder()
+                        .data(similarProblem)
+                        .success(false)
+                        .build();
             } else {
-                throw new BadRequestException("At least a record or text is required!");
+                return createNewProblem(dto);
             }
-
-            String docUrl = null;
-            if (dto.getProof() != null) {
-                docUrl = uploadDoc.uploadDoc(dto.getProof());
-            }
-
-            // create the object
-            Problem problem = Problem.builder()
-                    .category(dto.getCategory())
-                    .ikibazo(ikibazo)
-                    .phoneNumber(dto.getPhoneNumber())
-                    .proofUrl(docUrl)
-                    .recordUrl(recordUrl)
-                    .status(EProblem_Status.PENDING)
-                    .owner(dto.getNationalId())
-                    .urwego(dto.getUrwego())
-                    .target(dto.getTarget())
-                    .build();
-
-            problemRepository.save(problem);
-
-            ProblemResponse response = new ProblemResponse();
-            response.setMessage(
-                    "Ikibazo cyawe cyoherejwe kubashinzwe kugikurikirana Tegereza igihe gito uraza gusubizwa!");
-            response.setProblem(problem);
-            return ApiResponse.builder()
-                    .success(true)
-                    .data(response)
-                    .build();
-        } catch (JsonMappingException | JsonParseException e) {
-            System.out.println(e);
-            throw new InvalidEnumConstantException("Invalid enum constant provided in the request.");
-        } catch (BadRequestException e) {
-            throw new BadRequestException(e.getMessage());
-        } catch (Exception e) {
-            System.out.println(e);
-            throw new Exception(e.getMessage());
+        } catch (RestClientException e) {
+            throw new RuntimeException("Error communicating with Python API", e);
         }
+    }
+
+    private ApiResponse<Object> createNewProblem(CreateProblemDto dto) throws Exception {
+        // Create the problem object
+        Problem problem = buildProblem(dto);
+
+        // Save the problem to the database
+        problemRepository.save(problem);
+
+        // Create the response
+        ProblemResponse response = new ProblemResponse();
+        response.setMessage("Ikibazo cyawe cyoherejwe kubashinzwe kugikurikirana Tegereza igihe gito uraza gusubizwa!");
+        response.setProblem(problem);
+
+        return ApiResponse.builder()
+                .success(true)
+                .data(response)
+                .build();
+    }
+
+    private Problem buildProblem(CreateProblemDto dto) throws IOException {
+        // Build the problem object
+        String recordUrl = (dto.getRecord() != null) ? uploadDoc.uploadRecord(dto.getRecord()) : "null";
+        String docUrl = (dto.getProof() != null) ? uploadDoc.uploadDoc(dto.getProof()) : null;
+
+        return Problem.builder()
+                .category(dto.getCategory())
+                .ikibazo(dto.getIkibazo())
+                .phoneNumber(dto.getPhoneNumber())
+                .proofUrl(docUrl)
+                .recordUrl(recordUrl)
+                .status(EProblem_Status.PENDING)
+                .owner(dto.getNationalId())
+                .urwego(dto.getUrwego())
+                .target(dto.getTarget())
+                .build();
     }
 
     @Override
