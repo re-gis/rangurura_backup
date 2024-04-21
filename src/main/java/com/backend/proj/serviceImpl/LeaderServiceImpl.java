@@ -177,6 +177,7 @@ public class LeaderServiceImpl implements LeaderService {
                     throw new UnauthorisedException("You are not authorized to perform this action!");
                 }
 
+                
                 String o = otpServiceImpl.generateOtp(6);
                 String message = "Your verification code to proj is: " + o
                         + "\n, you are now registered as a leader of " + dto.getLocation()
