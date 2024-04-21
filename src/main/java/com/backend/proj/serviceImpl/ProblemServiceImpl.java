@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.*;
 
 import org.cloudinary.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -46,8 +47,16 @@ public class ProblemServiceImpl implements ProblemService {
     private final ProblemRepository problemRepository;
     private final LeaderRepository leaderRepository;
     private static final Logger logger = LoggerFactory.getLogger(ProblemService.class);
-    private static final String PYTHON_API_URL = "http://localhost:3000/check_similar_problem";
+    private static final String PYTHON_API_URL = "http://localhost:8080/check_similar_problem";
     private RestTemplate restTemplate;
+
+//    private RestTemplate restTemplate; // Inject RestTemplate bean here
+
+    // Setter for restTemplate
+    @Autowired
+    public void setRestTemplate(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
 //    @Override
 //    public ApiResponse<Object> createAProblem(CreateProblemDto dto) throws Exception {
