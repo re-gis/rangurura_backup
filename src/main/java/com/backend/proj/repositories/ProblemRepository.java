@@ -1,5 +1,6 @@
 package com.backend.proj.repositories;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -18,6 +19,7 @@ public interface ProblemRepository extends JpaRepository<Problem, UUID> {
     List<Problem> findAllByUrwegoAndCategory(EUrwego origanizationLevel, ECategory category);
 
     List<Problem> findAllByUrwegoAndCategoryAndTarget(EUrwego organizationLevel, ECategory category, String location);
+    List<Problem> findAllByStatus(EProblem_Status status);
 
     Optional<Problem> findById(UUID id);
 
@@ -26,4 +28,6 @@ public interface ProblemRepository extends JpaRepository<Problem, UUID> {
     long countByStatusAndOwner(EProblem_Status status, String owner);
     long countAllByUrwegoAndCategoryAndTarget(EUrwego organizationLevel, ECategory category, String location);
     long countAllByUrwegoAndCategoryAndTargetAndStatus(EUrwego organizationLevel, ECategory category, String location,EProblem_Status status);
+
+    List<Problem> findAllByStatusAndCreatedAtBefore(EProblem_Status pending, LocalDateTime twoWeeksAgo);
 }

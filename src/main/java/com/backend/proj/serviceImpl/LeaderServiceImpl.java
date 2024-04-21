@@ -7,8 +7,11 @@ import com.backend.proj.dtos.UserLeaderDto;
 import com.backend.proj.entities.Leaders;
 import com.backend.proj.entities.Otp;
 import com.backend.proj.entities.User;
+import com.backend.proj.enums.ECategory;
+import com.backend.proj.enums.EUrwego;
 import com.backend.proj.enums.URole;
 import com.backend.proj.exceptions.BadRequestException;
+import com.backend.proj.exceptions.InvalidEnumConstantException;
 import com.backend.proj.exceptions.NotFoundException;
 import com.backend.proj.exceptions.UnauthorisedException;
 import com.backend.proj.repositories.LeaderRepository;
@@ -17,6 +20,7 @@ import com.backend.proj.repositories.UserRepository;
 import com.backend.proj.response.ApiResponse;
 import com.backend.proj.response.NotFoundResponse;
 import com.backend.proj.response.UserResponse;
+import com.backend.proj.utils.AssignLeader;
 import com.backend.proj.utils.GetLoggedUser;
 
 import java.util.ArrayList;
@@ -39,6 +43,7 @@ public class LeaderServiceImpl implements LeaderService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final OtpRepository otpRepository;
+    private final AssignLeader assignLeader;
 
     // @PreAuthorize("hasRole('ADMIN')")
     @Override
@@ -55,61 +60,70 @@ public class LeaderServiceImpl implements LeaderService {
             Leaders savedLeader = null;
             Optional<User> euser = userRepository.findByNationalId(dto.getNationalId());
             if (euser.isPresent()) {
-                // check if there is an existing leader
-                Optional<Leaders> ld = leaderRepository.findByNationalId(euser.get().getNationalId());
-                if (ld.isPresent()) {
-                    // Get the existing leader entity
-                    Leaders existingLeader = ld.get();
+                /**
+                 * if the user exists actually we have to check if he/she wasn't a leader
+                 */
+                Optional<Leaders> eLeader = leaderRepository.findByNationalId(euser.get().getNationalId());
 
-                    // Update attributes from DTO while keeping the existing values for attributes
-                    // not provided in the DTO
-                    if (dto.getOrganizationLevel() != null) {
-                        existingLeader.setOrganizationLevel(dto.getOrganizationLevel());
-                    }
-                    if (dto.getLocation() != null) {
-                        existingLeader.setLocation(dto.getLocation());
-                    }
-                    if (dto.getCategory() != null) {
-                        existingLeader.setCategory(dto.getCategory());
-                    }
+                if (eLeader.isPresent()) {
+                    /**
+                     * if is a leader, check the one to grant the role
+                     */
 
-                    savedLeader = leaderRepository.save(existingLeader);
-
-                    // Update the role of the user
-                    euser.get().setRole(URole.UMUYOBOZI);
-                    userRepository.save(euser.get());
-
-                    if (savedLeader == null) {
-                        throw new Exception("Error while saving the user...");
+                    // if(userResponse.getUrwego() )
+                    switch (userResponse.getUrwego()) {
+                        case UMUDUGUDU:
+                            throw new UnauthorisedException("You are not authorised to perform this action!");
+                        case AKAGARI:
+                            savedLeader = assignLeader.assigneLeader(eLeader.get(), dto, EUrwego.UMUDUGUDU);
+                            break;
+                        case UMURENGE:
+                            savedLeader = assignLeader.assigneLeader(eLeader.get(), dto, EUrwego.AKAGARI);
+                            break;
+                        case AKARERE:
+                            savedLeader = assignLeader.assigneLeader(eLeader.get(), dto, EUrwego.UMURENGE);
+                            break;
+                        case INTARA:
+                            savedLeader = assignLeader.assigneLeader(eLeader.get(), dto, EUrwego.AKARERE);
+                            break;
+                        default:
+                            throw new InvalidEnumConstantException("Invalid Organisational level!");
                     }
                 } else {
-
-                    // we create a leader and update the user.ROLE
-                    Leaders leaderEntity = convertDtoToEntity(dto);
-                    // save the leader and update the role of the user
-                    euser.get().setRole(URole.UMUYOBOZI);
-                    savedLeader = leaderRepository.save(leaderEntity);
-                    userRepository.save(euser.get());
-                    if (savedLeader == null) {
-                        throw new Exception("Error while saving the user...");
+                    switch (userResponse.getUrwego()) {
+                        case UMUDUGUDU:
+                            throw new UnauthorisedException("You are not authorised to perform this action!");
+                        case AKAGARI:
+                            savedLeader = assignLeader.assignNewLeader(dto, EUrwego.UMUDUGUDU,
+                                    euser.get());
+                            break;
+                        case UMURENGE:
+                            savedLeader = assignLeader.assignNewLeader(dto, EUrwego.AKAGARI, euser.get());
+                            break;
+                        case AKARERE:
+                            savedLeader = assignLeader.assignNewLeader(dto, EUrwego.UMURENGE, euser.get());
+                            break;
+                        case INTARA:
+                            savedLeader = assignLeader.assignNewLeader(dto, EUrwego.AKARERE, euser.get());
+                            break;
+                        default:
+                            throw new InvalidEnumConstantException("Invalid Organisational level!");
                     }
                 }
-            } else {
-                // there is no user so create the user and leader
-                // send the message
-                if (dto.getName() == null || dto.getCell() == null || dto.getDistrict() == null
-                        || dto.getProvince() == null || dto.getVillage() == null || dto.getSector() == null) {
-                    throw new BadRequestException(
-                            "Since the leader is new to system, your all credentials and location information...");
-                }
-                String o = otpServiceImpl.generateOtp(6);
-                String message = "Your verification code to proj is: " + o
-                        + "\n and you are now registered as a leader of " + dto.getLocation();
-                otpServiceImpl.sendMessage(dto.getPhoneNumber(), message);
 
-                Otp otp = new Otp();
-                otp.setNumber(dto.getPhoneNumber());
-                otp.setOtp(passwordEncoder.encode(o));
+                return ApiResponse.builder()
+                        .data("Leader successfully registered!")
+                        .success(true)
+                        .build();
+            } else {
+                // // there is no user so create the user and leader
+                // // send the message
+                if (dto.getName() == null || dto.getCell() == null || dto.getDistrict() == null
+                        || dto.getProvince() == null || dto.getVillage() == null || dto.getSector() == null
+                        || dto.getPhoneNumber() == null) {
+                    throw new BadRequestException(
+                            "Since the leader is new to system, your all credentials and location information are required...");
+                }
 
                 User user = new User();
                 user.setNationalId(dto.getNationalId());
@@ -124,22 +138,46 @@ public class LeaderServiceImpl implements LeaderService {
                 user.setImageUrl("https://icon-library.com/images/no-user-image-icon/no-user-image-icon-0.jpg");
                 user.setVerified(false);
                 user.setRole(URole.UMUYOBOZI);
+                User exUser = userRepository.save(user);
 
-                otpRepository.save(otp);
-                userRepository.save(user);
-
-                Leaders leaderEntity = convertDtoToEntity(dto);
-                savedLeader = leaderRepository.save(leaderEntity);
-                if (savedLeader == null) {
-                    throw new Exception("Error while saving the leader...");
+                switch (userResponse.getUrwego()) {
+                    case UMUDUGUDU:
+                        throw new UnauthorisedException("You are not authorised to perform this action!");
+                    case AKAGARI:
+                        savedLeader = assignLeader.assignNewLeader(dto, EUrwego.UMUDUGUDU,
+                                exUser);
+                        break;
+                    case UMURENGE:
+                        savedLeader = assignLeader.assignNewLeader(dto, EUrwego.AKAGARI, exUser);
+                        break;
+                    case AKARERE:
+                        savedLeader = assignLeader.assignNewLeader(dto, EUrwego.UMURENGE, exUser);
+                        break;
+                    case INTARA:
+                        savedLeader = assignLeader.assignNewLeader(dto, EUrwego.AKARERE, exUser);
+                        break;
+                    default:
+                        throw new InvalidEnumConstantException("Invalid Organisational level!");
                 }
+
+                String o = otpServiceImpl.generateOtp(6);
+                String message = "Your verification code to proj is: " + o
+                        + "\n, you are now registered as a leader of " + dto.getLocation()
+                        + " \n use your national id as password to login!";
+                otpServiceImpl.sendMessage(dto.getPhoneNumber(), message);
+
+                Otp otp = new Otp();
+                otp.setNumber(dto.getPhoneNumber());
+                otp.setOtp(passwordEncoder.encode(o));
+                otpRepository.save(otp);
+
+                return ApiResponse.builder()
+                        .data("Leader successfully registered, verify to continue to system... ")
+                        .success(true)
+                        .build();
 
             }
 
-            return ApiResponse.builder()
-                    .data("Leader successfully registered, verify to continue to system... ")
-                    .success(true)
-                    .build();
         } catch (UnauthorisedException e) {
             throw new UnauthorisedException(e.getMessage());
         } catch (BadRequestException e) {
@@ -327,20 +365,20 @@ public class LeaderServiceImpl implements LeaderService {
     }
 
     // this is the function to convert dto to entity
-    private Leaders convertDtoToEntity(RegisterLeaderDto dto) {
-        // Implement logic to convert DTO to Entity
-        Leaders leaders = new Leaders();
+    // private Leaders convertDtoToEntity(RegisterLeaderDto dto) {
+    //     // Implement logic to convert DTO to Entity
+    //     Leaders leaders = new Leaders();
 
-        leaders.setNationalId(dto.getNationalId());
-        leaders.setLocation(dto.getLocation());
-        leaders.setCategory(dto.getCategory());
-        leaders.setOrganizationLevel(dto.getOrganizationLevel());
-        leaders.setVerified(false);
-        leaders.setRole(URole.UMUYOBOZI);
-        // leaders.setPhoneNumber(dto.getPhoneNumber());
+    //     leaders.setNationalId(dto.getNationalId());
+    //     leaders.setLocation(dto.getLocation());
+    //     leaders.setCategory(dto.getCategory());
+    //     leaders.setOrganizationLevel(dto.getOrganizationLevel());
+    //     leaders.setVerified(false);
+    //     leaders.setRole(URole.UMUYOBOZI);
+    //     // leaders.setPhoneNumber(dto.getPhoneNumber());
 
-        return leaders;
-    }
+    //     return leaders;
+    // }
 
     @Override
     public ApiResponse<Object> getLeaderById(UUID id) throws Exception {
