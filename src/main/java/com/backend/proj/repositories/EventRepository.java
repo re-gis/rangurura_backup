@@ -22,5 +22,6 @@ public interface EventRepository extends JpaRepository<Events , UUID> {
     Optional<Events> findById(UUID id);
 
     void deleteById(UUID id);
+    long countByOwner(String owner);
 
 }

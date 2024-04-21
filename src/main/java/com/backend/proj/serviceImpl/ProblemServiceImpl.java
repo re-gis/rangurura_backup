@@ -5,11 +5,10 @@ import com.backend.proj.exceptions.InvalidEnumConstantException;
 import com.backend.proj.exceptions.NotFoundException;
 import com.backend.proj.exceptions.UnauthorisedException;
 
-import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
 
-import org.cloudinary.json.JSONObject;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import org.slf4j.Logger;
@@ -24,6 +23,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.backend.proj.Services.ProblemService;
 import com.backend.proj.dtos.CreateProblemDto;
+import com.backend.proj.dtos.EscalateProblemDto;
 import com.backend.proj.dtos.UpdateProblemDto;
 import com.backend.proj.entities.Leaders;
 import com.backend.proj.entities.Problem;
@@ -35,8 +35,6 @@ import com.backend.proj.repositories.LeaderRepository;
 import com.backend.proj.repositories.ProblemRepository;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 
 @Service
 @RequiredArgsConstructor
@@ -46,153 +44,72 @@ public class ProblemServiceImpl implements ProblemService {
     private final ProblemRepository problemRepository;
     private final LeaderRepository leaderRepository;
     private static final Logger logger = LoggerFactory.getLogger(ProblemService.class);
-    private final String PYTHON_API_URL = "http://127.0.0.1:8080/check_similar_problem"; //this is the end point or AI to check if the problem is existing in db
-
-    private final RestTemplate restTemplate;
-
-
-//    @Override
-//    public ApiResponse<Object> createAProblem(CreateProblemDto dto) throws Exception {
-//        try {
-//            // Send problem data to Python API
-//            ResponseEntity<String> responseEntity = restTemplate.postForEntity(PYTHON_API_URL, dto, String.class);
-//            String response = responseEntity.getBody();
-//
-//            // Check if response is null or empty
-//            if (response == null || response.isEmpty()) {
-//                throw new RuntimeException("Empty response received from Python API");
-//            }
-//
-//            // Parse response from Python API
-//            JSONObject jsonResponse = new JSONObject(response);
-//            boolean similarProblemExists = jsonResponse.getBoolean("similar_problem_exists");
-//            if (similarProblemExists) {
-//                String similarProblem = jsonResponse.getString("similar_problem");
-//                return ApiResponse.builder()
-//                        .data(similarProblem)
-//                        .success(false)
-//                        .build();
-//            } else {
-//                // Handle problem creation
-//                return createNewProblem(dto);
-//            }
-//        } catch (RestClientException e) {
-//            logger.error("Error communicating with Python API: {}", e.getMessage());
-//            throw new RuntimeException("Error communicating with Python API", e);
-//        }
-//    }
-//
-//    private ApiResponse<Object> createNewProblem(CreateProblemDto dto) throws Exception {
-//        // Create the problem object
-//        Problem problem = buildProblem(dto);
-//
-//        // Save the problem to the database
-//        problemRepository.save(problem);
-//
-//        // Create the response
-//        ProblemResponse response = new ProblemResponse();
-//        response.setMessage("Ikibazo cyawe cyoherejwe kubashinzwe kugikurikirana Tegereza igihe gito uraza gusubizwa!");
-//        response.setProblem(problem);
-//
-//        return ApiResponse.builder()
-//                .success(true)
-//                .data(response)
-//                .build();
-//    }
-//
-//    private Problem buildProblem(CreateProblemDto dto) throws IOException {
-//        // Build the problem object
-//        String recordUrl = (dto.getRecord() != null) ? uploadDoc.uploadRecord(dto.getRecord()) : "null";
-//        String docUrl = (dto.getProof() != null) ? uploadDoc.uploadDoc(dto.getProof()) : null;
-//
-//        return Problem.builder()
-//                .category(dto.getCategory())
-//                .ikibazo(dto.getIkibazo())
-//                .phoneNumber(dto.getPhoneNumber())
-//                .proofUrl(docUrl)
-//                .recordUrl(recordUrl)
-//                .status(EProblem_Status.PENDING)
-//                .owner(dto.getNationalId())
-//                .urwego(dto.getUrwego())
-//                .target(dto.getTarget())
-//                .build();
-//    }
-
 
     @Override
     public ApiResponse<Object> createAProblem(CreateProblemDto dto) throws Exception {
         try {
-            // Send problem data to Python API
-            ResponseEntity<String> responseEntity = restTemplate.postForEntity(PYTHON_API_URL, dto, String.class);
-            String response = responseEntity.getBody();
+            // get logged in user
+            // UserResponse user = getLoggedUser.getLoggedUser();
 
-            // Check if response is null or empty
-            if (response == null || response.isEmpty()) {
-                throw new RuntimeException("Empty response received from Python API");
+            if (dto.getCategory() == null || dto.getTarget() == null || dto.getUrwego() == null
+                    || dto.getPhoneNumber() == null
+                    || (dto.getIkibazo() == null && dto.getRecord() == null)) {
+                throw new BadRequestException(
+                        "Vuga ikibazo cyawe byibuze ushyireho urwego, kategori yacyo, aho kigenewe na \'proof\' ubundi wohereze!");
             }
 
-            // Parse response from Python API
-            JSONObject jsonResponse = new JSONObject(response);
+            String recordUrl = "null";
+            String ikibazo = "null";
 
-            // Check if the response contains error
-            if (jsonResponse.has("error")) {
-                String errorMessage = jsonResponse.getString("error");
-                throw new RuntimeException("Error from Python API: " + errorMessage);
-            }
-
-            // Check if similar problem exists
-            boolean similarProblemExists = jsonResponse.optBoolean("similar_problem_exists", false);
-            if (similarProblemExists) {
-                String similarProblem = jsonResponse.optString("similar_problem", "");
-                return ApiResponse.builder()
-                        .data(similarProblem)
-                        .success(false)
-                        .build();
+            if (dto.getIkibazo() != null && dto.getRecord() != null) {
+                ikibazo = dto.getIkibazo();
+                recordUrl = uploadDoc.uploadRecord(dto.getRecord());
+            } else if (dto.getIkibazo() != null) {
+                ikibazo = dto.getIkibazo();
+            } else if (dto.getRecord() != null) {
+                recordUrl = uploadDoc.uploadRecord(dto.getRecord());
             } else {
-                return createNewProblem(dto);
+                throw new BadRequestException("At least a record or text is required!");
             }
-        } catch (RestClientException e) {
-            throw new RuntimeException("Error communicating with Python API", e);
+
+            String docUrl = null;
+            if (dto.getProof() != null) {
+                docUrl = uploadDoc.uploadDoc(dto.getProof());
+            }
+
+            // create the object
+            Problem problem = Problem.builder()
+                    .category(dto.getCategory())
+                    .ikibazo(ikibazo)
+                    .phoneNumber(dto.getPhoneNumber())
+                    .proofUrl(docUrl)
+                    .recordUrl(recordUrl)
+                    .status(EProblem_Status.PENDING)
+                    .owner(dto.getNationalId())
+                    .urwego(dto.getUrwego())
+                    .target(dto.getTarget())
+                    .build();
+
+            problemRepository.save(problem);
+
+            ProblemResponse response = new ProblemResponse();
+            response.setMessage(
+                    "Ikibazo cyawe cyoherejwe kubashinzwe kugikurikirana Tegereza igihe gito uraza gusubizwa!");
+            response.setProblem(problem);
+            return ApiResponse.builder()
+                    .success(true)
+                    .data(response)
+                    .build();
+        } catch (JsonMappingException | JsonParseException e) {
+            System.out.println(e);
+            throw new InvalidEnumConstantException("Invalid enum constant provided in the request.");
+        } catch (BadRequestException e) {
+            throw new BadRequestException(e.getMessage());
+        } catch (Exception e) {
+            System.out.println(e);
+            throw new Exception(e.getMessage());
         }
     }
-
-    private ApiResponse<Object> createNewProblem(CreateProblemDto dto) throws Exception {
-        // Create the problem object
-        Problem problem = buildProblem(dto);
-
-        // Save the problem to the database
-        problemRepository.save(problem);
-
-        // Create the response
-        ProblemResponse response = new ProblemResponse();
-        response.setMessage("Ikibazo cyawe cyoherejwe kubashinzwe kugikurikirana Tegereza igihe gito uraza gusubizwa!");
-        response.setProblem(problem);
-
-        return ApiResponse.builder()
-                .success(true)
-                .data(response)
-                .build();
-    }
-
-    private Problem buildProblem(CreateProblemDto dto) throws IOException {
-        // Build the problem object
-        String recordUrl = (dto.getRecord() != null) ? uploadDoc.uploadRecord(dto.getRecord()) : "null";
-        String docUrl = (dto.getProof() != null) ? uploadDoc.uploadDoc(dto.getProof()) : null;
-
-        return Problem.builder()
-                .category(dto.getCategory())
-                .ikibazo(dto.getIkibazo())
-                .phoneNumber(dto.getPhoneNumber())
-                .proofUrl(docUrl)
-                .recordUrl(recordUrl)
-                .status(EProblem_Status.PENDING)
-                .owner(dto.getNationalId())
-                .urwego(dto.getUrwego())
-                .target(dto.getTarget())
-                .build();
-    }
-
-
 
     @Override
     public ApiResponse<Object> getMyAskedProblems() throws Exception {
@@ -541,20 +458,19 @@ public class ProblemServiceImpl implements ProblemService {
         }
     }
 
-
-//this is to get the number of all probs by admin
+    // this is to get the number of all probs by admin
     @Override
     public ApiResponse<Object> getNumberOfAllProb() throws Exception {
-        try{
+        try {
             UserResponse user = getLoggedUser.getLoggedUser();
             if (user != null && user.getRole() == URole.ADMIN) {
                 long numberOfProblems = problemRepository.count();
-                return  ApiResponse.builder()
+                return ApiResponse.builder()
                         .data(numberOfProblems)
                         .success(true)
                         .build();
 
-            }else{
+            } else {
                 if (user == null) {
                     logger.warn("User is not logged in");
                 } else {
@@ -566,7 +482,7 @@ public class ProblemServiceImpl implements ProblemService {
                         .build();
             }
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             logger.error("Error in fetching problems", e); // Include the exception in the log
             return ApiResponse.builder()
                     .data("Error in fetching problems")
@@ -575,53 +491,53 @@ public class ProblemServiceImpl implements ProblemService {
         }
     }
 
-//get number of all pending probs
-@Override
+    // get number of all pending probs
+    @Override
     public ApiResponse<Object> getNumberOfPendingProblems() throws Exception {
 
-    try{
-        UserResponse user = getLoggedUser.getLoggedUser();
-        if (user != null && user.getRole() == URole.ADMIN) {
-            long numberOfCheckedProblems = problemRepository.countByStatus(EProblem_Status.PENDING);
-            return  ApiResponse.builder()
-                    .data(numberOfCheckedProblems)
-                    .success(true)
-                    .build();
+        try {
+            UserResponse user = getLoggedUser.getLoggedUser();
+            if (user != null && user.getRole() == URole.ADMIN) {
+                long numberOfCheckedProblems = problemRepository.countByStatus(EProblem_Status.PENDING);
+                return ApiResponse.builder()
+                        .data(numberOfCheckedProblems)
+                        .success(true)
+                        .build();
 
-        }else{
-            if (user == null) {
-                logger.warn("User is not logged in");
             } else {
-                logger.warn("User {} does not have ADMIN role", user.getName());
+                if (user == null) {
+                    logger.warn("User is not logged in");
+                } else {
+                    logger.warn("User {} does not have ADMIN role", user.getName());
+                }
+                return ApiResponse.builder()
+                        .data("You are not authorized to perform this action")
+                        .success(false)
+                        .build();
             }
+
+        } catch (Exception e) {
+            logger.error("Error in fetching problems", e); // Include the exception in the log
             return ApiResponse.builder()
-                    .data("You are not authorized to perform this action")
+                    .data("Error in fetching problems")
                     .success(false)
                     .build();
         }
-
-    }catch (Exception e) {
-        logger.error("Error in fetching problems", e); // Include the exception in the log
-        return ApiResponse.builder()
-                .data("Error in fetching problems")
-                .success(false)
-                .build();
-    }
     }
 
-    //get number of all approved probs
+    // get number of all approved probs
     @Override
     public ApiResponse<Object> getNumberOfApprovedProblems() throws Exception {
-        try{
+        try {
             UserResponse user = getLoggedUser.getLoggedUser();
             if (user != null && user.getRole() == URole.ADMIN) {
                 long numberOfApprovedProblems = problemRepository.countByStatus(EProblem_Status.APPROVED);
-                return  ApiResponse.builder()
+                return ApiResponse.builder()
                         .data(numberOfApprovedProblems)
                         .success(true)
                         .build();
 
-            }else{
+            } else {
                 if (user == null) {
                     logger.warn("User is not logged in");
                 } else {
@@ -633,7 +549,7 @@ public class ProblemServiceImpl implements ProblemService {
                         .build();
             }
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             logger.error("Error in fetching problems", e); // Include the exception in the log
             return ApiResponse.builder()
                     .data("Error in fetching problems")
@@ -642,20 +558,20 @@ public class ProblemServiceImpl implements ProblemService {
         }
     }
 
-    //get rejected probs
-//        @PreAuthorize("hasRole('ADMIN')")
+    // get rejected probs
+    // @PreAuthorize("hasRole('ADMIN')")
     @Override
     public ApiResponse<Object> getNumberOfRejectedProblems() throws Exception {
-        try{
+        try {
             UserResponse user = getLoggedUser.getLoggedUser();
             if (user != null && user.getRole() == URole.ADMIN) {
                 long numberOfRejectedProblems = problemRepository.countByStatus(EProblem_Status.REJECTED);
-                return  ApiResponse.builder()
+                return ApiResponse.builder()
                         .data(numberOfRejectedProblems)
                         .success(true)
                         .build();
 
-            }else{
+            } else {
                 if (user == null) {
                     logger.warn("User is not logged in");
                 } else {
@@ -667,7 +583,7 @@ public class ProblemServiceImpl implements ProblemService {
                         .build();
             }
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             logger.error("Error in fetching problems", e); // Include the exception in the log
             return ApiResponse.builder()
                     .data("Error in fetching problems")
@@ -676,16 +592,14 @@ public class ProblemServiceImpl implements ProblemService {
         }
     }
 
-
-
-
-    //get number of solved probs for user
+    // get number of solved probs for user
     @Override
     public ApiResponse<Object> getNumberOfSolvedProblemsForUser() throws Exception {
         try {
             UserResponse user = getLoggedUser.getLoggedUser();
             if (user != null) {
-                long numberOfSolvedProblems = problemRepository.countByStatusAndOwner(EProblem_Status.APPROVED, user.getNationalId());
+                long numberOfSolvedProblems = problemRepository.countByStatusAndOwner(EProblem_Status.APPROVED,
+                        user.getNationalId());
                 return ApiResponse.builder()
                         .data(numberOfSolvedProblems)
                         .success(true)
@@ -706,13 +620,14 @@ public class ProblemServiceImpl implements ProblemService {
         }
     }
 
-    //get number of pending prob for user
+    // get number of pending prob for user
     @Override
     public ApiResponse<Object> getNumberOfPendingProblemsForUser() throws Exception {
         try {
             UserResponse user = getLoggedUser.getLoggedUser();
             if (user != null) {
-                long numberOfUnSolvedProblems = problemRepository.countByStatusAndOwner(EProblem_Status.PENDING, user.getNationalId());
+                long numberOfUnSolvedProblems = problemRepository.countByStatusAndOwner(EProblem_Status.PENDING,
+                        user.getNationalId());
                 return ApiResponse.builder()
                         .data(numberOfUnSolvedProblems)
                         .success(true)
@@ -733,8 +648,8 @@ public class ProblemServiceImpl implements ProblemService {
         }
     }
 
-//    //get number of probs on his level
-//
+    // get number of probs on his level
+
     @Override
     public ApiResponse<Object> getNumberOfProOnMyLevel() throws Exception {
         try {
@@ -761,20 +676,10 @@ public class ProblemServiceImpl implements ProblemService {
 
             // Count the number of problems to be solved
             long numberOfProblems = problemRepository.countAllByUrwegoAndCategoryAndTarget(
-                leader.get().getOrganizationLevel(),
-                leader.get().getCategory(), leader.get().getLocation());
-                
+                    leader.get().getOrganizationLevel(),
+                    leader.get().getCategory(), leader.get().getLocation());
+
             System.out.println(numberOfProblems);
-            // Check if there are any problems
-            if (numberOfProblems == 0) {
-                NotFoundResponse response = NotFoundResponse.builder()
-                        .message("No problems found!")
-                        .build();
-                return ApiResponse.builder()
-                        .data(response)
-                        .success(true)
-                        .build();
-            }
 
             return ApiResponse.builder()
                     .data(numberOfProblems)
@@ -815,18 +720,8 @@ public class ProblemServiceImpl implements ProblemService {
             // Count the number of problems to be solved
             long numberOfProblems = problemRepository.countAllByUrwegoAndCategoryAndTargetAndStatus(
                     leader.get().getOrganizationLevel(),
-                    leader.get().getCategory(), leader.get().getLocation(),EProblem_Status.PENDING);
+                    leader.get().getCategory(), leader.get().getLocation(), EProblem_Status.PENDING);
 
-            // Check if there are any problems
-            if (numberOfProblems == 0) {
-                NotFoundResponse response = NotFoundResponse.builder()
-                        .message("No problems found!")
-                        .build();
-                return ApiResponse.builder()
-                        .data(response)
-                        .success(true)
-                        .build();
-            }
 
             return ApiResponse.builder()
                     .data(numberOfProblems)
@@ -867,18 +762,8 @@ public class ProblemServiceImpl implements ProblemService {
             // Count the number of problems to be solved
             long numberOfProblems = problemRepository.countAllByUrwegoAndCategoryAndTargetAndStatus(
                     leader.get().getOrganizationLevel(),
-                    leader.get().getCategory(), leader.get().getLocation(),EProblem_Status.APPROVED);
+                    leader.get().getCategory(), leader.get().getLocation(), EProblem_Status.APPROVED);
 
-            // Check if there are any problems
-            if (numberOfProblems == 0) {
-                NotFoundResponse response = NotFoundResponse.builder()
-                        .message("No problems found!")
-                        .build();
-                return ApiResponse.builder()
-                        .data(response)
-                        .success(true)
-                        .build();
-            }
 
             return ApiResponse.builder()
                     .data(numberOfProblems)
@@ -889,6 +774,37 @@ public class ProblemServiceImpl implements ProblemService {
             throw new NotFoundException(e.getMessage());
         } catch (UnauthorisedException e) {
             throw new UnauthorisedException(e.getMessage());
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @Override
+    public ApiResponse<Object> escalateManually(EscalateProblemDto dto) throws Exception {
+        try {
+            UUID problemId = dto.getProblemId();
+            Optional<Problem> problem = problemRepository.findById(problemId);
+            if (!problem.isPresent()) {
+                // return
+                // ApiResponse.builder().data(problem).success(true).status(HttpStatus.OK).build();
+                throw new NotFoundException("Problem " + problemId + " does not exist!");
+            } else {
+                EUrwego nextLevel = dto.getNextUrwego();
+                String target = dto.getTarget();
+                if (nextLevel == null || target == null) {
+                    throw new BadRequestException("Please provide the next level and the name of that " + nextLevel);
+                } else {
+                    // problem.get().setCreatedAt(LocalDateTime.now());
+                    problem.get().setUrwego(nextLevel);
+                    problem.get().setTarget(target);
+                    problemRepository.save(problem.get());
+
+                    return ApiResponse.builder()
+                            .data("Problem " + problem.get().getId() + " has been escalated successfully").success(true)
+                            .status(HttpStatus.OK).build();
+                }
+
+            }
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
