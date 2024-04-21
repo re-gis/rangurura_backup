@@ -2,6 +2,8 @@ package com.backend.proj.dtos;
 
 import com.backend.proj.enums.ECategory;
 import com.backend.proj.enums.EUrwego;
+import com.backend.proj.enums.LRole;
+import com.backend.proj.enums.URole;
 
 import lombok.*;
 
@@ -24,4 +26,5 @@ public class RegisterLeaderDto {
     private String district;
     private String sector;
     private String province;
+    private LRole role;
 }
