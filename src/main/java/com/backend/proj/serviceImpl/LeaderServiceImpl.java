@@ -7,7 +7,6 @@ import com.backend.proj.dtos.UserLeaderDto;
 import com.backend.proj.entities.Leaders;
 import com.backend.proj.entities.Otp;
 import com.backend.proj.entities.User;
-import com.backend.proj.enums.ECategory;
 import com.backend.proj.enums.EUrwego;
 import com.backend.proj.enums.URole;
 import com.backend.proj.exceptions.BadRequestException;
@@ -65,50 +64,61 @@ public class LeaderServiceImpl implements LeaderService {
                  */
                 Optional<Leaders> eLeader = leaderRepository.findByNationalId(euser.get().getNationalId());
 
-                if (eLeader.isPresent()) {
-                    /**
-                     * if is a leader, check the one to grant the role
-                     */
+                if (userResponse.getRole() == URole.UMUYOBOZI) {
+                    if (eLeader.isPresent()) {
+                        /**
+                         * if is a leader, check the one to grant the role
+                         */
 
-                    // if(userResponse.getUrwego() )
-                    switch (userResponse.getUrwego()) {
-                        case UMUDUGUDU:
-                            throw new UnauthorisedException("You are not authorised to perform this action!");
-                        case AKAGARI:
-                            savedLeader = assignLeader.assigneLeader(eLeader.get(), dto, EUrwego.UMUDUGUDU);
-                            break;
-                        case UMURENGE:
-                            savedLeader = assignLeader.assigneLeader(eLeader.get(), dto, EUrwego.AKAGARI);
-                            break;
-                        case AKARERE:
-                            savedLeader = assignLeader.assigneLeader(eLeader.get(), dto, EUrwego.UMURENGE);
-                            break;
-                        case INTARA:
-                            savedLeader = assignLeader.assigneLeader(eLeader.get(), dto, EUrwego.AKARERE);
-                            break;
-                        default:
-                            throw new InvalidEnumConstantException("Invalid Organisational level!");
+                        // if(userResponse.getUrwego() )
+
+                        switch (userResponse.getUrwego()) {
+                            case UMUDUGUDU:
+                                throw new UnauthorisedException("You are not authorised to perform this action!");
+                            case AKAGARI:
+                                savedLeader = assignLeader.assigneLeader(eLeader.get(), dto, EUrwego.UMUDUGUDU);
+                                break;
+                            case UMURENGE:
+                                savedLeader = assignLeader.assigneLeader(eLeader.get(), dto, EUrwego.AKAGARI);
+                                break;
+                            case AKARERE:
+                                savedLeader = assignLeader.assigneLeader(eLeader.get(), dto, EUrwego.UMURENGE);
+                                break;
+                            case INTARA:
+                                savedLeader = assignLeader.assigneLeader(eLeader.get(), dto, EUrwego.AKARERE);
+                                break;
+                            default:
+                                throw new InvalidEnumConstantException("Invalid Organisational level!");
+                        }
+                    } else {
+                        switch (userResponse.getUrwego()) {
+                            case UMUDUGUDU:
+                                throw new UnauthorisedException("You are not authorised to perform this action!");
+                            case AKAGARI:
+                                savedLeader = assignLeader.assignNewLeader(dto, EUrwego.UMUDUGUDU,
+                                        euser.get());
+                                break;
+                            case UMURENGE:
+                                savedLeader = assignLeader.assignNewLeader(dto, EUrwego.AKAGARI, euser.get());
+                                break;
+                            case AKARERE:
+                                savedLeader = assignLeader.assignNewLeader(dto, EUrwego.UMURENGE, euser.get());
+                                break;
+                            case INTARA:
+                                savedLeader = assignLeader.assignNewLeader(dto, EUrwego.AKARERE, euser.get());
+                                break;
+                            default:
+                                throw new InvalidEnumConstantException("Invalid Organisational level!");
+                        }
+                    }
+                } else if (userResponse.getRole() == URole.ADMIN) {
+                    if (eLeader.isPresent()) {
+                        savedLeader = assignLeader.assigneLeader(savedLeader, dto, EUrwego.INTARA);
+                    } else {
+                        savedLeader = assignLeader.assignNewLeader(dto, EUrwego.INTARA, euser.get());
                     }
                 } else {
-                    switch (userResponse.getUrwego()) {
-                        case UMUDUGUDU:
-                            throw new UnauthorisedException("You are not authorised to perform this action!");
-                        case AKAGARI:
-                            savedLeader = assignLeader.assignNewLeader(dto, EUrwego.UMUDUGUDU,
-                                    euser.get());
-                            break;
-                        case UMURENGE:
-                            savedLeader = assignLeader.assignNewLeader(dto, EUrwego.AKAGARI, euser.get());
-                            break;
-                        case AKARERE:
-                            savedLeader = assignLeader.assignNewLeader(dto, EUrwego.UMURENGE, euser.get());
-                            break;
-                        case INTARA:
-                            savedLeader = assignLeader.assignNewLeader(dto, EUrwego.AKARERE, euser.get());
-                            break;
-                        default:
-                            throw new InvalidEnumConstantException("Invalid Organisational level!");
-                    }
+                    throw new UnauthorisedException("You are not authorized to perform this action!");
                 }
 
                 return ApiResponse.builder()
@@ -140,26 +150,34 @@ public class LeaderServiceImpl implements LeaderService {
                 user.setRole(URole.UMUYOBOZI);
                 User exUser = userRepository.save(user);
 
-                switch (userResponse.getUrwego()) {
-                    case UMUDUGUDU:
-                        throw new UnauthorisedException("You are not authorised to perform this action!");
-                    case AKAGARI:
-                        savedLeader = assignLeader.assignNewLeader(dto, EUrwego.UMUDUGUDU,
-                                exUser);
-                        break;
-                    case UMURENGE:
-                        savedLeader = assignLeader.assignNewLeader(dto, EUrwego.AKAGARI, exUser);
-                        break;
-                    case AKARERE:
-                        savedLeader = assignLeader.assignNewLeader(dto, EUrwego.UMURENGE, exUser);
-                        break;
-                    case INTARA:
-                        savedLeader = assignLeader.assignNewLeader(dto, EUrwego.AKARERE, exUser);
-                        break;
-                    default:
-                        throw new InvalidEnumConstantException("Invalid Organisational level!");
+                if (userResponse.getRole() == URole.UMUYOBOZI) {
+
+                    switch (userResponse.getUrwego()) {
+                        case UMUDUGUDU:
+                            throw new UnauthorisedException("You are not authorised to perform this action!");
+                        case AKAGARI:
+                            savedLeader = assignLeader.assignNewLeader(dto, EUrwego.UMUDUGUDU,
+                                    exUser);
+                            break;
+                        case UMURENGE:
+                            savedLeader = assignLeader.assignNewLeader(dto, EUrwego.AKAGARI, exUser);
+                            break;
+                        case AKARERE:
+                            savedLeader = assignLeader.assignNewLeader(dto, EUrwego.UMURENGE, exUser);
+                            break;
+                        case INTARA:
+                            savedLeader = assignLeader.assignNewLeader(dto, EUrwego.AKARERE, exUser);
+                            break;
+                        default:
+                            throw new InvalidEnumConstantException("Invalid Organisational level!");
+                    }
+                } else if (userResponse.getRole() == URole.ADMIN) {
+                    savedLeader = assignLeader.assignNewLeader(dto, EUrwego.INTARA, exUser);
+                } else {
+                    throw new UnauthorisedException("You are not authorized to perform this action!");
                 }
 
+                
                 String o = otpServiceImpl.generateOtp(6);
                 String message = "Your verification code to proj is: " + o
                         + "\n, you are now registered as a leader of " + dto.getLocation()
@@ -366,18 +384,18 @@ public class LeaderServiceImpl implements LeaderService {
 
     // this is the function to convert dto to entity
     // private Leaders convertDtoToEntity(RegisterLeaderDto dto) {
-    //     // Implement logic to convert DTO to Entity
-    //     Leaders leaders = new Leaders();
+    // // Implement logic to convert DTO to Entity
+    // Leaders leaders = new Leaders();
 
-    //     leaders.setNationalId(dto.getNationalId());
-    //     leaders.setLocation(dto.getLocation());
-    //     leaders.setCategory(dto.getCategory());
-    //     leaders.setOrganizationLevel(dto.getOrganizationLevel());
-    //     leaders.setVerified(false);
-    //     leaders.setRole(URole.UMUYOBOZI);
-    //     // leaders.setPhoneNumber(dto.getPhoneNumber());
+    // leaders.setNationalId(dto.getNationalId());
+    // leaders.setLocation(dto.getLocation());
+    // leaders.setCategory(dto.getCategory());
+    // leaders.setOrganizationLevel(dto.getOrganizationLevel());
+    // leaders.setVerified(false);
+    // leaders.setRole(URole.UMUYOBOZI);
+    // // leaders.setPhoneNumber(dto.getPhoneNumber());
 
-    //     return leaders;
+    // return leaders;
     // }
 
     @Override
