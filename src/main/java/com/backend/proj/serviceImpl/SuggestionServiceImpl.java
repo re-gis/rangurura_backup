@@ -27,10 +27,14 @@ import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 
+import org.cloudinary.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 @RequiredArgsConstructor
 @Service
@@ -40,43 +44,69 @@ public class SuggestionServiceImpl implements SuggestionService {
     private final LeaderRepository leaderRepository;
     private final ValidateEnum validateEnum;
     private static final Logger logger = LoggerFactory.getLogger(ProblemService.class);
+    private static final String PYTHON_API_URL = "https://rangurura-ai.up.railway.app/check_similar_suggestions";
+    private RestTemplate restTemplate;
 
-    @Override
-    public ApiResponse<Object> PostSuggestion(SuggestionDto dto) throws Exception {
-        try {
-            if (dto.getCategory() == null || dto.getIgitekerezo() == null || dto.getNationalId() == null
-                    || dto.getUrwego() == null || dto.getLocation() == null) {
-                throw new BadRequestException("All suggestion details are required!");
-            }
+    // Setter for restTemplate
+    @Autowired
+    public void setRestTemplate(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
-            validateEnum.isValidEnumConstant(dto.getCategory(), ECategory.class);
+@Override
+public ApiResponse<Object> PostSuggestion(SuggestionDto dto) throws Exception {
+    try {
+        // Send suggestion data to Python API to check for similar suggestions
+        ResponseEntity<String> responseEntity = restTemplate.postForEntity(PYTHON_API_URL , dto, String.class);
+        String response = responseEntity.getBody();
 
-            // Convert DTO to entity
+        // Check if response is null or empty
+        if (response == null || response.isEmpty()) {
+            throw new RuntimeException("Empty response received from AI");
+        }
+
+        // Parse response from Python API
+        JSONObject jsonResponse = new JSONObject(response);
+
+        // Check if the response contains error
+        if (jsonResponse.has("error")) {
+            String errorMessage = jsonResponse.getString("error");
+            throw new RuntimeException("Internal server error from AI " + errorMessage);
+        }
+
+        // Check if similar suggestion exists
+        boolean similarSuggestionExists = jsonResponse.optBoolean("similar_suggestion_exists", false);
+        if (similarSuggestionExists) {
+            return ApiResponse.builder()
+                    .data("The similar suggestion has been given by other user!")
+                    .success(false)
+                    .build();
+        } else {
+            // If no similar suggestion exists, proceed to save the suggestion to the repository
             Suggestions suggestionEntity = convertDtoToEntity(dto);
-
-            // Save the suggestion to the repository
             Suggestions savedSuggestion = suggestionRepository.save(suggestionEntity);
             if (savedSuggestion != null) {
-                SuggestionResponse response = new SuggestionResponse();
-                response.setMessage("Suggestion sent successfully");
-                response.setSuggestion(savedSuggestion);
+                SuggestionResponse response1 = new SuggestionResponse();
+                response1.setMessage("Suggestion sent successfully");
+                response1.setSuggestion(savedSuggestion);
                 return ApiResponse.builder()
-                        .data(response)
+                        .data(response1)
                         .success(true)
                         .build();
             } else {
-                throw new ServiceException("Failed to save the Suggestion!");
+                throw new ServiceException("Suggestion not sent ,  Please try again later !");
             }
-        } catch (InvalidEnumConstantException e) {
-            throw new BadRequestException(e.getMessage());
-        } catch (ServiceException e) {
-            throw new ServiceException(e.getMessage());
-        } catch (BadRequestException e) {
-            throw new BadRequestException(e.getMessage());
-        } catch (Exception e) {
-            throw new Exception(e.getMessage());
         }
+    } catch (InvalidEnumConstantException e) {
+        throw new BadRequestException(e.getMessage());
+    } catch (ServiceException | BadRequestException e) {
+        throw new ServiceException(e.getMessage());
+    } catch (Exception e) {
+        throw new Exception(e.getMessage());
     }
+}
+
+
 
     @Override
     public ApiResponse<Object> UpdateSuggestion(SuggestionUpdateDto dto, UUID id) throws Exception {
