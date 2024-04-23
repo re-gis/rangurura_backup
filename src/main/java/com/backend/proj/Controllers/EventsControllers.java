@@ -1,5 +1,6 @@
 package com.backend.proj.Controllers;
 
+import com.backend.proj.dtos.CancelEventDto;
 import com.backend.proj.dtos.CreateEventsDto;
 import com.backend.proj.dtos.UpdateEventDto;
 import com.backend.proj.response.ApiResponse;
@@ -57,8 +58,14 @@ public class EventsControllers {
         Object ob = eventServiceImpl.receivedEvent().getData();
         return ResponseHandler.success(ob, HttpStatus.OK);
     }
+
     @GetMapping("/number_of_events")
-    public ResponseEntity<ApiResponse<Object>>getNumberOfAllSuggestions() throws  Exception{
-        return ResponseHandler.success(eventServiceImpl.getNumberOfAllEvents(),HttpStatus.OK);
+    public ResponseEntity<ApiResponse<Object>> getNumberOfAllSuggestions() throws Exception {
+        return ResponseHandler.success(eventServiceImpl.getNumberOfAllEvents(), HttpStatus.OK);
+    }
+
+    @PutMapping("/event/cancel")
+    public ResponseEntity<ApiResponse<Object>> cancelEvent(@Valid @RequestBody CancelEventDto dto) throws Exception {
+        return ResponseHandler.success(eventServiceImpl.cancelEvent(dto), HttpStatus.OK);
     }
 }

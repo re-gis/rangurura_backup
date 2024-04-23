@@ -164,9 +164,9 @@ public class UserServiceImpl implements UserService {
             }
 
             // delete the otp
-            otpRepository.delete(otp);
             User euser = userRepository.findOneByPhone(eotp.get().getNumber())
                     .orElseThrow(() -> new NotFoundException("User not found!"));
+            otpRepository.delete(otp);
             euser.setVerified(true);
             userRepository.save(euser);
 
@@ -380,7 +380,7 @@ public class UserServiceImpl implements UserService {
             // if number given send the otp
             String o = otpServiceImpl.generateOtp(6);
             System.out.println(o);
-            String message = " yo guhindura  ni: " + o;
+            String message = "Code yo guhindura ijambobanga  ni: " + o;
             otpServiceImpl.sendMessage(dto.getPhoneNumber(), message);
 
             Otp otp = new Otp();
@@ -450,6 +450,37 @@ public class UserServiceImpl implements UserService {
                 }
             }
 
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @Override
+    public ApiResponse<Object> resendOtp(String phone) throws Exception {
+        try {
+            if (phone == null) {
+                throw new BadRequestException("Phone number required to send otp...");
+            } else {
+                // first check the otp and delete it
+                Optional<Otp> eOtp = otpRepository.findOneByNumber(phone);
+                if (eOtp.isPresent()) {
+                    otpRepository.delete(eOtp.get());
+                }
+                // send the message
+                String o = otpServiceImpl.generateOtp(6);
+                System.out.println(o);
+                String message = "Your verification code to RANGURURA is: " + o;
+                otpServiceImpl.sendMessage(phone, message);
+                Otp otp = new Otp();
+                otp.setNumber(phone);
+                otp.setOtp(passwordEncoder.encode(o));
+                otpRepository.save(otp);
+
+                return ApiResponse.builder()
+                        .data("Otp resent successfully")
+                        .success(true)
+                        .status(HttpStatus.OK).build();
+            }
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }

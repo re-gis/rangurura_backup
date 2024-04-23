@@ -1,10 +1,12 @@
 package com.backend.proj.serviceImpl;
 
 import com.backend.proj.Services.EventsService;
+import com.backend.proj.dtos.CancelEventDto;
 import com.backend.proj.dtos.CreateEventsDto;
 import com.backend.proj.dtos.UpdateEventDto;
 import com.backend.proj.entities.Events;
 import com.backend.proj.entities.Leaders;
+import com.backend.proj.enums.EEvent;
 import com.backend.proj.enums.URole;
 import com.backend.proj.exceptions.BadRequestException;
 import com.backend.proj.exceptions.NotFoundException;
@@ -19,6 +21,8 @@ import com.backend.proj.response.UserResponse;
 import com.backend.proj.utils.GetLoggedUser;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -90,6 +94,7 @@ public class EventServiceImpl implements EventsService {
         events.setEndDate(dto.getEndDate());
         events.setCategory(dto.getCategory());
         events.setOwner(user.getNationalId());
+        events.setStatus(EEvent.PENDING);
 
         return events;
     }
@@ -274,7 +279,6 @@ public class EventServiceImpl implements EventsService {
                         .build();
             }
 
-
             return ApiResponse.builder()
                     .data(receivedEvents)
                     .success(true)
@@ -287,15 +291,15 @@ public class EventServiceImpl implements EventsService {
         }
     }
 
-    //get numbers of all events by admin
-//    @PreAuthorize("hasRole('ADMIN')")
+    // get numbers of all events by admin
+    // @PreAuthorize("hasRole('ADMIN')")
     @Override
     public ApiResponse<Object> getNumberOfAllEvents() throws Exception {
         try {
             UserResponse user = getLoggedUser.getLoggedUser();
             if (user.getRole() != URole.ADMIN) {
                 throw new UnauthorisedException("You are not authorised to perform this action!");
-            }else {
+            } else {
                 Long numberOfAllEvents = eventRepository.count();
                 return ApiResponse.builder()
                         .data(numberOfAllEvents)
@@ -308,7 +312,7 @@ public class EventServiceImpl implements EventsService {
 
     }
 
-    //get the number of all events I gave
+    // get the number of all events I gave
     @Override
     public ApiResponse<Object> getNumberOfAllEventsByMe() throws Exception {
         try {
@@ -328,7 +332,6 @@ public class EventServiceImpl implements EventsService {
             long numberOfEvents = eventRepository.countByOwner(
                     leader.get().getNationalId());
 
-
             return ApiResponse.builder()
                     .data(numberOfEvents)
                     .success(true)
@@ -337,6 +340,38 @@ public class EventServiceImpl implements EventsService {
             throw new UnauthorisedException(e.getMessage());
         } catch (NotFoundException e) {
             throw new NotFoundException(e.getMessage());
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @Override
+    public ApiResponse<Object> cancelEvent(CancelEventDto dto) throws Exception {
+        try {
+            UUID eventId = dto.getEventId();
+            if (eventId == null || eventId.toString().isBlank()) {
+                throw new BadRequestException("please provide the UUID of the event!");
+            } else {
+                // get the event
+                Optional<Events> event = eventRepository.findById(eventId);
+                if (!event.isPresent()) {
+                    return ApiResponse.builder()
+                            .data(event)
+                            .success(true)
+                            .message("No event " + eventId + " found!")
+                            .status(HttpStatus.OK)
+                            .build();
+                } else {
+                    event.get().setStatus(EEvent.CANCELED);
+                    eventRepository.save(event.get());
+                    return ApiResponse.builder()
+                            .message("Event " + eventId + " successfully cancelled!")
+                            .status(HttpStatus.OK)
+                            .success(true)
+                            .build();
+                }
+
+            }
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }

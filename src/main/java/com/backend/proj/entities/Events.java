@@ -1,6 +1,7 @@
 package com.backend.proj.entities;
 
 import com.backend.proj.enums.ECategory;
+import com.backend.proj.enums.EEvent;
 import com.backend.proj.enums.EUrwego;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,7 +21,7 @@ import org.hibernate.annotations.GenericGenerator;
 @Data
 @Builder
 public class Events {
-   @Id
+    @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
     private UUID id;
@@ -51,7 +52,11 @@ public class Events {
 
     @Column(nullable = false)
     private String descriptions;
+
     @Column(nullable = false)
     private String owner;
+
+    @Enumerated(EnumType.STRING)
+    private EEvent status;
 
 }

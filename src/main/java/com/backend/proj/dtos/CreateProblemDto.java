@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder    
+@Builder
 public class CreateProblemDto {
     private ECategory category;
     private String ikibazo;

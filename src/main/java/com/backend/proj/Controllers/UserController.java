@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.proj.dtos.RegisterDto;
+import com.backend.proj.dtos.ResendOtpDto;
 import com.backend.proj.dtos.ResetPasswordDto;
 import com.backend.proj.dtos.SendOtpDto;
 import com.backend.proj.dtos.VerifyOtpDto;
@@ -72,6 +73,12 @@ public class UserController {
     @PostMapping("/otp/send")
     public ResponseEntity<ApiResponse<Object>> sendOtp(@RequestBody SendOtpDto dto) throws Exception {
         Object ob = userServiceImpl.sendOtp(dto).getData();
+        return ResponseHandler.success(ob, HttpStatus.OK);
+    }
+
+    @PostMapping("/otp/resend")
+    public ResponseEntity<ApiResponse<Object>> resendOtp(@RequestBody ResendOtpDto dto) throws Exception {
+        Object ob = userServiceImpl.resendOtp(dto.getPhoneNumber()).getData();
         return ResponseHandler.success(ob, HttpStatus.OK);
     }
 
