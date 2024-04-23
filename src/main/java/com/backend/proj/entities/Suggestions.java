@@ -2,10 +2,12 @@ package com.backend.proj.entities;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import javax.persistence.*;
 
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 
 import com.backend.proj.enums.ECategory;
@@ -47,5 +49,9 @@ public class Suggestions {
 
     @Enumerated(EnumType.STRING)
     private ESuggestion status;
+
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
 }

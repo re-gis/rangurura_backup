@@ -83,22 +83,21 @@ public class ProblemServiceImpl implements ProblemService {
             // Check if the response contains error
             if (jsonResponse.has("error")) {
                 String errorMessage = jsonResponse.getString("error");
-                throw new RuntimeException("Error from Python API: " + errorMessage);
+                throw new RuntimeException("Internal server error from AI  " + errorMessage);
             }
 
             // Check if similar problem exists
             boolean similarProblemExists = jsonResponse.optBoolean("similar_problem_exists", false);
             if (similarProblemExists) {
-                String similarProblem = jsonResponse.optString("similar_problem", "");
                 return ApiResponse.builder()
-                        .data(similarProblem)
+                        .data("The similar problem has been reported by other person!")
                         .success(false)
                         .build();
             } else {
                 return createNewProblem(dto);
             }
         } catch (RestClientException e) {
-            throw new RuntimeException("Error communicating with Python API", e);
+            throw new RuntimeException("Communication error with AI ", e);
         }
     }
 
@@ -351,64 +350,6 @@ public class ProblemServiceImpl implements ProblemService {
             // EUrwego urwego = leader.get().getOrganizationLevel();
             for (Problem problem : problems) {
                 filteredProblems.add(problem);
-                // System.out.println(problem.getId());
-                // String owner = problem.getOwner();
-                // // get the same user
-                // Optional<User> userResponse = userRepository.findByNationalId(owner);
-                // if (!userResponse.isPresent()) {
-                // NotFoundResponse response = NotFoundResponse.builder()
-                // .message(
-                // "Owner " + owner
-                // + " not found!")
-                // .build();
-                // return ApiResponse.builder()
-                // .data(response)
-                // .success(true)
-                // .build();
-                // }
-
-                // get the user's location same to that of the leader
-                // switch (urwego) {
-                // case AKAGARI:
-                // // check the user with the same akagari
-                // if (userResponse.get().getCell() == leader.get().getLocation()) {
-                // filteredProblems.add(problem);
-                // }
-                // break;
-                // case INTARA:
-                // if (userResponse.get().getProvince() == leader.get().getLocation()) {
-                // filteredProblems.add(problem);
-                // }
-                // break;
-
-                // case AKARERE:
-                // if (userResponse.get().getProvince() == leader.get().getLocation()) {
-                // filteredProblems.add(problem);
-                // }
-                // break;
-
-                // case UMUDUGUDU:
-                // if (userResponse.get().getProvince() == leader.get().getLocation()) {
-                // filteredProblems.add(problem);
-                // }
-                // break;
-
-                // case UMURENGE:
-                // if (userResponse.get().getProvince() == leader.get().getLocation()) {
-                // filteredProblems.add(problem);
-                // }
-                // break;
-                // default:
-                // NotFoundResponse response = NotFoundResponse.builder()
-                // .message(
-                // "No problems found in your location!")
-                // .build();
-                // return ApiResponse.builder()
-                // .data(response)
-                // .success(true)
-                // .build();
-
-                // }
             }
 
             if (filteredProblems.isEmpty()) {
