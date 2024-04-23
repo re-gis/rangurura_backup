@@ -22,8 +22,11 @@ public interface SuggestionService {
 
     ApiResponse<Object> getSuggestionById(UUID id) throws Exception;
 
-    ApiResponse<Object> getAllSuggestions()throws Exception;
-    ApiResponse<Object>getNumberOfAllSuggestions() throws Exception; //this is for admin
-    ApiResponse<Object>getNumberOfAcceptedSuggestionForMe() throws  Exception ; //this is for citizen
-    ApiResponse<Object>getNumberOfAllOnMyLocal() throws  Exception ; //this is for citizen
+    ApiResponse<Object> getAllSuggestions() throws Exception;
+
+    ApiResponse<Object> getNumberOfAllSuggestions() throws Exception; // this is for admin
+
+    ApiResponse<Object> getNumberOfAcceptedSuggestionForMe() throws Exception; // this is for citizen
+
+    ApiResponse<Object> getNumberOfAllOnMyLocal() throws Exception; // this is for citizen
 }

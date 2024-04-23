@@ -5,7 +5,6 @@ import com.backend.proj.exceptions.InvalidEnumConstantException;
 import com.backend.proj.exceptions.NotFoundException;
 import com.backend.proj.exceptions.UnauthorisedException;
 
-
 import java.io.IOException;
 import java.util.*;
 
@@ -58,7 +57,7 @@ public class ProblemServiceImpl implements ProblemService {
     private static final String PYTHON_API_URL = "https://rangurura-ai.up.railway.app/check_similar_problem";
     private RestTemplate restTemplate;
 
-//    private RestTemplate restTemplate; // Inject RestTemplate bean here
+    // private RestTemplate restTemplate; // Inject RestTemplate bean here
 
     // Setter for restTemplate
     @Autowired
@@ -123,7 +122,7 @@ public class ProblemServiceImpl implements ProblemService {
     private Problem buildProblem(CreateProblemDto dto) throws IOException {
         // Build the problem object
         String recordUrl = (dto.getRecord() != null) ? uploadDoc.uploadRecord(dto.getRecord()) : "null";
-        String docUrl = (dto.getProof() != null) ? uploadDoc.uploadDoc(dto.getProof()) : null;
+        String docUrl = (dto.getProof() != null) ? uploadDoc.uploadDoc(dto.getProof()) : "null";
 
         return Problem.builder()
                 .category(dto.getCategory())
@@ -148,12 +147,14 @@ public class ProblemServiceImpl implements ProblemService {
                 NotFoundResponse response = NotFoundResponse.builder()
                         .message("No problems found for user: " + user
                                 .getName())
+                        .data(problems)
                         .build();
                 return ApiResponse.builder()
                         .data(response)
                         .success(true)
                         .build();
             }
+            Arrays.sort(problems, Comparator.comparing(Problem::getCreatedAt).reversed());
 
             return ApiResponse.builder()
                     .data(problems)
@@ -176,6 +177,7 @@ public class ProblemServiceImpl implements ProblemService {
                 NotFoundResponse response = NotFoundResponse.builder()
                         .message("No problems found for user: " + user
                                 .getName())
+                        .data(problems)
                         .build();
                 return ApiResponse.builder()
                         .data(response)
@@ -361,6 +363,8 @@ public class ProblemServiceImpl implements ProblemService {
                         .build();
             }
 
+            filteredProblems.sort(Comparator.comparing(Problem::getCreatedAt).reversed());
+
             return ApiResponse.builder()
                     .data(filteredProblems)
                     .success(true)
@@ -417,6 +421,8 @@ public class ProblemServiceImpl implements ProblemService {
                     filteredProblems.add(problem);
                 }
             }
+
+            filteredProblems.sort(Comparator.comparing(Problem::getCreatedAt).reversed());
 
             return ApiResponse.builder()
                     .data(filteredProblems)
@@ -691,7 +697,6 @@ public class ProblemServiceImpl implements ProblemService {
                     leader.get().getOrganizationLevel(),
                     leader.get().getCategory(), leader.get().getLocation(), EProblem_Status.PENDING);
 
-
             return ApiResponse.builder()
                     .data(numberOfProblems)
                     .success(true)
@@ -733,7 +738,6 @@ public class ProblemServiceImpl implements ProblemService {
                     leader.get().getOrganizationLevel(),
                     leader.get().getCategory(), leader.get().getLocation(), EProblem_Status.APPROVED);
 
-
             return ApiResponse.builder()
                     .data(numberOfProblems)
                     .success(true)
@@ -751,6 +755,10 @@ public class ProblemServiceImpl implements ProblemService {
     @Override
     public ApiResponse<Object> escalateManually(EscalateProblemDto dto) throws Exception {
         try {
+            UserResponse user = getLoggedUser.getLoggedUser();
+            if (user.getRole() != URole.UMUYOBOZI) {
+                throw new UnauthorisedException("You are not allowed to perform this action!");
+            }
             UUID problemId = dto.getProblemId();
             Optional<Problem> problem = problemRepository.findById(problemId);
             if (!problem.isPresent()) {
@@ -758,12 +766,30 @@ public class ProblemServiceImpl implements ProblemService {
                 // ApiResponse.builder().data(problem).success(true).status(HttpStatus.OK).build();
                 throw new NotFoundException("Problem " + problemId + " does not exist!");
             } else {
-                EUrwego nextLevel = dto.getNextUrwego();
+                EUrwego nextLevel;
+                // here we switch the levels
+                switch (problem.get().getUrwego()) {
+                    case UMUDUGUDU:
+                        nextLevel = EUrwego.AKAGARI;
+                        break;
+                    case AKAGARI:
+                        nextLevel = EUrwego.UMURENGE;
+                        break;
+                    case UMURENGE:
+                        nextLevel = EUrwego.AKARERE;
+                        break;
+                    case AKARERE:
+                        nextLevel = EUrwego.INTARA;
+                        break;
+                    default:
+                        throw new InvalidEnumConstantException("Enum not found!");
+                }
                 String target = dto.getTarget();
-                if (nextLevel == null || target == null) {
-                    throw new BadRequestException("Please provide the next level and the name of that " + nextLevel);
+                if (target == null || target.isBlank()) {
+                    throw new BadRequestException("Please provide the name of that " + nextLevel);
                 } else {
                     // problem.get().setCreatedAt(LocalDateTime.now());
+                    problem.get().setStatus(EProblem_Status.ESCALATED);
                     problem.get().setUrwego(nextLevel);
                     problem.get().setTarget(target);
                     problemRepository.save(problem.get());
@@ -774,6 +800,29 @@ public class ProblemServiceImpl implements ProblemService {
                 }
 
             }
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @Override
+    public ApiResponse<Object> getAllProblems() throws Exception {
+        try {
+            UserResponse user = getLoggedUser.getLoggedUser();
+            if (user.getRole() != URole.ADMIN) {
+                throw new UnauthorisedException("You are not authorised to perform this action!");
+            }
+
+            List<Problem> problems = problemRepository.findAll();
+            if (!problems.isEmpty()) {
+                problems.sort(Comparator.comparing(Problem::getCreatedAt).reversed());
+            }
+
+            return ApiResponse.builder()
+                    .data(problems)
+                    .success(true)
+                    .status(HttpStatus.OK)
+                    .build();
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }

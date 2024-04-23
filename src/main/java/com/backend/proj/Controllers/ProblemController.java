@@ -55,6 +55,12 @@ public class ProblemController {
 
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<ApiResponse<Object>> getAllProblems() throws Exception {
+        Object problems = problemServiceImpl.getAllProblems().getData();
+        return ResponseHandler.success(problems, HttpStatus.OK);
+    }
+
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<ApiResponse<Object>> deleteMyProblem(@PathVariable("id") UUID id) throws Exception {
 

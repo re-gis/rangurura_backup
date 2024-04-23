@@ -15,6 +15,7 @@ public class ApiResponse<T> {
     private T data;
     private String error;
     private HttpStatus status;
+    private String message;
 
     // Constructor for success response
     public ApiResponse(T data) {

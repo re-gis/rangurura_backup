@@ -43,4 +43,6 @@ public interface ProblemService {
 
     public ApiResponse<Object> escalateManually(EscalateProblemDto dto) throws Exception;
 
+    public ApiResponse<Object> getAllProblems() throws Exception;
+
 }

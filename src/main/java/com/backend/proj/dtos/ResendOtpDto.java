@@ -1,4 +1,4 @@
-package com.backend.proj.response;
+package com.backend.proj.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,12 +8,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-@Builder
-public class NotFoundResponse {
-    private String message;
-    private Object[] data;
+public class ResendOtpDto {
+    private String phoneNumber;
 }

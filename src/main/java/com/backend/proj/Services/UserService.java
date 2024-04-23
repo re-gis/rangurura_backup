@@ -21,12 +21,14 @@ public interface UserService {
     ApiResponse<Object> updateUser(UserUpdateDto dto) throws Exception;
 
     ApiResponse<Object> getAllUsers() throws Exception;
-//    ApiResponse<Object>get
+    // ApiResponse<Object>get
 
     ApiResponse<Object> resetPassword(ResetPasswordDto dto) throws Exception;
 
     ApiResponse<Object> sendOtp(SendOtpDto dto) throws Exception;
 
     boolean verifyOtp(String otp, String phone) throws Exception;
+
+    ApiResponse<Object> resendOtp(String phone) throws Exception;
 
 }
