@@ -86,14 +86,32 @@ public class ProblemServiceImpl implements ProblemService {
                 throw new RuntimeException("Internal server error from AI  " + errorMessage);
             }
 
-            // Check if similar problem exists
+//            // Check if similar problem exists
+//            boolean similarProblemExists = jsonResponse.optBoolean("similar_problem_exists", false);
+//            String similarProblem = jsonResponse.optString("similar_problem", "");
+//            similarProblem.setmessage("The similar problem has been reported by another person!");
+//            if (similarProblemExists) {
+//                return ApiResponse.builder()
+//                        .data(similarProblem)
+//                        .success(false)
+//                        .build();
+//            }
+
             boolean similarProblemExists = jsonResponse.optBoolean("similar_problem_exists", false);
+            String similarProblemDescription = jsonResponse.optString("similar_problem", "");
+            String message = "The similar problem has been reported by another person!";
+
             if (similarProblemExists) {
+                Map<String, Object> responseData = new HashMap<>();
+                responseData.put("message", message);
+                responseData.put("similarProblemDescription", similarProblemDescription);
+
                 return ApiResponse.builder()
-                        .data("The similar problem has been reported by other person!")
-                        .success(false)
+                        .data(responseData)
+                        .success(false)  // Set success to false when similar problem exists
                         .build();
-            } else {
+            }
+            else {
                 return createNewProblem(dto);
             }
         } catch (RestClientException e) {
