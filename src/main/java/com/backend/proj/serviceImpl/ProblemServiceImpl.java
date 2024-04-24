@@ -123,7 +123,6 @@ public class ProblemServiceImpl implements ProblemService {
         // Build the problem object
         String recordUrl = (dto.getRecord() != null) ? uploadDoc.uploadRecord(dto.getRecord()) : "null";
         String docUrl = (dto.getProof() != null) ? uploadDoc.uploadDoc(dto.getProof()) : "null";
-
         return Problem.builder()
                 .category(dto.getCategory())
                 .ikibazo(dto.getIkibazo())

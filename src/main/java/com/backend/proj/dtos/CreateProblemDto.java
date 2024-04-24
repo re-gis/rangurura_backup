@@ -1,5 +1,6 @@
 package com.backend.proj.dtos;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.backend.proj.enums.ECategory;
@@ -19,7 +20,9 @@ public class CreateProblemDto {
     private String ikibazo;
     private EUrwego urwego;
     private String phoneNumber;
+    @JsonIgnore
     private MultipartFile proof;
+    @JsonIgnore
     private MultipartFile record;
     private String nationalId;
     private String target;
