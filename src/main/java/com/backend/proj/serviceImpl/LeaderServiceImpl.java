@@ -22,10 +22,7 @@ import com.backend.proj.response.UserResponse;
 import com.backend.proj.utils.AssignLeader;
 import com.backend.proj.utils.GetLoggedUser;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import lombok.RequiredArgsConstructor;
 
@@ -397,7 +394,6 @@ public class LeaderServiceImpl implements LeaderService {
 
     // return leaders;
     // }
-
     @Override
     public ApiResponse<Object> getLeaderById(UUID id) throws Exception {
         try {
@@ -408,20 +404,39 @@ public class LeaderServiceImpl implements LeaderService {
                         .build();
                 return ApiResponse.builder()
                         .data(response)
-                        .status(HttpStatus.OK)
-                        .success(true)
+                        .status(HttpStatus.NOT_FOUND) // Change status to NOT_FOUND
+                        .success(false) // Change success to false since it's not found
                         .build();
+            } else {
+                String leaderNationalId = leader.get().getNationalId();
+                Optional<User> user = userRepository.findByNationalId(leaderNationalId);
+                if (!user.isPresent()) {
+                    NotFoundResponse response = NotFoundResponse.builder()
+                            .message("No user found")
+                            .build();
+                    return ApiResponse.builder()
+                            .data(response)
+                            .status(HttpStatus.NOT_FOUND) // Change status to NOT_FOUND
+                            .success(false) // Change success to false since user is not found
+                            .build();
+                } else {
+                    // Assuming you want to return both leader and user
+                    // You might want to adjust this part based on your requirements
+                    Map<String, Object> responseData = new HashMap<>();
+                    responseData.put("leader", leader.get());
+                    responseData.put("user", user.get());
+                    return ApiResponse.builder()
+                            .data(responseData)
+                            .status(HttpStatus.OK)
+                            .success(true)
+                            .build();
+                }
             }
-
-            return ApiResponse.builder()
-                    .success(true)
-                    .data(leader)
-                    .status(HttpStatus.OK)
-                    .build();
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
     }
+
 
     // get leader profile
     @Override
