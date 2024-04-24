@@ -55,4 +55,18 @@ public class Validator {
         }
         return true;
     }
+
+    public static void validatePhonePasswordAndNationalId(String phone, String password, String nationalId){
+        if(!password.matches("^(?=.*[A-Z])(?=.*[!@#$%^&*()-_+=]).{8,20}$")){
+            throw new BadRequestException("Pasword must be between 8 and 20 characters, contain at least one capital case and at least one special character!");
+        }
+
+        if(!nationalId.matches("^\\d{20}$")){
+            throw new BadRequestException("Please provide a valid national id");
+        }
+
+        if(!phone.matches("^\\+250\\d{9}$")){
+            throw new BadRequestException("Please provide a valid phone number!");
+        }
+    }
 }
