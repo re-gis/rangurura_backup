@@ -38,14 +38,14 @@ public class Formatter {
     }
 
     public static LocalDateTime getStartLocalDateTime(String startDate) {
-
         LocalDateTime parsedStartDate = LocalDateTime.parse(startDate, Formatter.getLocalDateTimeFormater());
-
         return parsedStartDate;
     }
 
     public static LocalDateTime getEndLocalDateTime(String endDate) {
-
+        LocalDateTime parsedEndDate = LocalDateTime.parse(endDate, Formatter.getLocalDateTimeFormater());
+        return parsedEndDate;
+    }
 
     public static String isFormedLocalDate() {
         return "verified";
