@@ -1,6 +1,6 @@
 package com.backend.proj.Controllers;
 
-import com.backend.proj.dtos.UserUpdateDto;
+import com.backend.proj.dtos.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,11 +9,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.backend.proj.dtos.RegisterDto;
-import com.backend.proj.dtos.ResendOtpDto;
-import com.backend.proj.dtos.ResetPasswordDto;
-import com.backend.proj.dtos.SendOtpDto;
-import com.backend.proj.dtos.VerifyOtpDto;
 import com.backend.proj.response.ApiResponse;
 import com.backend.proj.serviceImpl.UserServiceImpl;
 import com.backend.proj.utils.ResponseHandler;
@@ -85,6 +80,11 @@ public class UserController {
     @PostMapping("/password/reset")
     public ResponseEntity<ApiResponse<Object>> resetPassword(@RequestBody ResetPasswordDto dto) throws Exception {
         Object ob = userServiceImpl.resetPassword(dto).getData();
+        return ResponseHandler.success(ob, HttpStatus.OK);
+    }
+    @PostMapping("/get_user_by_national_id")
+    public ResponseEntity<ApiResponse<Object>> getUserByNationalId(@RequestBody GetUserByNationalIdDto dto) throws Exception {
+        Object ob = userServiceImpl.getUserByNationalId(dto).getData();
         return ResponseHandler.success(ob, HttpStatus.OK);
     }
 }
