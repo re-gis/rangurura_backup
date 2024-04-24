@@ -488,7 +488,7 @@ public class UserServiceImpl implements UserService {
 
         try {
             UserResponse response = getLoggedUser.getLoggedUser();
-            if(response.getRole()!=URole.UMUYOBOZI){
+            if(response.getRole()!=URole.UMUYOBOZI && response.getRole()!=URole.ADMIN){
                 throw new Exception("You are not allowed to perfom this action!");
             }
             Optional<User>  user=userRepository.findByNationalId(dto.getNationalId());
