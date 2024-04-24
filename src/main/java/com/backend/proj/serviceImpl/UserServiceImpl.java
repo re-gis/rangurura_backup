@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.backend.proj.dtos.UserUpdateDto;
+import com.backend.proj.dtos.*;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -14,10 +14,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.backend.proj.dtos.RegisterDto;
-import com.backend.proj.dtos.ResetPasswordDto;
-import com.backend.proj.dtos.SendOtpDto;
-import com.backend.proj.dtos.VerifyOtpDto;
 import com.backend.proj.entities.Otp;
 import com.backend.proj.entities.User;
 import com.backend.proj.enums.URole;
@@ -416,6 +412,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+
     public ApiResponse<Object> resetPassword(ResetPasswordDto dto) throws Exception {
         try {
             if (!verifyOtp(dto.getOtp(), dto.getPhone())) {
@@ -484,6 +481,36 @@ public class UserServiceImpl implements UserService {
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
+    }
+
+    @Override
+    public ApiResponse<Object> getUserByNationalId(GetUserByNationalIdDto dto) throws Exception {
+
+        try {
+            UserResponse response = getLoggedUser.getLoggedUser();
+            if(response.getRole()!=URole.UMUYOBOZI){
+                throw new Exception("You are not allowed to perfom this action!");
+            }
+            Optional<User>  user=userRepository.findByNationalId(dto.getNationalId());
+            if(user.isPresent()){
+                return  ApiResponse.builder()
+                        .data(user)
+                        .success(true)
+                        .status(HttpStatus.OK).build();
+
+            }
+            return ApiResponse.builder()
+                    .data("The user  with "  + dto.getNationalId() + " is not found!" )
+                    .success(false)
+                    .status(HttpStatus.BAD_REQUEST)
+                    .build();
+
+        }catch (Exception e){
+            throw new Exception(e.getMessage());
+
+
+        }
+
     }
 
 }
