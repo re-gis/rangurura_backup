@@ -1,10 +1,6 @@
 package com.backend.proj.Services;
 
-import com.backend.proj.dtos.RegisterDto;
-import com.backend.proj.dtos.ResetPasswordDto;
-import com.backend.proj.dtos.SendOtpDto;
-import com.backend.proj.dtos.UserUpdateDto;
-import com.backend.proj.dtos.VerifyOtpDto;
+import com.backend.proj.dtos.*;
 import com.backend.proj.response.ApiResponse;
 
 public interface UserService {
@@ -30,5 +26,6 @@ public interface UserService {
     boolean verifyOtp(String otp, String phone) throws Exception;
 
     ApiResponse<Object> resendOtp(String phone) throws Exception;
+    ApiResponse<Object>getUserByNationalId(GetUserByNationalIdDto dto) throws Exception;
 
 }
