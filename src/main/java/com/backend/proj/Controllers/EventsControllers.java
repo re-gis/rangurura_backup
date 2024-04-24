@@ -2,6 +2,7 @@ package com.backend.proj.Controllers;
 
 import com.backend.proj.dtos.CancelEventDto;
 import com.backend.proj.dtos.CreateEventsDto;
+import com.backend.proj.dtos.PostponeEventDto;
 import com.backend.proj.dtos.UpdateEventDto;
 import com.backend.proj.response.ApiResponse;
 import com.backend.proj.serviceImpl.EventServiceImpl;
@@ -66,6 +67,13 @@ public class EventsControllers {
 
     @PutMapping("/event/cancel")
     public ResponseEntity<ApiResponse<Object>> cancelEvent(@Valid @RequestBody CancelEventDto dto) throws Exception {
-        return ResponseHandler.success(eventServiceImpl.cancelEvent(dto), HttpStatus.OK);
+        return ResponseHandler.success(eventServiceImpl.cancelEvent(dto).getData(), HttpStatus.OK);
+    }
+
+    @PutMapping("/event/{eventId}/postpone")
+    public ResponseEntity<ApiResponse<Object>> postponeEvent(@PathVariable("eventId") UUID eventId,
+            @Valid @RequestBody PostponeEventDto dto) throws Exception {
+        Object obj = eventServiceImpl.postponeEvent(eventId, dto).getData();
+        return ResponseHandler.success(obj, HttpStatus.OK);
     }
 }

@@ -3,6 +3,7 @@ package com.backend.proj.serviceImpl;
 import com.backend.proj.Services.EventsService;
 import com.backend.proj.dtos.CancelEventDto;
 import com.backend.proj.dtos.CreateEventsDto;
+import com.backend.proj.dtos.PostponeEventDto;
 import com.backend.proj.dtos.UpdateEventDto;
 import com.backend.proj.entities.Events;
 import com.backend.proj.entities.Leaders;
@@ -18,7 +19,10 @@ import com.backend.proj.response.ApiResponse;
 import com.backend.proj.response.EventsResponse;
 import com.backend.proj.response.NotFoundResponse;
 import com.backend.proj.response.UserResponse;
+import com.backend.proj.utils.Formatter;
 import com.backend.proj.utils.GetLoggedUser;
+import com.backend.proj.utils.Validators.Validator;
+
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 
@@ -26,6 +30,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -72,11 +77,18 @@ public class EventServiceImpl implements EventsService {
     }
 
     private void validateInput(CreateEventsDto dto) {
-        if (dto.getCategory() == null || dto.getLocation() == null || dto.getEndDate() == null ||
+        if (dto.getCategory() == null || dto.getLocation() == null || dto.getEndDateTime() == null ||
                 dto.getEventName() == null || dto.getOrganizationLevel() == null ||
-                dto.getDescriptions() == null || dto.getEndTime() == null || dto.getStartTime() == null ||
-                dto.getStartDate() == null || dto.getEndDate() == null) {
+                dto.getDescriptions() == null ||
+                dto.getStartDateTime() == null) {
             throw new BadRequestException("Please provide all required details for your  announcement!");
+        } else {
+            // validate the dates and time
+            Validator.ValidateEventTime(Formatter.getStartLocalDateTime(dto.getStartDateTime()),
+                    Formatter.getEndLocalDateTime(dto.getEndDateTime()));
+
+            Validator.validateTimeInterval(Formatter.getStartLocalDateTime(dto.getStartDateTime()),
+                    Formatter.getEndLocalDateTime(dto.getEndDateTime()));
         }
     }
 
@@ -87,11 +99,9 @@ public class EventServiceImpl implements EventsService {
         events.setOrganizationLevel(dto.getOrganizationLevel());
         events.setEventName(dto.getEventName());
         events.setDescriptions(dto.getDescriptions());
-        events.setStartTime(dto.getStartTime());
-        events.setEndTime(dto.getEndTime());
-        events.setStartDate(dto.getStartDate());
+        events.setStartDateTime(Formatter.getStartLocalDateTime(dto.getStartDateTime()));
         events.setLocation(dto.getLocation());
-        events.setEndDate(dto.getEndDate());
+        events.setEndDateTime(Formatter.getEndLocalDateTime(dto.getEndDateTime()));
         events.setCategory(dto.getCategory());
         events.setOwner(user.getNationalId());
         events.setStatus(EEvent.PENDING);
@@ -114,6 +124,7 @@ public class EventServiceImpl implements EventsService {
             if (events.length == 0) {
                 NotFoundResponse response = NotFoundResponse.builder()
                         .message("No events found for user: " + user.getName())
+                        .data(events)
                         .build();
                 return ApiResponse.builder()
                         .data(response)
@@ -142,13 +153,10 @@ public class EventServiceImpl implements EventsService {
             // Perform the update using data from the DTO
             existingEvent.setEventName(dto.getEventName());
             existingEvent.setOrganizationLevel(dto.getOrganizationLevel());
-            ;
             existingEvent.setCategory(dto.getCategory());
             existingEvent.setLocation(dto.getLocation());
-            existingEvent.setStartDate(dto.getStartDate());
-            existingEvent.setEndDate(dto.getEndDate());
-            existingEvent.setStartTime(dto.getStartTime());
-            existingEvent.setEndTime(dto.getEndTime());
+            existingEvent.setStartDateTime(Formatter.getStartLocalDateTime(dto.getStartDateTime()));
+            existingEvent.setEndDateTime(Formatter.getEndLocalDateTime(dto.getEndDateTime()));
             existingEvent.setDescriptions(dto.getDescriptions());
 
             // Save the updated event
@@ -189,7 +197,7 @@ public class EventServiceImpl implements EventsService {
             Optional<Events> eventToDelete = eventRepository.findById(id);
 
             // Check if the event exists
-            if (eventToDelete.isEmpty()) {
+            if (eventToDelete.isEmpty() || !eventToDelete.isPresent()) {
                 NotFoundResponse response = NotFoundResponse.builder()
                         .message("Event " + id
                                 + " not found!")
@@ -207,7 +215,7 @@ public class EventServiceImpl implements EventsService {
             }
 
             // Delete the event
-            eventRepository.deleteById(id);
+            eventRepository.delete(event);
 
             return ApiResponse.builder()
                     .data("Announcement  deleted successfully")
@@ -240,7 +248,7 @@ public class EventServiceImpl implements EventsService {
                         .build();
             }
 
-            // You can further process the list of events as needed
+            recentEvents.sort(Comparator.comparing(Events::getStartDateTime).reversed());
 
             return ApiResponse.builder()
                     .data(recentEvents)
@@ -278,6 +286,8 @@ public class EventServiceImpl implements EventsService {
                         .success(true)
                         .build();
             }
+
+            receivedEvents.sort(Comparator.comparing(Events::getStartDateTime).reversed());
 
             return ApiResponse.builder()
                     .data(receivedEvents)
@@ -376,4 +386,47 @@ public class EventServiceImpl implements EventsService {
             throw new Exception(e.getMessage());
         }
     }
+
+    @Override
+    public ApiResponse<Object> postponeEvent(UUID eventId, PostponeEventDto dto) throws Exception {
+        try {
+            if (dto.getOtherEndDateTime() == null || dto.getOtherEndDateTime().isBlank()
+                    || dto.getOtherStartDateTime() == null || dto.getOtherStartDateTime().isBlank()) {
+                throw new BadRequestException("Please provide the date the event is postponed to!");
+            } else {
+                // get the event
+                Optional<Events> event = eventRepository.findById(eventId);
+                if (!event.isPresent()) {
+                    return ApiResponse.builder()
+                            .data(event)
+                            .message("Event " + eventId + " not found!")
+                            .status(HttpStatus.OK)
+                            .build();
+                } else {
+                    // validate the date and time
+                    Validator.ValidateEventTime(Formatter.getStartLocalDateTime(dto.getOtherStartDateTime()),
+                            Formatter.getEndLocalDateTime(dto.getOtherEndDateTime()));
+
+                    Validator.validateTimeInterval(Formatter.getStartLocalDateTime(dto.getOtherStartDateTime()),
+                            Formatter.getEndLocalDateTime(dto.getOtherEndDateTime()));
+
+                    // update the event
+                    event.get().setStartDateTime(Formatter.getStartLocalDateTime(dto.getOtherStartDateTime()));
+                    event.get().setEndDateTime(Formatter.getEndLocalDateTime(dto.getOtherEndDateTime()));
+                    event.get().setStatus(EEvent.POSTPONED);
+                    Events e = eventRepository.save(event.get());
+                    return ApiResponse.builder()
+                            .status(HttpStatus.OK)
+                            .message("Event " + eventId + " postponed successfully...")
+                            .data(e)
+                            .build();
+                }
+
+                // TODO: make the controller and test this service
+            }
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
 }

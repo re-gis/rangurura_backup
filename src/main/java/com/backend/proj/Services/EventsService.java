@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import com.backend.proj.dtos.CancelEventDto;
 import com.backend.proj.dtos.CreateEventsDto;
+import com.backend.proj.dtos.PostponeEventDto;
 import com.backend.proj.dtos.UpdateEventDto;
 import com.backend.proj.response.ApiResponse;
 
@@ -22,6 +23,7 @@ public interface EventsService {
 
     ApiResponse<Object> getNumberOfAllEventsByMe() throws Exception;
 
-    ApiResponse<Object> cancelEvent(CancelEventDto dto)throws Exception;
+    ApiResponse<Object> cancelEvent(CancelEventDto dto) throws Exception;
 
+    ApiResponse<Object> postponeEvent(UUID eventId, PostponeEventDto dto) throws Exception;
 }

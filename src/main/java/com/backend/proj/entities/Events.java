@@ -3,11 +3,14 @@ package com.backend.proj.entities;
 import com.backend.proj.enums.ECategory;
 import com.backend.proj.enums.EEvent;
 import com.backend.proj.enums.EUrwego;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import javax.persistence.*;
@@ -38,17 +41,19 @@ public class Events {
     @Column(nullable = false)
     private String location;
 
-    @Column(nullable = false)
-    private String startDate;
+    // @Column(nullable = false)
+    // private String startDate;
 
-    @Column(nullable = false)
-    private String endDate;
+    // @Column(nullable = false)
+    // private String endDate;
 
-    @Column(nullable = false)
-    private String startTime;
+    @Column(nullable = false, name = "startDateTime")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime startDateTime;
 
-    @Column(nullable = false)
-    private String endTime;
+    @Column(nullable = false, name = "endDateTime")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime endDateTime;
 
     @Column(nullable = false)
     private String descriptions;
