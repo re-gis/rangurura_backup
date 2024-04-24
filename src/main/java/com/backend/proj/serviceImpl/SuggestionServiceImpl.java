@@ -73,15 +73,21 @@ public ApiResponse<Object> PostSuggestion(SuggestionDto dto) throws Exception {
             String errorMessage = jsonResponse.getString("error");
             throw new RuntimeException("Internal server error from AI " + errorMessage);
         }
-
-        // Check if similar suggestion exists
         boolean similarSuggestionExists = jsonResponse.optBoolean("similar_suggestion_exists", false);
+        String similarSuggestionDescription = jsonResponse.optString("similar_suggestion", "");
+        String message = "The similar suggestion has been reported by another person!";
+
         if (similarSuggestionExists) {
+            Map<String, Object> responseData = new HashMap<>();
+            responseData.put("message", message);
+            responseData.put("similarSuggestionDescription", similarSuggestionDescription);
+
             return ApiResponse.builder()
-                    .data("The similar suggestion has been given by other user!")
-                    .success(false)
+                    .data(responseData)
+                    .success(false)  // Set success to false when similar problem exists
                     .build();
-        } else {
+        }
+        else {
             // If no similar suggestion exists, proceed to save the suggestion to the repository
             Suggestions suggestionEntity = convertDtoToEntity(dto);
             Suggestions savedSuggestion = suggestionRepository.save(suggestionEntity);
