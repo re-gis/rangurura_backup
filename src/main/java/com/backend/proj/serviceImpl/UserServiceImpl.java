@@ -35,6 +35,7 @@ import com.backend.proj.response.UserResponse;
 import com.backend.proj.Services.UserService;
 import com.backend.proj.utils.GetLoggedUser;
 import com.backend.proj.utils.ValidateEnum;
+import com.backend.proj.utils.Validators.Validator;
 
 import lombok.RequiredArgsConstructor;
 
@@ -53,9 +54,11 @@ public class UserServiceImpl implements UserService {
         try {
             if (dto.getName() == null || dto.getProvince() == null || dto.getDistrict() == null
                     || dto.getSector() == null || dto.getCell() == null || dto.getVillage() == null
-                    || dto.getPassword() == null || dto.getCpassword() == null || dto.getNationalId() == null) {
+                    || dto.getPassword() == null || dto.getCpassword() == null || dto.getNationalId() == null || dto.getPhoneNumber() == null) {
                 throw new BadRequestException("All credentials are required!");
             } else {
+
+                Validator.validatePhonePasswordAndNationalId(dto.getPhoneNumber(), dto.getPassword(), dto.getNationalId());
 
                 if (!dto.getPassword().equals(dto.getCpassword())) {
                     return ApiResponse.builder()
