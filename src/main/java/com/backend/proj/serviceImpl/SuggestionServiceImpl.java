@@ -74,7 +74,7 @@ public ApiResponse<Object> PostSuggestion(SuggestionDto dto) throws Exception {
             throw new RuntimeException("Internal server error from AI " + errorMessage);
         }
         boolean similarSuggestionExists = jsonResponse.optBoolean("similar_suggestion_exists", false);
-        String similarSuggestionDescription = jsonResponse.optString("similar_suggestion", "");
+        String similarSuggestionDescription = jsonResponse.optString("similar_suggestions", "");
         String message = "The similar suggestion has been reported by another person!";
 
         if (similarSuggestionExists) {
