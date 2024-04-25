@@ -32,6 +32,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.backend.proj.Services.ProblemService;
 import com.backend.proj.dtos.CreateProblemDto;
 import com.backend.proj.dtos.EscalateProblemDto;
+import com.backend.proj.dtos.SolveProblemDto;
 import com.backend.proj.dtos.UpdateProblemDto;
 import com.backend.proj.entities.Leaders;
 import com.backend.proj.entities.Problem;
@@ -56,6 +57,7 @@ public class ProblemServiceImpl implements ProblemService {
     private static final Logger logger = LoggerFactory.getLogger(ProblemService.class);
     private static final String PYTHON_API_URL = "https://rangurura-ai.up.railway.app/check_similar_problem";
     private RestTemplate restTemplate;
+    private final OtpServiceImpl otpServiceImpl;
 
     // private RestTemplate restTemplate; // Inject RestTemplate bean here
 
@@ -97,10 +99,9 @@ public class ProblemServiceImpl implements ProblemService {
 
                 return ApiResponse.builder()
                         .data(responseData)
-                        .success(false)  // Set success to false when similar problem exists
+                        .success(false) // Set success to false when similar problem exists
                         .build();
-            }
-            else {
+            } else {
                 return createNewProblem(dto);
             }
         } catch (RestClientException e) {
@@ -829,6 +830,36 @@ public class ProblemServiceImpl implements ProblemService {
                     .success(true)
                     .status(HttpStatus.OK)
                     .build();
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @Override
+    public ApiResponse<Object> solveProblem(UUID problemId, SolveProblemDto dto) throws Exception {
+        try {
+            UserResponse user = getLoggedUser.getLoggedUser();
+            if (user.getRole() != URole.UMUYOBOZI) {
+                throw new UnauthorisedException("You are not authorised to perform this action!");
+            } else {
+                Optional<Problem> problem = problemRepository.findById(problemId);
+                if (!problem.isPresent() || problem.isEmpty()) {
+                    return ApiResponse.builder().data(problem.get()).success(true).status(HttpStatus.OK)
+                            .message("Problem " + problemId + " not found!").build();
+                } else {
+                    // get the message to send to problem sender
+                    String message = dto.getMessage();
+                    String phoneNumber = problem.get().getPhoneNumber();
+                    if (message == null || message.isBlank() || message.isEmpty()) {
+                        throw new BadRequestException("Please provide the message to send to the user...");
+                    } else {
+                        // send the message
+                        otpServiceImpl.sendMessage(phoneNumber, message);
+                        return ApiResponse.builder().data("Response sent to " + phoneNumber + " successfully...")
+                                .status(HttpStatus.OK).success(true).build();
+                    }
+                }
+            }
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }

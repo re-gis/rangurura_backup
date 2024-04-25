@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import com.backend.proj.dtos.CreateProblemDto;
 import com.backend.proj.dtos.EscalateProblemDto;
+import com.backend.proj.dtos.SolveProblemDto;
 import com.backend.proj.dtos.UpdateProblemDto;
 import com.backend.proj.enums.EProblem_Status;
 import com.backend.proj.response.ApiResponse;
@@ -44,5 +45,7 @@ public interface ProblemService {
     public ApiResponse<Object> escalateManually(EscalateProblemDto dto) throws Exception;
 
     public ApiResponse<Object> getAllProblems() throws Exception;
+
+    public ApiResponse<Object> solveProblem(UUID problemId, SolveProblemDto dto)throws Exception;
 
 }
