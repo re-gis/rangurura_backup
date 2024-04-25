@@ -3,11 +3,7 @@ package com.backend.proj.Controllers;
 import com.backend.proj.dtos.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.backend.proj.response.ApiResponse;
 import com.backend.proj.serviceImpl.UserServiceImpl;
@@ -15,6 +11,8 @@ import com.backend.proj.utils.ResponseHandler;
 
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -86,5 +84,9 @@ public class UserController {
     public ResponseEntity<ApiResponse<Object>> getUserByNationalId(@RequestBody GetUserByNationalIdDto dto) throws Exception {
         Object ob = userServiceImpl.getUserByNationalId(dto).getData();
         return ResponseHandler.success(ob, HttpStatus.OK);
+    }
+    @GetMapping("/user/{id}")
+    public ResponseEntity<ApiResponse<Object>>  getUserById(@PathVariable("id") UUID id) throws Exception {
+        return ResponseHandler.success(userServiceImpl.getUserById(id), HttpStatus.OK);
     }
 }

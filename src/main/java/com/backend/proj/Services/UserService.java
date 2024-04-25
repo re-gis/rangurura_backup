@@ -3,6 +3,9 @@ package com.backend.proj.Services;
 import com.backend.proj.dtos.*;
 import com.backend.proj.response.ApiResponse;
 
+import java.rmi.server.UID;
+import java.util.UUID;
+
 public interface UserService {
     public ApiResponse<Object> registerUser(RegisterDto dto) throws Exception;
 
@@ -27,5 +30,6 @@ public interface UserService {
 
     ApiResponse<Object> resendOtp(String phone) throws Exception;
     ApiResponse<Object>getUserByNationalId(GetUserByNationalIdDto dto) throws Exception;
+    ApiResponse<Object>getUserById(UUID userId) throws  Exception;
 
 }
