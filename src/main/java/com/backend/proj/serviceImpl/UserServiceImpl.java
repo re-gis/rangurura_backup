@@ -491,7 +491,7 @@ public class UserServiceImpl implements UserService {
 
         try {
             UserResponse response = getLoggedUser.getLoggedUser();
-            if(response.getRole()!=URole.UMUYOBOZI){
+            if(response.getRole()!=URole.UMUYOBOZI && response.getRole()!=URole.ADMIN){
                 throw new Exception("You are not allowed to perfom this action!");
             }
             Optional<User>  user=userRepository.findByNationalId(dto.getNationalId());
@@ -515,5 +515,29 @@ public class UserServiceImpl implements UserService {
         }
 
     }
+
+    @Override
+    public ApiResponse<Object> getUserById(UUID userId) throws Exception {
+        try {
+            Optional<User> user = userRepository.findById(userId);
+            if (user.isPresent()) {
+                // If user is found, return success response with user data
+                return ApiResponse.builder()
+                        .data(user.get()) // Unwrap Optional<User> to User
+                        .status(HttpStatus.OK)
+                        .build();
+            } else {
+                // If user is not found, return failure response with message
+                return ApiResponse.builder()
+                        .data("I can't find the user with that UID")
+                        .status(HttpStatus.NOT_FOUND) // Change status to NOT_FOUND or BAD_REQUEST as per your requirement
+                        .build();
+            }
+        } catch (Exception e) {
+            // If any exception occurs, rethrow it
+            throw new Exception(e.getMessage());
+        }
+    }
+
 
 }
