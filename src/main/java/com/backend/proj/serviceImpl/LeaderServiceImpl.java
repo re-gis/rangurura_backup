@@ -117,7 +117,7 @@ public class LeaderServiceImpl implements LeaderService {
                     }
                 } else if (userResponse.getRole() == URole.ADMIN) {
                     if (eLeader.isPresent() && eLeader != null) {
-                        savedLeader = assignLeader.assigneLeader(savedLeader, dto, EUrwego.INTARA);
+                        savedLeader = assignLeader.assigneLeader(eLeader.get(), dto, EUrwego.INTARA);
                     } else {
                         savedLeader = assignLeader.assignNewLeader(dto, EUrwego.INTARA, euser.get());
                     }
