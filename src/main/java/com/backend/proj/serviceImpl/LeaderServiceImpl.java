@@ -54,6 +54,13 @@ public class LeaderServiceImpl implements LeaderService {
                 throw new UnauthorisedException("Verify the account to continue please!");
             }
             Leaders savedLeader = null;
+
+            if (dto.getNationalId() == null || dto.getNationalId().isEmpty() || dto.getNationalId().isBlank()
+                    || dto.getOrganizationLevel() == null || dto.getCategory() == null || dto.getCategory() == null
+                    || dto.getRole() == null || dto.getLocation().isEmpty() || dto.getLocation().isBlank()
+                    || dto.getLocation() == null) {
+                throw new BadRequestException("Please all details are required!");
+            }
             Optional<User> euser = userRepository.findByNationalId(dto.getNationalId());
             if (euser.isPresent() && euser != null) {
                 /**
