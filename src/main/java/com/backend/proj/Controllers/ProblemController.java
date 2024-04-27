@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.backend.proj.dtos.CreateProblemDto;
 import com.backend.proj.dtos.EscalateProblemDto;
+import com.backend.proj.dtos.SolveProblemDto;
 import com.backend.proj.dtos.UpdateProblemDto;
 import com.backend.proj.enums.EProblem_Status;
 import com.backend.proj.enums.EUrwego;
@@ -164,5 +165,12 @@ public class ProblemController {
                     .status(HttpStatus.OK)
                     .build(), HttpStatus.OK);
         }
+    }
+
+    @PostMapping("/answer/{id}")
+    public ResponseEntity<ApiResponse<Object>> answerProblem(@PathVariable("id") UUID problemId,
+            @RequestBody SolveProblemDto dto) throws Exception {
+        Object obj = problemServiceImpl.solveProblem(problemId, dto).getData();
+        return ResponseHandler.success(obj, HttpStatus.OK);
     }
 }

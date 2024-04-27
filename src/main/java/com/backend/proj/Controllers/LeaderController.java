@@ -25,7 +25,7 @@ public class LeaderController {
 
     // registering leaders
     @PostMapping("/addLeader")
-    public ResponseEntity<ApiResponse<Object>> PostSuggestion(@Valid @RequestBody RegisterLeaderDto dto)
+    public ResponseEntity<ApiResponse<Object>> createALeader(@Valid @RequestBody RegisterLeaderDto dto)
             throws Exception {
 
         Object ob = leaderServiceImpl.registerNewLeader(dto).getData();

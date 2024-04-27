@@ -55,14 +55,14 @@ public class LeaderServiceImpl implements LeaderService {
             }
             Leaders savedLeader = null;
             Optional<User> euser = userRepository.findByNationalId(dto.getNationalId());
-            if (euser.isPresent()) {
+            if (euser.isPresent() && euser != null) {
                 /**
                  * if the user exists actually we have to check if he/she wasn't a leader
                  */
                 Optional<Leaders> eLeader = leaderRepository.findByNationalId(euser.get().getNationalId());
 
                 if (userResponse.getRole() == URole.UMUYOBOZI) {
-                    if (eLeader.isPresent()) {
+                    if (eLeader.isPresent() && eLeader != null) {
                         /**
                          * if is a leader, check the one to grant the role
                          */
@@ -109,7 +109,7 @@ public class LeaderServiceImpl implements LeaderService {
                         }
                     }
                 } else if (userResponse.getRole() == URole.ADMIN) {
-                    if (eLeader.isPresent()) {
+                    if (eLeader.isPresent() && eLeader != null) {
                         savedLeader = assignLeader.assigneLeader(savedLeader, dto, EUrwego.INTARA);
                     } else {
                         savedLeader = assignLeader.assignNewLeader(dto, EUrwego.INTARA, euser.get());
@@ -174,7 +174,6 @@ public class LeaderServiceImpl implements LeaderService {
                     throw new UnauthorisedException("You are not authorized to perform this action!");
                 }
 
-                
                 String o = otpServiceImpl.generateOtp(6);
                 String message = "Your verification code to proj is: " + o
                         + "\n, you are now registered as a leader of " + dto.getLocation()
@@ -436,7 +435,6 @@ public class LeaderServiceImpl implements LeaderService {
             throw new Exception(e.getMessage());
         }
     }
-
 
     // get leader profile
     @Override
