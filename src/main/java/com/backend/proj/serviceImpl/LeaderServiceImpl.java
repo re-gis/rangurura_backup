@@ -118,6 +118,8 @@ public class LeaderServiceImpl implements LeaderService {
                     throw new UnauthorisedException("You are not authorized to perform this action!");
                 }
 
+                userRepository.save(euser.get());
+
                 return ApiResponse.builder()
                         .data("Leader successfully registered!")
                         .success(true)
