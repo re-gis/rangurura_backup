@@ -15,20 +15,24 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.backend.proj.entities.User;
 import com.backend.proj.exceptions.AuthenticationFailedException;
 import com.backend.proj.exceptions.JwtExpiredException;
 import com.backend.proj.exceptions.UnauthorisedException;
+import com.backend.proj.repositories.UserRepository;
 import com.backend.proj.serviceImpl.JwtServiceImpl;
 
 import io.jsonwebtoken.ExpiredJwtException;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
     private final UserDetailsService userDetailsService;
     private final JwtServiceImpl jwtService;
+    private final UserRepository userRepository;
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
@@ -43,6 +47,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             }
             jwt = authHeader.substring(7);
             userEmail = jwtService.extractUserEmail(jwt);
+            Optional<User> user = userRepository.findOneByNationalId(userEmail);
+            if(user == null || !user.isPresent()){
+                throw new UnauthorisedException("User " + userEmail + " not valid!");
+            }
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
 

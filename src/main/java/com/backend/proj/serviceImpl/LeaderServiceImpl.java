@@ -56,7 +56,7 @@ public class LeaderServiceImpl implements LeaderService {
             Leaders savedLeader = null;
 
             if (dto.getNationalId() == null || dto.getNationalId().isEmpty() || dto.getNationalId().isBlank()
-                    || dto.getOrganizationLevel() == null || dto.getCategory() == null || dto.getCategory() == null
+                  || dto.getCategory() == null || dto.getCategory() == null
                     || dto.getRole() == null || dto.getLocation().isEmpty() || dto.getLocation().isBlank()
                     || dto.getLocation() == null) {
                 throw new BadRequestException("Please all details are required!");

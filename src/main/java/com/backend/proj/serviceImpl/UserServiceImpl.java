@@ -249,7 +249,7 @@ public class UserServiceImpl implements UserService {
             throw e;
         } catch (Exception e) {
             // e.printStackTrace();
-            throw new Exception("Internal server error...");
+            throw new Exception(e.getMessage());
         }
     }
 

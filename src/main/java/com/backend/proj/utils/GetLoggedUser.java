@@ -54,9 +54,6 @@ public class GetLoggedUser {
                     if (leader == null) {
                         throw new NotFoundException(String.format("Leader %s not found!", nationalId));
                     }
-                    System.out.println(user.get().getRealName());
-                    System.out.println(user.get().getRole());
-                    System.out.println(leader.get().getNationalId());
                     u = UserResponse.builder()
                             .name(user.get().getRealName())
                             .nationalId(user.get().getNationalId())

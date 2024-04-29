@@ -13,7 +13,7 @@ import java.util.UUID;
 public interface EventRepository extends JpaRepository<Events, UUID> {
         Events[] findAllByOwner(String owner_id);
 
-        List<Events> findAllByOwner(UUID owner_id);
+        // List<Events> findAllByOwner(UUID owner_id);
 
         @Query(value = "SELECT * FROM events WHERE (location = :village AND organization_level='UMUDUGUDU') OR " +
                         "(location = :sector AND organization_level='UMURENGE') OR " +

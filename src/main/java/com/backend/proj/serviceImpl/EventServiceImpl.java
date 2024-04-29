@@ -434,7 +434,7 @@ public class EventServiceImpl implements EventsService {
             if(user == null || user.getRole() == URole.UMUTURAGE){
                 throw new UnauthorisedException("You are not authorised to perform this action!");
             }else {
-                List<Events> events = eventRepository.findAllByOwner(user.getId());
+                List<Events> events = List.of(eventRepository.findAllByOwner(user.getNationalId()));
                 return ApiResponse.builder()
                 .data(events)
                 .status(HttpStatus.OK)
