@@ -26,4 +26,6 @@ public interface EventsService {
     ApiResponse<Object> cancelEvent(CancelEventDto dto) throws Exception;
 
     ApiResponse<Object> postponeEvent(UUID eventId, PostponeEventDto dto) throws Exception;
+
+    ApiResponse<Object> getMyEvents()throws Exception;
 }

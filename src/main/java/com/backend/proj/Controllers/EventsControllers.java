@@ -47,6 +47,12 @@ public class EventsControllers {
 
     }
 
+    @GetMapping("/mine")
+    public ResponseEntity<ApiResponse<Object>> getMyEvents() throws Exception {
+        Object ob = eventServiceImpl.getMyEvents().getData();
+        return ResponseHandler.success(ob, HttpStatus.OK);
+    }
+
     @GetMapping("/my_events")
     public ResponseEntity<ApiResponse<Object>> myRecentEvent() throws Exception {
 

@@ -421,8 +421,25 @@ public class EventServiceImpl implements EventsService {
                             .data(e)
                             .build();
                 }
+            }
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
 
-                // TODO: make the controller and test this service
+    @Override
+    public ApiResponse<Object> getMyEvents() throws Exception {
+        try {
+            UserResponse user = getLoggedUser.getLoggedUser();
+            if(user == null || user.getRole() == URole.UMUTURAGE){
+                throw new UnauthorisedException("You are not authorised to perform this action!");
+            }else {
+                List<Events> events = eventRepository.findAllByOwner(user.getId());
+                return ApiResponse.builder()
+                .data(events)
+                .status(HttpStatus.OK)
+                .success(true)
+                .build();
             }
         } catch (Exception e) {
             throw new Exception(e.getMessage());
