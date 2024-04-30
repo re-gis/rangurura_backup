@@ -21,6 +21,7 @@ import com.backend.proj.response.NotFoundResponse;
 import com.backend.proj.response.UserResponse;
 import com.backend.proj.utils.AssignLeader;
 import com.backend.proj.utils.GetLoggedUser;
+import com.backend.proj.utils.Validators.Validator;
 
 import java.util.*;
 
@@ -140,6 +141,8 @@ public class LeaderServiceImpl implements LeaderService {
                     throw new BadRequestException(
                             "Since the leader is new to system, your all credentials and location information are required...");
                 }
+
+                Validator.validatePhonePasswordAndNationalId(dto.getPhoneNumber(), dto.getNationalId());
 
                 User user = new User();
                 user.setNationalId(dto.getNationalId());
