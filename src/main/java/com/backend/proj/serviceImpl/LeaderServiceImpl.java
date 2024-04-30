@@ -187,6 +187,7 @@ public class LeaderServiceImpl implements LeaderService {
                 }
 
                 String o = otpServiceImpl.generateOtp(6);
+                System.out.println(o);
                 String message = "Your verification code to proj is: " + o
                         + "\n, you are now registered as a leader of " + dto.getLocation()
                         + " \n use your national id as password to login!";

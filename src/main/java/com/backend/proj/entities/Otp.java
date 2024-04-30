@@ -1,6 +1,5 @@
 package com.backend.proj.entities;
 
-
 import java.util.UUID;
 
 import javax.persistence.*;
@@ -31,6 +30,6 @@ public class Otp {
     @Column(nullable = false)
     private String otp;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String number;
 }
