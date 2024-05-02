@@ -6,6 +6,7 @@ RUN mvn clean package
 
 # Create the final image with the packaged JAR
 FROM openjdk:17
+
 WORKDIR /app
 
 # Create the directory
