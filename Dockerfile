@@ -18,6 +18,6 @@ RUN chmod 777 /opt/uploads/uploads-backend/uploads
 # Copy the packaged JAR
 COPY --from=builder /app/target/*.jar lab.jar
 
-EXPOSE 7898
+EXPOSE 5000
 
 ENTRYPOINT ["java", "-jar", "lab.jar"]
