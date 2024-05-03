@@ -9,7 +9,7 @@ public class projApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(projApplication.class, args);
-		System.out.println("Rangurura is running ....");
+		System.out.println("RAN_backup is running ....");
 	}
 
 }
